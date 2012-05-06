@@ -16,6 +16,10 @@
 
 package com.android.systemui.statusbar.phone;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
 import android.animation.ObjectAnimator;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
@@ -25,28 +29,31 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.IPowerManager;
 import android.os.Message;
+import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Slog;
 import android.util.Log;
+import android.util.Slog;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.IWindowManager;
@@ -56,11 +63,13 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManagerImpl;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,26 +77,24 @@ import android.widget.RemoteViews;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusBarNotification;
-
 import com.android.systemui.R;
 import com.android.systemui.recent.RecentTasksLoader;
 import com.android.systemui.recent.RecentsPanelView;
 import com.android.systemui.recent.TaskDescription;
 import com.android.systemui.statusbar.NotificationData;
+import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.StatusBar;
 import com.android.systemui.statusbar.StatusBarIconView;
-import com.android.systemui.statusbar.SignalClusterView;
+import com.android.systemui.statusbar.policy.BrightnessController;
+import com.android.systemui.statusbar.policy.CenterClock;
+import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.statusbar.policy.DateView;
-import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.LocationController;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
+import com.android.systemui.statusbar.policy.toggles.TogglesView;
 
 public class PhoneStatusBar extends StatusBar {
     static final String TAG = "PhoneStatusBar";
@@ -112,6 +119,7 @@ public class PhoneStatusBar extends StatusBar {
     private static final int MSG_HIDE_INTRUDER = 1003;
     private static final int MSG_OPEN_RECENTS_PANEL = 1020;
     private static final int MSG_CLOSE_RECENTS_PANEL = 1021;
+    private static final int MSG_SAMSUNG_MAGIC = 2000;
 
     // will likely move to a resource or other tunable param at some point
     private static final int INTRUDER_ALERT_DECAY_MS = 10000;
@@ -130,10 +138,13 @@ public class PhoneStatusBar extends StatusBar {
     private float mExpandAccelPx; // classic value: 2000px/s/s
     private float mCollapseAccelPx; // classic value: 2000px/s/s (will be negated to collapse "up")
 
+    private float mScreenWidth;
+    private int mMinBrightness;
+
     PhoneStatusBarPolicy mIconPolicy;
 
     // These are no longer handled by the policy, because we need custom strategies for them
-    BatteryController mBatteryController;
+    // BatteryController mBatteryController;
     LocationController mLocationController;
     NetworkController mNetworkController;
 
@@ -165,6 +176,9 @@ public class PhoneStatusBar extends StatusBar {
     TextView mNoNotificationsTitle;
     View mClearButton;
     View mSettingsButton;
+
+    TogglesView mQuickToggles;
+    BrightnessController mBrightness;
 
     // drag bar
     CloseDragHandle mCloseView;
@@ -218,8 +232,18 @@ public class PhoneStatusBar extends StatusBar {
     boolean mAnimatingReveal = false;
     int mViewDelta;
     int[] mAbsPos = new int[2];
+    int mLinger = 0;
     Runnable mPostCollapseCleanup = null;
 
+    private int mIsBrightNessMode = 0;
+    private boolean mIsStatusBarBrightNess;
+    private boolean mIsAutoBrightNess;
+    private BrightNessContentObserver mBrightNessContentObs = new BrightNessContentObserver();
+    private Float mPropFactor;
+
+    boolean mQuickTogglesHideAfterCollapse = true;
+
+    LinearLayout mCenterClockLayout;
 
     // for disabling the status bar
     int mDisabled = 0;
@@ -264,6 +288,7 @@ public class PhoneStatusBar extends StatusBar {
 
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext);
+     Settings.System.putInt(mContext.getContentResolver(), Settings.System.IS_TABLET, 0);
     }
 
     // ================================================================================
@@ -278,6 +303,9 @@ public class PhoneStatusBar extends StatusBar {
         loadDimens();
 
         mIconSize = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_icon_size);
+        mScreenWidth = (float) context.getResources().getDisplayMetrics().widthPixels;
+        mMinBrightness = context.getResources().getInteger(
+                com.android.internal.R.integer.config_screenBrightnessDim);
 
         ExpandedView expanded = (ExpandedView)View.inflate(context,
                 R.layout.status_bar_expanded, null);
@@ -296,10 +324,12 @@ public class PhoneStatusBar extends StatusBar {
         mStatusBarView = sb;
 
         try {
+            int layoutToInflate = R.layout.navigation_bar;
             boolean showNav = mWindowManager.hasNavigationBar();
             if (showNav) {
                 mNavigationBarView =
-                    (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+                        (NavigationBarView) View.inflate(context, R.layout.navigation_bar_naked,
+                                null);
 
                 mNavigationBarView.setDisabledFlags(mDisabled);
             }
@@ -332,6 +362,46 @@ public class PhoneStatusBar extends StatusBar {
         mSettingsButton.setOnClickListener(mSettingsButtonListener);
         mScrollView = (ScrollView)expanded.findViewById(R.id.scroll);
 
+        mQuickToggles = (TogglesView) expanded.findViewById(R.id.quick_toggles);
+
+     // check and change layout type :)
+        final int layout_type = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_LAYOUT, 0);
+        if (layout_type == 0) {
+            mExpandedContents = mPile; // was:
+                                       // expanded.findViewById(R.id.notificationLinearLayout);
+        } else {
+
+            View drawer_header = expanded.findViewById(R.id.drawer_header);
+            View drawer_header_hr = expanded.findViewById(R.id.drawer_header_hr);
+            View drawer_header_hr2 = expanded.findViewById(R.id.drawer_header_hr2);
+            View notifications = expanded.findViewById(R.id.notifications);
+
+            expanded.removeView(drawer_header_hr2);
+            expanded.removeView(drawer_header);
+            expanded.removeView(drawer_header_hr);
+            expanded.removeView(mQuickToggles);
+            expanded.removeView(notifications);
+
+            if (layout_type == 1) {
+                expanded.addView(notifications);
+                expanded.addView(drawer_header_hr);
+                expanded.addView(drawer_header);
+                expanded.addView(drawer_header_hr2);
+                expanded.addView(mQuickToggles);
+                mExpandedContents = mQuickToggles;
+            }
+            if (layout_type == 2) {
+                expanded.addView(mQuickToggles);
+ 	        expanded.addView(drawer_header_hr2);
+ 	        expanded.addView(drawer_header);
+ 	        expanded.addView(drawer_header_hr);
+ 	        expanded.addView(notifications);
+ 	        mExpandedContents = mQuickToggles;
+ 	        }
+
+        }
+
         mTicker = new MyTicker(context, sb);
 
         TickerView tickerView = (TickerView)sb.findViewById(R.id.tickerText);
@@ -349,8 +419,8 @@ public class PhoneStatusBar extends StatusBar {
 
         // Other icons
         mLocationController = new LocationController(mContext); // will post a notification
-        mBatteryController = new BatteryController(mContext);
-        mBatteryController.addIconView((ImageView)sb.findViewById(R.id.battery));
+     //   mBatteryController = new BatteryController(mContext);
+     //   mBatteryController.addIconView((ImageView)sb.findViewById(R.id.battery));
         mNetworkController = new NetworkController(mContext);
         final SignalClusterView signalCluster =
                 (SignalClusterView)sb.findViewById(R.id.signal_cluster);
@@ -372,8 +442,68 @@ public class PhoneStatusBar extends StatusBar {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         context.registerReceiver(mBroadcastReceiver, filter);
 
+      SettingsObserver observer = new SettingsObserver(new Handler());
+        observer.observe();
+        updateSettings();
+
+        // restore state
+        mQuickToggles.setVisibility(Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_TOGGLES_VISIBILITY, 1) == 1 ? View.VISIBLE : View.GONE);
+        mQuickToggles.setBar(this);
+
+        mIsStatusBarBrightNess = Settings.System.getInt(mStatusBarView.getContext()
+                .getContentResolver(),
+                Settings.System.STATUS_BAR_BRIGHTNESS_TOGGLE, 0) == 1;
+        if (mIsStatusBarBrightNess) {
+            mIsAutoBrightNess = checkAutoBrightNess();
+            mContext.getContentResolver().registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE), false,
+                    mBrightNessContentObs);
+            updatePropFactorValue();
+        }
+
+
         return sb;
     }
+
+    private boolean checkAutoBrightNess() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
+    }
+
+    private void doBrightNess(MotionEvent e) {
+        int screenBrightness = checkMinMax(Float.valueOf((e.getRawX() * mPropFactor.floatValue()))
+                .intValue());
+        Settings.System.putInt(mContext.getContentResolver(), "screen_brightness", screenBrightness);
+        // Log.e(TAG, "Screen brightness: " + screenBrightness);
+        try {
+            IPowerManager pw = IPowerManager.Stub.asInterface(ServiceManager.getService("power"));
+            if (pw != null) {
+                pw.setBacklightBrightness(screenBrightness);
+            }
+        } catch (RemoteException e1) {
+        }
+    }
+
+    private int checkMinMax(int brightness) {
+        int min = 0;
+        int max = 255;
+ 	 	
+        if (min > brightness) // brightness < 0x1E
+             return min;
+        else if (max < brightness) { // brightness > 0xFF
+             return max;
+        }
+
+        return brightness;
+    }
+
+    private void updatePropFactorValue() {
+        mPropFactor = Float.valueOf((float) android.os.Power.BRIGHTNESS_ON
+                / Integer.valueOf(mDisplay.getWidth()).floatValue());
+    }
+
 
     protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutParams) {
         boolean opaque = false;
@@ -453,6 +583,10 @@ public class PhoneStatusBar extends StatusBar {
 
         mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
         mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPanel);
+    } catch (NullPointerException e) {
+            // just in case the layout doesn't use the recents button ;)
+        }
+        ;
     }
 
     // For small-screen devices (read: phones) that lack hardware navigation buttons
@@ -1038,12 +1172,19 @@ public class PhoneStatusBar extends StatusBar {
         */
     }
 
-    public void showClock(boolean show) {
-        View clock = mStatusBarView.findViewById(R.id.clock);
+   public void showClock(boolean show) {
+
+        Clock clock = (Clock) mStatusBarView.findViewById(R.id.clock);
         if (clock != null) {
-            clock.setVisibility(show ? View.VISIBLE : View.GONE);
+            clock.updateVisibilityFromStatusBar(show);
+        }
+
+        CenterClock cclock = (CenterClock) mStatusBarView.findViewById(R.id.center_clock);
+        if (cclock != null) {
+            cclock.updateVisibilityFromStatusBar(show);
         }
     }
+
 
     /**
      * State is one or more of the DISABLE constants from StatusBarManager.
@@ -1159,6 +1300,13 @@ public class PhoneStatusBar extends StatusBar {
                         mRecentsPanel.show(false, true);
                     }
                     break;
+                 case MSG_SAMSUNG_MAGIC:
+                    if (mIsStatusBarBrightNess) {
+                        mIsBrightNessMode = 1;
+                        updateExpandedViewPos(0);
+                        performCollapse();
+                    }
+                    break;
             }
         }
     }
@@ -1257,6 +1405,9 @@ public class PhoneStatusBar extends StatusBar {
         updateExpandedViewPos(EXPANDED_FULL_OPEN);
 
         if (false) postStartTracing();
+
+        mQuickToggles.onStatusbarExpanded();
+
     }
 
     void performCollapse() {
@@ -1275,6 +1426,12 @@ public class PhoneStatusBar extends StatusBar {
 
         if ((mDisabled & StatusBarManager.DISABLE_NOTIFICATION_ICONS) == 0) {
             setNotificationIconVisibility(true, com.android.internal.R.anim.fade_in);
+        }
+
+        if (mQuickTogglesHideAfterCollapse) {
+            mQuickToggles.setVisibility(View.GONE);
+            Settings.System.putInt(mContext.getContentResolver(),
+                    Settings.System.STATUSBAR_TOGGLES_VISIBILITY, 0);
         }
 
         if (!mExpanded) {
@@ -1489,6 +1646,13 @@ public class PhoneStatusBar extends StatusBar {
                 if (x >= edgeBorder && x < mDisplayMetrics.widthPixels - edgeBorder) {
                     prepareTracking(y, !mExpanded);// opening if we're not already fully visible
                     trackMovement(event);
+                if (mIsStatusBarBrightNess) {
+                        mIsBrightNessMode = 0;
+                if (!mIsAutoBrightNess) {
+                            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_SAMSUNG_MAGIC),
+                                    ViewConfiguration.getGlobalActionKeyTimeout() * 2);
+                        }
+                    }
                 }
             }
         } else if (mTracking) {
@@ -1496,8 +1660,21 @@ public class PhoneStatusBar extends StatusBar {
             final int minY = statusBarSize + mCloseView.getHeight();
             if (action == MotionEvent.ACTION_MOVE) {
                 if (mAnimatingReveal && y < minY) {
-                    // nothing
-                } else  {
+                   // samsung brightness
+            if (mIsStatusBarBrightNess && mIsBrightNessMode == 1) {
+                        doBrightNess(event);
+                    }
+                } else {
+                   // remove brightness events from being posted, change mode
+            if (mIsStatusBarBrightNess) {
+            if (!mIsAutoBrightNess && mHandler.hasMessages(MSG_SAMSUNG_MAGIC)) {
+                            mHandler.removeMessages(MSG_SAMSUNG_MAGIC);
+                        }
+
+            if (mIsBrightNessMode == 1) {
+                mIsBrightNessMode = 2;
+                        }
+                    }
                     mAnimatingReveal = false;
                     updateExpandedViewPos(y + mViewDelta);
                 }
@@ -1530,9 +1707,12 @@ public class PhoneStatusBar extends StatusBar {
                 }
 
                 performFling(y + mViewDelta, vel, false);
+                if (mIsStatusBarBrightNess && mHandler.hasMessages(MSG_SAMSUNG_MAGIC)) {
+                    mHandler.removeMessages(MSG_SAMSUNG_MAGIC);
             }
 
-        }
+         }
+      }
         return false;
     }
 
@@ -1700,26 +1880,35 @@ public class PhoneStatusBar extends StatusBar {
         public void tickerStarting() {
             mTicking = true;
             mIcons.setVisibility(View.GONE);
+            mCenterClockLayout.setVisibility(View.GONE);
             mTickerView.setVisibility(View.VISIBLE);
             mTickerView.startAnimation(loadAnim(com.android.internal.R.anim.push_up_in, null));
             mIcons.startAnimation(loadAnim(com.android.internal.R.anim.push_up_out, null));
+            mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.push_up_out,
+                    null));
         }
 
         @Override
         public void tickerDone() {
             mIcons.setVisibility(View.VISIBLE);
+            mCenterClockLayout.setVisibility(View.VISIBLE);
             mTickerView.setVisibility(View.GONE);
             mIcons.startAnimation(loadAnim(com.android.internal.R.anim.push_down_in, null));
+            mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.push_down_in,
+                    null));
             mTickerView.startAnimation(loadAnim(com.android.internal.R.anim.push_down_out,
-                        mTickingDoneListener));
+                    mTickingDoneListener));
         }
 
+
         public void tickerHalting() {
-            mIcons.setVisibility(View.VISIBLE);
+           mIcons.setVisibility(View.VISIBLE);
+            mCenterClockLayout.setVisibility(View.VISIBLE);
             mTickerView.setVisibility(View.GONE);
             mIcons.startAnimation(loadAnim(com.android.internal.R.anim.fade_in, null));
+            mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.fade_in, null));
             mTickerView.startAnimation(loadAnim(com.android.internal.R.anim.fade_out,
-                        mTickingDoneListener));
+                    mTickingDoneListener));
         }
     }
 
@@ -2194,18 +2383,141 @@ public class PhoneStatusBar extends StatusBar {
 
     private View.OnClickListener mSettingsButtonListener = new View.OnClickListener() {
         public void onClick(View v) {
-            try {
-                // Dismiss the lock screen when Settings starts.
-                ActivityManagerNative.getDefault().dismissKeyguardOnNextActivity();
-            } catch (RemoteException e) {
-            }
-            v.getContext().startActivity(new Intent(Settings.ACTION_SETTINGS)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            animateCollapse();
+           if (mDropdownSettingsDefualtBehavior)
+                mSettingsBehaviorOpenSettings();
+            else
+                mSettingsBehaviorOpenToggles();
         }
     };
 
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    private View.OnLongClickListener mSettingsLongClickListener = new View.OnLongClickListener() {
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mDropdownSettingsDefualtBehavior)
+                mSettingsBehaviorOpenToggles();
+            else
+                mSettingsBehaviorOpenSettings();
+            return true;
+        }
+    };
+
+         private void mSettingsBehaviorOpenSettings() {
+            try {
+                // Dismiss the lock screen when Settings starts.
+            ActivityManagerNative.getDefault().dismissKeyguardOnNextActivity();
+        } catch (RemoteException e) {
+        }
+        mContext.startActivity(new Intent(Settings.ACTION_SETTINGS)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        animateCollapse();
+    }
+
+         private void mSettingsBehaviorOpenToggles() {
+         if (mQuickToggles.getVisibility() == View.VISIBLE) {
+            int height = mQuickToggles.getHeight();
+
+            Animation a =
+                    AnimationUtils.makeOutAnimation(mContext, true);
+            a.setDuration(400);
+            a.setAnimationListener(new AnimationListener() {
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mQuickToggles.setVisibility(View.GONE);
+                    Settings.System.putInt(mContext.getContentResolver(),
+                            Settings.System.STATUSBAR_TOGGLES_VISIBILITY, 0);
+                }
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            mQuickToggles.startAnimation(a);
+        } else {
+            Animation a =
+                    AnimationUtils.makeInAnimation(mContext, true);
+            a.setDuration(400);
+            a.setAnimationListener(new AnimationListener() {
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    mQuickToggles.setVisibility(View.VISIBLE);
+                    Settings.System.putInt(mContext.getContentResolver(),
+                            Settings.System.STATUSBAR_TOGGLES_VISIBILITY, 1);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            mQuickToggles.startAnimation(a);
+        }
+
+    }
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_SETTINGS_BEHAVIOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_QUICKTOGGLES_AUTOHIDE), false, this);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_BRIGHTNESS_TOGGLE), false, this);
+                   
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+        private class BrightNessContentObserver extends ContentObserver {
+
+        public BrightNessContentObserver() {
+            super(new Handler());
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            mIsAutoBrightNess = checkAutoBrightNess();
+        }
+
+    }
+
+    boolean mDropdownSettingsDefualtBehavior = true;
+
+    private void updateSettings() {
+        // Slog.i(TAG, "updated settings values");
+        
+        ContentResolver cr = mContext.getContentResolver();
+        mDropdownSettingsDefualtBehavior = Settings.System.getInt(cr,
+                Settings.System.STATUSBAR_SETTINGS_BEHAVIOR, 0) == 1;
+
+        mQuickTogglesHideAfterCollapse = Settings.System.getInt(cr,
+                Settings.System.STATUSBAR_QUICKTOGGLES_AUTOHIDE, 0) == 1;
+        
+        mIsStatusBarBrightNess = Settings.System.getInt(mStatusBarView.getContext()
+                .getContentResolver(),
+                Settings.System.STATUS_BAR_BRIGHTNESS_TOGGLE, 0) == 1;
+
+    }
+    
+      private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)
@@ -2317,6 +2629,10 @@ public class PhoneStatusBar extends StatusBar {
         }
     };
 
+    public boolean isTablet() {
+        return false;
+    }
+
     public class TouchOutsideListener implements View.OnTouchListener {
         private int mMsg;
         private RecentsPanelView mPanel;
@@ -2339,4 +2655,3 @@ public class PhoneStatusBar extends StatusBar {
         }
     }
 }
-
