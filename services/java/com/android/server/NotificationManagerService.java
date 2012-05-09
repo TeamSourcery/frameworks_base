@@ -330,6 +330,9 @@ public class NotificationManagerService extends INotificationManager.Stub
 
             boolean queryRestart = false;
             
+            boolean ledScreenOn = Settings.Secure.getInt(mContext.getContentResolver(),
+                    Settings.Secure.LED_SCREEN_ON, 0) == 1;
+
             if (action.equals(Intent.ACTION_PACKAGE_REMOVED)
                     || action.equals(Intent.ACTION_PACKAGE_RESTARTED)
                     || action.equals(Intent.ACTION_PACKAGE_CHANGED)
@@ -366,7 +369,7 @@ public class NotificationManagerService extends INotificationManager.Stub
                 mInCall = (intent.getStringExtra(TelephonyManager.EXTRA_STATE).equals(
                         TelephonyManager.EXTRA_STATE_OFFHOOK));
                 updateNotificationPulse();
-            } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
+            } else if (action.equals(Intent.ACTION_USER_PRESENT) && !ledScreenOn) {
                 // turn off LED when user passes through lock screen
                 mNotificationLight.turnOff();
             }
@@ -1095,6 +1098,11 @@ public class NotificationManagerService extends INotificationManager.Stub
     // lock on mNotificationList
     private void updateLightsLocked()
     {
+    // Get ICSControl "flash when screen ON" flag
+        boolean ledScreenOn = Settings.Secure.getInt(
+          mContext.getContentResolver(),
+          Settings.Secure.LED_SCREEN_ON, 0) == 1;
+
         // handle notification lights
         if (mLedNotification == null) {
             // get next notification, if any

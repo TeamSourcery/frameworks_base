@@ -580,7 +580,7 @@ public class PhoneStatusBar extends StatusBar {
 
     private void prepareNavigationBarView() {
         mNavigationBarView.reorient();
-
+    try {
         mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
         mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPanel);
     } catch (NullPointerException e) {

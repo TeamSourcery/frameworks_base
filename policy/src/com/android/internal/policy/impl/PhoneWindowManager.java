@@ -2954,6 +2954,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     // If the keyguard is showing, let it decide what to do with the wake key.
                     mKeyguardMediator.onWakeKeyWhenKeyguardShowingTq(keyCode,
                             mDockMode != Intent.EXTRA_DOCK_STATE_UNDOCKED);
+                  }
                 } else {
                     // Otherwise, wake the device ourselves.
                     result |= ACTION_POKE_USER_ACTIVITY;
@@ -3048,6 +3049,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         // If music is playing but we decided not to pass the key to the
                         // application, handle the volume change here.
                         handleVolumeKey(AudioManager.STREAM_MUSIC, keyCode);
+                         }
                         break;
                     }
                 }
@@ -3719,8 +3721,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mBootMsgDialog.setCancelable(false);
                     mBootMsgDialog.show();
                 }
-                mBootMsgDialog.setTitle(R.string.android_upgrading_title);
-                mBootMsgDialog.setMessage(msg);
+                    mBootMsgDialog.setMessage(msg);
                 if (DEBUG_BOOTMSG) Log.d(TAG, "********** showBootMessage(" + msg +", " + always + ") updated ***********");
                 if (CURRENT_PACKAGE_NAME != null) {
                     mBootMsgDialog.setTitle(msg);
@@ -3755,7 +3756,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.post(new Runnable() {
             @Override public void run() {
                 if (mBootMsgDialog != null) {
-            CURRENT_PACKAGE_NAME = "no";
+                CURRENT_PACKAGE_NAME = "no";
                     mBootMsgDialog.dismiss();
                     mBootMsgDialog = null;
                 }

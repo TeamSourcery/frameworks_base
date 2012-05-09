@@ -259,6 +259,8 @@ public class PowerManagerService extends IPowerManager.Stub
     private int mWarningSpewThrottleCount;
     private long mWarningSpewThrottleTime;
     private int mAnimationSetting = ANIM_SETTING_OFF;
+    private boolean mAnimateCrtOff = false;
+     private boolean mAnimateCrtOn = false;
 
 
     // Must match with the ISurfaceComposer constants in C++.
@@ -476,7 +478,6 @@ public class PowerManagerService extends IPowerManager.Stub
                 // final float windowScale = getFloat(WINDOW_ANIMATION_SCALE, 1.0f);
                 // final float transitionScale = getFloat(TRANSITION_ANIMATION_SCALE, 1.0f);
                 mAnimationSetting = 0;
-                if (mContext.getResources().getBoolean(com.android.internal.R.bool.config_enableCrtAnimations)) {
                     mAnimateCrtOn = getInt(Settings.System.CRT_ON_ANIMATION, 0) == 1;
                     mAnimateCrtOff = getInt(Settings.System.CRT_OFF_ANIMATION, 1) == 1;
                     if (mAnimateCrtOff)
@@ -484,7 +485,7 @@ public class PowerManagerService extends IPowerManager.Stub
                     if (mAnimateCrtOn) {
                         mAnimationSetting |= ANIM_SETTING_ON;
                     }
-                }
+                
                 // if (windowScale > 0.5f) {
                 // mAnimationSetting |= ANIM_SETTING_OFF;
                 // }
