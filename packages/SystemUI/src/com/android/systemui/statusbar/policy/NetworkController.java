@@ -971,7 +971,8 @@ public class NetworkController extends BroadcastReceiver {
                         break;
                 }
             }
-
+ 
+            mDataTypeIconId = 0;
             combinedActivityIconId = mWifiActivityIconId;
             combinedLabel = wifiLabel;
             combinedSignalIconId = mWifiIconId; // set by updateWifiIcons()
