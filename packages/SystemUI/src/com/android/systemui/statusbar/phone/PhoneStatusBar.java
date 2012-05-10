@@ -389,6 +389,7 @@ public class PhoneStatusBar extends StatusBar {
                 expanded.addView(drawer_header);
                 expanded.addView(drawer_header_hr2);
                 expanded.addView(mQuickToggles);
+
                 mExpandedContents = mQuickToggles;
             }
             if (layout_type == 2) {
