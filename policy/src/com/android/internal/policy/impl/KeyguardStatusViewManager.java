@@ -63,7 +63,7 @@ class KeyguardStatusViewManager implements OnClickListener {
     private static final int HELP_MESSAGE_TEXT = 13;
     private static final int OWNER_INFO = 14;
     private static final int BATTERY_INFO = 15;
-private static final int COLOR_WHITE = 0xFFFFFFFF;
+    private static final int COLOR_WHITE = 0xFFFFFFFF;
 
     private StatusMode mStatus;
     private String mDateFormatString;
