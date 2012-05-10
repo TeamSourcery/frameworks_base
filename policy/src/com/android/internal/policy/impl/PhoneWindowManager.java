@@ -3675,8 +3675,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     }
 
-    ProgressDialog mBootMsgDialog = null;
-
+   
     /** {@inheritDoc} */
     public void showBootMessage(final CharSequence msg, final boolean always) {
     Log.d(TAG, "showBootMessage msg: " + msg);
