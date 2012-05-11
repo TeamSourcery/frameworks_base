@@ -322,11 +322,11 @@ public class RecentsPanelView extends RelativeLayout implements OnItemClickListe
         mBar = bar;
     }
 
-    public void RecentsPanelView(Context context, AttributeSet attrs) {
+    public RecentsPanelView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public void RecentsPanelView(Context context, AttributeSet attrs, int defStyle) {
+    public RecentsPanelView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
         updateValuesFromResources();
