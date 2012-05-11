@@ -753,6 +753,10 @@
          movement threshold where scrolling should begin. -->
     <dimen name="config_viewConfigurationTouchSlop">8dp</dimen>
 
+    <!-- Whether to even allow system settings for crt animations
+    		setting this to false will completely disable them -->
+    <bool name="config_enableCrtAnimations">true</bool>
+
     <!-- Array of OEM specific USB mode override config.
          OEM can override a certain USB mode depending on ro.bootmode.
          Specify an array of below items to set override rule.
