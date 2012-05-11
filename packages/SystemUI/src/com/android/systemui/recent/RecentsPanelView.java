@@ -131,8 +131,7 @@ public class RecentsPanelView extends RelativeLayout implements OnItemClickListe
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if (convertView == null) {
-                if (convertView == null) {
-            	if (Settings.System.getInt(mContext.getContentResolver(),
+                if (Settings.System.getInt(mContext.getContentResolver(),
                       Settings.System.HORIZONTAL_RECENTS_TASK_PANEL,0) == 1)
             		convertView = mInflater.inflate(R.layout.status_bar_recent_item_webos, parent, false);
             	else 
