@@ -24,17 +24,17 @@
     <dimen name="status_bar_recents_app_icon_max_width">48dp</dimen>
     <!-- Upper height limit for application icon -->
     <dimen name="status_bar_recents_app_icon_max_height">48dp</dimen>
-
- <!-- Dimensions for Webos View -->
-     <dimen name="status_bar_recents_thumbnail_width_webos">170.0dip</dimen>
+    
+    <!-- Dimensions for Webos View -->
+    <dimen name="status_bar_recents_thumbnail_width_webos">170.0dip</dimen>
     <dimen name="status_bar_recents_thumbnail_height_webos">210.0dip</dimen>
 
     <!-- Size of application thumbnail -->
-    <dimen name="status_bar_recents_thumbnail_width">164dp</dimen>
-    <dimen name="status_bar_recents_thumbnail_height">145dp</dimen>
+    <dimen name="status_bar_recents_thumbnail_width">82dp</dimen>
+    <dimen name="status_bar_recents_thumbnail_height">73dp</dimen>
 
     <!-- Size of application label text -->
-    <dimen name="status_bar_recents_app_label_text_size">14dip</dimen>
+    <dimen name="status_bar_recents_app_label_text_size">16dip</dimen>
     <!-- Size of application description text -->
     <dimen name="status_bar_recents_app_description_text_size">14dip</dimen>
     <!-- Size of fading edge for scroll effect -->
@@ -61,7 +61,7 @@
     <dimen name="status_bar_icon_drawing_size">18dip</dimen>
 
     <!-- opacity at which Notification icons will be drawn in the status bar -->
-    <item type="dimen" name="status_bar_icon_drawing_alpha">55%</item>
+    <item type="dimen" name="status_bar_icon_drawing_alpha">100%</item>
 
     <!-- gap on either side of status bar notification icons -->
     <dimen name="status_bar_icon_padding">0dp</dimen>

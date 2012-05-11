@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list android:oneshot="false"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_01" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_02" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_03" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_04" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_05" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_06" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_07" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_08" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_09" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_10" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_11" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_12" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_13" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_14" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_15" />
+    <item android:duration="100" android:drawable="@drawable/sourcery_part_16" />
+</animation-list>

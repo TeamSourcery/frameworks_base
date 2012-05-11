@@ -54,7 +54,6 @@ import android.widget.TextView;
 import android.provider.Settings;
 import android.os.RemoteException;
 
-
 import com.android.systemui.R;
 import com.android.systemui.statusbar.StatusBar;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
@@ -131,7 +130,7 @@ public class RecentsPanelView extends RelativeLayout implements OnItemClickListe
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if (convertView == null) {
-                if (Settings.System.getInt(mContext.getContentResolver(),
+            	if (Settings.System.getInt(mContext.getContentResolver(),
                       Settings.System.HORIZONTAL_RECENTS_TASK_PANEL,0) == 1)
             		convertView = mInflater.inflate(R.layout.status_bar_recent_item_webos, parent, false);
             	else 
@@ -334,6 +333,7 @@ public class RecentsPanelView extends RelativeLayout implements OnItemClickListe
 
     public void updateValuesFromResources() {
         final Resources res = mContext.getResources();
+
         if (Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.HORIZONTAL_RECENTS_TASK_PANEL,0) == 1) {
         	mFitThumbnailToXY = res.getBoolean(R.bool.config_recents_thumbnail_image_fits_to_xy_webos);
@@ -343,7 +343,7 @@ public class RecentsPanelView extends RelativeLayout implements OnItemClickListe
             mFitThumbnailToXY = res.getBoolean(R.bool.config_recents_thumbnail_image_fits_to_xy);
         	mThumbnailWidth = Math.round(res.getDimension(R.dimen.status_bar_recents_thumbnail_width));
         }
-        }
+    }
 
     @Override
     protected void onFinishInflate() {

@@ -52,7 +52,7 @@ public class SignalClusterView
     private String mWifiDescription, mMobileDescription, mMobileTypeDescription;
    
     private boolean showingSignalText = false;
-    private boolean showingWiFiText = false;
+private boolean showingWiFiText = false;
     
     ViewGroup mWifiGroup, mMobileGroup;
     ImageView mWifi, mMobile, mWifiActivity, mMobileActivity, mMobileType;

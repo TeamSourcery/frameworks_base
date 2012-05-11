@@ -48,6 +48,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.storage.StorageManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Slog;
 import android.view.accessibility.AccessibilityEvent;
@@ -167,7 +169,7 @@ public class TabletStatusBar extends StatusBar implements
     ViewGroup mPile;
 
     HeightReceiver mHeightReceiver;
-   // BatteryController mBatteryController;
+//    BatteryController mBatteryController;
     BluetoothController mBluetoothController;
     LocationController mLocationController;
     NetworkController mNetworkController;
@@ -199,8 +201,10 @@ public class TabletStatusBar extends StatusBar implements
     private boolean mPanelSlightlyVisible;
 
     public Context getContext() { return mContext; }
-   
+    
     TogglesView mQuickToggles;
+
+    private StorageManager mStorageManager;
 
     protected void addPanelWindows() {
         final Context context = mContext;
@@ -215,20 +219,30 @@ public class TabletStatusBar extends StatusBar implements
                 new TouchOutsideListener(MSG_CLOSE_NOTIFICATION_PANEL, mNotificationPanel));
 
         // the battery icon
-       // mBatteryController.addIconView((ImageView)mNotificationPanel.findViewById(R.id.battery));
-      //  mBatteryController.addLabelView(
-       //         (TextView)mNotificationPanel.findViewById(R.id.battery_text));
+//        mBatteryController.addIconView((ImageView)mNotificationPanel.findViewById(R.id.battery));
+//        mBatteryController.addLabelView(
+//                (TextView)mNotificationPanel.findViewById(R.id.battery_text));
 
-         mQuickToggles = (TogglesView) mNotificationPanel.findViewById(R.id.quick_toggles);
- 	 mQuickToggles.setVisibility(View.VISIBLE);
- 	 mQuickToggles.setBar(this);
-
+        mQuickToggles = (TogglesView) mNotificationPanel.findViewById(R.id.quick_toggles);
+        mQuickToggles.setVisibility(View.VISIBLE);
+        mQuickToggles.setBar(this);
+        
         // Bt
         mBluetoothController.addIconView(
                 (ImageView)mNotificationPanel.findViewById(R.id.bluetooth));
 
+        // storage
+        mStorageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+        mStorageManager.registerListener(
+                new com.android.systemui.usb.StorageNotification(context));
+
         // network icons: either a combo icon that switches between mobile and data, or distinct
         // mobile and data icons
+        final ImageView comboRSSI = 
+                (ImageView)mNotificationPanel.findViewById(R.id.network_signal);
+        if (comboRSSI != null) {
+            mNetworkController.addCombinedSignalIconView(comboRSSI);
+        }
         final ImageView mobileRSSI = 
                 (ImageView)mNotificationPanel.findViewById(R.id.mobile_signal);
         if (mobileRSSI != null) {
@@ -239,14 +253,14 @@ public class TabletStatusBar extends StatusBar implements
         if (wifiRSSI != null) {
             mNetworkController.addWifiIconView(wifiRSSI);
         }
-    //    mNetworkController.addWifiLabelView(
-          //      (TextView)mNotificationPanel.findViewById(R.id.wifi_text));
 
-       mNetworkController.addDataTypeIconView(
-                (ImageView)mNotificationPanel.findViewById(R.id.mobile_type));
-      //  mNetworkController.addMobileLabelView(
-      //          (TextView)mNotificationPanel.findViewById(R.id.mobile_text));
-        mNetworkController.addCombinedLabelView(
+        mNetworkController.addDataTypeIconView(
+                (ImageView)mNotificationPanel.findViewById(R.id.network_type));
+        mNetworkController.addDataDirectionOverlayIconView(
+                (ImageView)mNotificationPanel.findViewById(R.id.network_direction));
+        mNetworkController.addLabelView(
+                (TextView)mNotificationPanel.findViewById(R.id.network_text));
+        mNetworkController.addLabelView(
                 (TextView)mBarContents.findViewById(R.id.network_text));
 
         mStatusBarView.setIgnoreChildren(0, mNotificationTrigger, mNotificationPanel);
@@ -504,8 +518,8 @@ public class TabletStatusBar extends StatusBar implements
         // The icons
         mLocationController = new LocationController(mContext); // will post a notification
 
-       // mBatteryController = new BatteryController(mContext);
-       // mBatteryController.addIconView((ImageView)sb.findViewById(R.id.battery));
+//        mBatteryController = new BatteryController(mContext);
+//        mBatteryController.addIconView((ImageView)sb.findViewById(R.id.battery));
         mBluetoothController = new BluetoothController(mContext);
         mBluetoothController.addIconView((ImageView)sb.findViewById(R.id.bluetooth));
 
@@ -1238,19 +1252,9 @@ public class TabletStatusBar extends StatusBar implements
             Slog.d(TAG, "Set hard keyboard status: available=" + available
                     + ", enabled=" + enabled);
         }
-        if (mContext.getResources().getBoolean(R.bool.config_forcefullyDisableHardwareKeyboard)) {
- 	    try {
- 	   mBarService.setHardKeyboardEnabled(false);
- 	    } catch (RemoteException e) {}
- 	   mInputMethodSwitchButton.setHardKeyboardStatus(false);
- 	   updateNotificationIcons();
- 	   mInputMethodsPanel.setHardKeyboardStatus(false, false);
- 	 	 	
-        } else {
- 	    mInputMethodSwitchButton.setHardKeyboardStatus(available);
- 	    updateNotificationIcons();
- 	    mInputMethodsPanel.setHardKeyboardStatus(available, enabled);
- 	}
+        mInputMethodSwitchButton.setHardKeyboardStatus(available);
+        updateNotificationIcons();
+        mInputMethodsPanel.setHardKeyboardStatus(available, enabled);
     }
 
     @Override
@@ -1932,7 +1936,7 @@ public class TabletStatusBar extends StatusBar implements
             return false;
         }
     }
-
+    
     public boolean isTablet() {
         return true;
     }
