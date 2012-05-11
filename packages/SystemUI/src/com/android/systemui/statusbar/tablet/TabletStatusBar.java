@@ -238,9 +238,9 @@ public class TabletStatusBar extends StatusBar implements
 
         // network icons: either a combo icon that switches between mobile and data, or distinct
         // mobile and data icons
-        final ImageView comboRSSI = 
-                (ImageView)mNotificationPanel.findViewById(R.id.network_signal);
-        if (comboRSSI != null) {
+        final ImageView mobileRSSI =
+                (ImageView)mNotificationPanel.findViewById(R.id.mobile_signal);
+        if (mobileRSSI != null) {
             mNetworkController.addCombinedSignalIconView(comboRSSI);
         }
         final ImageView mobileRSSI = 
@@ -254,16 +254,18 @@ public class TabletStatusBar extends StatusBar implements
             mNetworkController.addWifiIconView(wifiRSSI);
         }
 
+         mNetworkController.addWifiLabelView(
+                (TextView)mNotificationPanel.findViewById(R.id.wifi_text));
+
         mNetworkController.addDataTypeIconView(
-                (ImageView)mNotificationPanel.findViewById(R.id.network_type));
-        mNetworkController.addDataDirectionOverlayIconView(
-                (ImageView)mNotificationPanel.findViewById(R.id.network_direction));
-        mNetworkController.addLabelView(
-                (TextView)mNotificationPanel.findViewById(R.id.network_text));
-        mNetworkController.addLabelView(
+                (ImageView)mNotificationPanel.findViewById(R.id.mobile_type));
+        mNetworkController.addMobileLabelView(
+                (TextView)mNotificationPanel.findViewById(R.id.mobile_text));
+        mNetworkController.addCombinedLabelView(
                 (TextView)mBarContents.findViewById(R.id.network_text));
 
         mStatusBarView.setIgnoreChildren(0, mNotificationTrigger, mNotificationPanel);
+
 
         WindowManager.LayoutParams lp = mNotificationPanelParams = new WindowManager.LayoutParams(
                 res.getDimensionPixelSize(R.dimen.notification_panel_width),
