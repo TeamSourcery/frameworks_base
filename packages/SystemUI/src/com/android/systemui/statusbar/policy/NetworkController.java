@@ -288,9 +288,8 @@ public class NetworkController extends BroadcastReceiver {
 
         if (mIsWimaxEnabled && mWimaxConnected) {
             // wimax is special
-            cluster.setMobileDataIndicators(
+             cluster.setMobileDataIndicators(
                     true,
-                    mWimaxIconId,
                     mAlwaysShowCdmaRssi ? mPhoneSignalIconId : mWimaxIconId,
                     mMobileActivityIconId,
                     mDataTypeIconId,
