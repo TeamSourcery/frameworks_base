@@ -88,6 +88,8 @@ public final class ServerOperation implements Operation, BaseStream {
 
     private boolean mHasBody;
 
+    private boolean mEndofBody = true;
+
     /**
      * Creates new ServerOperation
      * @param p the parent that created this object
@@ -363,24 +365,32 @@ public final class ServerOperation implements Operation, BaseStream {
                  * the output stream is closed we need to send the 0x49
                  * (End of Body) otherwise, we need to send 0x48 (Body)
                  */
-                if ((finalBitSet) || (mPrivateOutput.isClosed())) {
-                    out.write(0x49);
+                 if ((finalBitSet) || (mPrivateOutput.isClosed())) {
+                    if (mEndofBody) {
+                        out.write((byte)0x49);
+                        bodyLength += 3;
+                        out.write((byte)(bodyLength >> 8));
+                        out.write((byte)bodyLength);
+                        out.write(body);
+                    }
                 } else {
                     out.write(0x48);
+                    bodyLength += 3;
+                    out.write((byte)(bodyLength >> 8));
+                    out.write((byte)bodyLength);
+                    out.write(body);
                 }
-
-                bodyLength += 3;
-                out.write((byte)(bodyLength >> 8));
-                out.write((byte)bodyLength);
-                out.write(body);
             }
         }
 
+
         if ((finalBitSet) && (type == ResponseCodes.OBEX_HTTP_OK) && (orginalBodyLength <= 0)) {
-            out.write(0x49);
-            orginalBodyLength = 3;
-            out.write((byte)(orginalBodyLength >> 8));
-            out.write((byte)orginalBodyLength);
+            if (mEndofBody) {
+               out.write(0x49);
+               orginalBodyLength = 3;
+               out.write((byte)(orginalBodyLength >> 8));
+               out.write((byte)orginalBodyLength);
+           }
 
         }
 
@@ -710,5 +720,10 @@ public final class ServerOperation implements Operation, BaseStream {
      */
     public void streamClosed(boolean inStream) throws IOException {
 
+     }
+
+    public void noEndofBody() {
+        mEndofBody = false;
     }
+
 }
