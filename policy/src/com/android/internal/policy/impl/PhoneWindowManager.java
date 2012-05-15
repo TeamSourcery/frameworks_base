@@ -3603,15 +3603,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // mUserRotationMode and mUserRotation will be assigned by the content observer
         if (mode == WindowManagerPolicy.USER_ROTATION_LOCKED) {
             Settings.System.putInt(res,
-                    Settings.System.USER_ROTATION,
-                    rot);
+                    Settings.System.USER_ROTATION, rot);
             Settings.System.putInt(res,
-                    Settings.System.ACCELEROMETER_ROTATION,
-                    0);
+                    Settings.System.ACCELEROMETER_ROTATION, 0);
         } else {
             Settings.System.putInt(res,
-                    Settings.System.ACCELEROMETER_ROTATION,
-                    1);
+                    Settings.System.ACCELEROMETER_ROTATION, 1);
         }
     }
 
@@ -3720,6 +3717,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mBootMsgDialog.setCancelable(false);
                     mBootMsgDialog.show();
                 }
+                    mBootMsgDialog.setTitle(R.string.android_upgrading_title);
                     mBootMsgDialog.setMessage(msg);
                 if (DEBUG_BOOTMSG) Log.d(TAG, "********** showBootMessage(" + msg +", " + always + ") updated ***********");
                 if (CURRENT_PACKAGE_NAME != null) {
