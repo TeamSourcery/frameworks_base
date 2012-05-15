@@ -3052,7 +3052,7 @@
             <!-- Input is numeric. -->
             <flag name="integer" value="0x01" />
             <!-- Input is numeric, with sign allowed. -->
-            <flag name="signed" value="0x003" />
+            <flag name="signed" value="0x03" />
             <!-- Input is numeric, with decimals allowed. -->
             <flag name="decimal" value="0x05" />
         </attr>
