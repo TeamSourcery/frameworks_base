@@ -329,7 +329,7 @@ public class MobileDataStateTracker implements NetworkStateTracker {
         case TelephonyManager.NETWORK_TYPE_HSUPA:
             networkTypeStr = "hsupa";
             break;
-        case TelephonyManager.NETWORK_TYPE_HSPA:
+        case TelephonyManager.NETWORK_TYPE_HSPAP:
             networkTypeStr = "hspa";
             break;
         case TelephonyManager.NETWORK_TYPE_CDMA:
