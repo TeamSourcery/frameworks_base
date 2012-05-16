@@ -70,6 +70,7 @@ public final class ShutdownThread extends Thread {
 
     // Provides shutdown assurance in case the system_server is killed
     public static final String SHUTDOWN_ACTION_PROPERTY = "sys.shutdown.requested";
+    public static final String RADIO_SHUTDOWN_PROPERTY = "sys.radio.shutdown";
 
     // static instance of this thread
     private static final ShutdownThread sInstance = new ShutdownThread();
@@ -108,8 +109,6 @@ public final class ShutdownThread extends Thread {
         final int resourceId = longPressBehavior == 2
                 ? com.android.internal.R.string.shutdown_confirm_question
                 : com.android.internal.R.string.shutdown_confirm;
-
-      //  Log.d(TAG, "Notifying thread to start shutdown longPressBehavior=" + longPressBehavior);
 
         if (confirm) {
              final AlertDialog dialog;
@@ -154,6 +153,9 @@ public final class ShutdownThread extends Thread {
                                 return true;
                             }
                         });
+            // Initialize to the first reason
+                String actions[] = context.getResources().getStringArray(com.android.internal.R.array.shutdown_reboot_actions);
+                mRebootReason = actions[0];
             } else {
                 dialog = new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -239,7 +241,6 @@ public final class ShutdownThread extends Thread {
         pd.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
 
         pd.show();
-
         sInstance.mContext = context;
         sInstance.mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
 
@@ -297,6 +298,7 @@ public final class ShutdownThread extends Thread {
             }
         };
 
+        if (!mRestart) {
         /*
          * Write a system property in case the system_server reboots before we
          * get to the actual hardware restart. If that happens, we'll retry at
@@ -329,6 +331,7 @@ public final class ShutdownThread extends Thread {
             }
         }
         
+     }
         Log.i(TAG, "Shutting down activity manager...");
         
         final IActivityManager am =
