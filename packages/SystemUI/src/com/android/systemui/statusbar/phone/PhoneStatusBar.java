@@ -2624,9 +2624,7 @@ private boolean checkAutoBrightNess() {
             cclock.setTextSize(fontSize);
          }
 
-        reDrawHeader();
-    }
-    
+      }
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
