@@ -3499,7 +3499,7 @@ private Runnable mLightFilterTask = new Runnable() {
                 if (mDebugLightSensor) {
                     Slog.d(TAG, "onSensorChanged: light value: " + value);
                 }
-                mHandler.removeCallbacks(mAutoBrightnessTask);
+                
                 mLightFilterSample = value;
                 if (mAutoBrightessEnabled && mLightFilterEnabled) {
                     if (mLightFilterRunning && mLightSensorValue != -1) {
@@ -3535,12 +3535,18 @@ private Runnable mLightFilterTask = new Runnable() {
                     return;
                 }
 
-                if (mLightSensorValue != value) {
-                    if (mLightSensorValue == -1 ||
-                            milliseconds < mLastScreenOnTime + mLightSensorWarmupTime) {
-                        // process the value immediately if screen has just turned on
-                        lightSensorChangedLocked(value);
-                    } else {
+                if (mLightSensorValue == -1 ||
+                        milliseconds < mLastScreenOnTime + mLightSensorWarmupTime) {
+                    // process the value immediately if screen has just turned on
+                    mHandler.removeCallbacks(mAutoBrightnessTask);
+                    mLightSensorPendingDecrease = false;
+                    mLightSensorPendingIncrease = false;
+                    lightSensorChangedLocked(value);
+                } else {
+                    if ((value > mLightSensorValue && mLightSensorPendingDecrease) ||
+                            (value < mLightSensorValue && mLightSensorPendingIncrease) ||
+                            (value == mLightSensorValue) ||
+                            (!mLightSensorPendingDecrease && !mLightSensorPendingIncrease)) {
                         // delay processing to debounce the sensor
                         mHandler.removeCallbacks(mAutoBrightnessTask);
                         mLightSensorPendingDecrease = (value < mLightSensorValue);
@@ -3549,12 +3555,11 @@ private Runnable mLightFilterTask = new Runnable() {
                             mLightSensorPendingValue = value;
                             mHandler.postDelayed(mAutoBrightnessTask, LIGHT_SENSOR_DELAY);
                         }
-}
-                    } else {
+                        } else {
                         mLightSensorPendingValue = value;
                     }
                 }
-           ;
+           }
         }
 
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
