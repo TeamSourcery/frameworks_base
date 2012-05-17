@@ -2469,6 +2469,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_TRANSPARENCY = "status_bar_transparency";
 
+
+         /**
+	 * @hide
+	 */
+ 	 public static final String STATUS_BAR_ICON_TRANSPARENCY = "status_bar_icon_transparency";
+
          /**
          * @hide
          */
