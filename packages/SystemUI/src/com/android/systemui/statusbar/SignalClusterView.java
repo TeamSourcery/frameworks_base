@@ -212,6 +212,8 @@ private boolean showingWiFiText = false;
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUSBAR_WIFI_SIGNAL_TEXT), false,
                     this);
+            resolver.registerContentObserver(
+ 	             Settings.System.getUriFor(Settings.System.STATUSBAR_FONT_SIZE), false, this);
             updateSettings();
         }
 
@@ -228,6 +230,12 @@ private boolean showingWiFiText = false;
                 Settings.System.STATUSBAR_SIGNAL_TEXT, 0) != 0;
         showingWiFiText = Settings.System.getInt(resolver,
                 Settings.System.STATUSBAR_WIFI_SIGNAL_TEXT, 0) != 0;
+        int fontSize = Settings.System.getInt(resolver,
+ 	               Settings.System.STATUSBAR_FONT_SIZE, 16);
+ 	if (mMobileText != null)
+ 	    mMobileText.setTextSize(fontSize);
+ 	if (mWiFiText != null)
+ 	    mWiFiText.setTextSize(fontSize);
         apply();
     }
  
