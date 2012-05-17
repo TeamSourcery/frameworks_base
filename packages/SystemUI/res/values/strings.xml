@@ -390,4 +390,8 @@
 
     <!-- Content text for do-not-disturb mode notification -->
     <string name="notifications_off_text">Tap here to turn notifications back on.</string>
+
+    <!-- for Sense 4.0 style multitasking mod -->
+    <string name="recent_apps_title">Recent apps</string>
+    
 </resources>
