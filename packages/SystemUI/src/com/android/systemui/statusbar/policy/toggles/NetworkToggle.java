@@ -38,6 +38,7 @@ public class NetworkToggle extends Toggle {
         	setIcon(R.drawable.toggle_data);
         else
         	setIcon(R.drawable.toggle_data_off);
+        context.registerReceiver(getBroadcastReceiver(), getIntentFilter());
     }
 
     private boolean isMobileDataEnabled() {
@@ -54,10 +55,7 @@ public class NetworkToggle extends Toggle {
 
     @Override
     protected void onCheckChanged(boolean isChecked) {
-        final BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        if (adapter != null) {
-            setMobileDataEnabled(isChecked);
-        }
+        setMobileDataEnabled(isChecked);
         if (isChecked)
         	setIcon(R.drawable.toggle_data);
         else
