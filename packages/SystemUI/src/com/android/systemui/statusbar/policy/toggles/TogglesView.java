@@ -123,7 +123,7 @@ public class TogglesView extends LinearLayout {
             else if (splitToggle.equals(TOGGLE_FCHARGE))
  	        newToggle = new FChargeToggle(mContext);
             else if (splitToggle.equals(TOGGLE_TETHER))
- 	        newToggle = new USBTetherToggle(mContext);
+ 	         newToggle = new USBTetherToggle(mContext);
             if (newToggle != null)
                 toggles.add(newToggle);
         }

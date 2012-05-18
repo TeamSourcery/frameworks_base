@@ -176,4 +176,4 @@ public class USBTetherToggle extends Toggle {
             }
         }
     }
-}
+} 
