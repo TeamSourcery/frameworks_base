@@ -33,7 +33,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.NetworkController;
 
 // Intimately tied to the design of res/layout/signal_cluster_view.xml
-public class SignalClusterView
+        public class SignalClusterView
         extends LinearLayout 
         implements NetworkController.SignalCluster {
 
@@ -52,13 +52,13 @@ public class SignalClusterView
     private String mWifiDescription, mMobileDescription, mMobileTypeDescription;
    
     private boolean showingSignalText = false;
-private boolean showingWiFiText = false;
-    
+    private boolean showingWiFiText = false;
+    private boolean mHideSignal = false;
+
     ViewGroup mWifiGroup, mMobileGroup;
     ImageView mWifi, mMobile, mWifiActivity, mMobileActivity, mMobileType;
     TextView mMobileText,mWiFiText;
-    View mSpacer;
-    
+       
     Handler mHandler;
         
     public SignalClusterView(Context context) {
@@ -112,6 +112,7 @@ private boolean showingWiFiText = false;
         mMobileType     = null;
         mMobileText	= null;
         mWiFiText       = null;
+
         super.onDetachedFromWindow();
     }
 
@@ -185,9 +186,11 @@ private boolean showingWiFiText = false;
             mMobileGroup.setVisibility(View.GONE);
         }
         if (mMobileVisible && mWifiVisible && mIsAirplaneMode) {
-            mSpacer.setVisibility(View.INVISIBLE);
+            float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6,
+                    getContext().getResources().getDisplayMetrics());
+             mMobileGroup.setPadding((int) px, 0, 0, 0);
         } else {
-            mSpacer.setVisibility(View.GONE);
+             mMobileGroup.setPadding(0, 0, 0, 0);
         }
 
         if (DEBUG) Slog.d(TAG,
@@ -213,7 +216,11 @@ private boolean showingWiFiText = false;
                     Settings.System.getUriFor(Settings.System.STATUSBAR_WIFI_SIGNAL_TEXT), false,
                     this);
             resolver.registerContentObserver(
- 	             Settings.System.getUriFor(Settings.System.STATUSBAR_FONT_SIZE), false, this);
+ 	             Settings.System.getUriFor(Settings.System.STATUSBAR_FONT_SIZE), false,
+                    this);
+             resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.STATUSBAR_HIDE_SIGNAL_BARS), false,
+                    this);
             updateSettings();
         }
 
@@ -230,14 +237,25 @@ private boolean showingWiFiText = false;
                 Settings.System.STATUSBAR_SIGNAL_TEXT, 0) != 0;
         showingWiFiText = Settings.System.getInt(resolver,
                 Settings.System.STATUSBAR_WIFI_SIGNAL_TEXT, 0) != 0;
+
+         int hideSignalBarsByDefault = getContext().getResources().getBoolean(R.bool.config_hideSignalBars) ? 1 : 0;
+        mHideSignal = (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_HIDE_SIGNAL_BARS, hideSignalBarsByDefault) == 1);
         int fontSize = Settings.System.getInt(resolver,
  	               Settings.System.STATUSBAR_FONT_SIZE, 16);
  	if (mMobileText != null)
  	    mMobileText.setTextSize(fontSize);
  	if (mWiFiText != null)
  	    mWiFiText.setTextSize(fontSize);
+        if(mWifiGroup != null) {
+            float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6,
+                    getContext().getResources().getDisplayMetrics());
+            if(mHideSignal) mWifiGroup.setPadding(0, 0, (int) px, 0);
+            else mWifiGroup.setPadding(0, 0, 0, 0);
+        }
         apply();
     }
  
 }
+
 
