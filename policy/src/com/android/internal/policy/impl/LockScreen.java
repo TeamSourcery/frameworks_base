@@ -85,6 +85,7 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
     private LockPatternUtils mLockPatternUtils;
     private KeyguardUpdateMonitor mUpdateMonitor;
     private KeyguardScreenCallback mCallback;
+    private SettingsObserver mSettingsObserver;
 
     // current configuration state of keyboard and display
     private int mKeyboardHidden;
@@ -569,8 +570,8 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
 
         mKeyboardHidden = configuration.hardKeyboardHidden;
 
-        SettingsObserver settingsObserver = new SettingsObserver(new Handler());
-        settingsObserver.observe();
+        mSettingsObserver = new SettingsObserver(new Handler());
+        mSettingsObserver.observe();
 
         targetController = new TargetController();
 
@@ -794,6 +795,8 @@ updateSettings();
     /** {@inheritDoc} */
     public void cleanUp() {
         mUpdateMonitor.removeCallback(this); // this must be first
+        mContext.getContentResolver().unregisterContentObserver(mSettingsObserver);
+        mSettingsObserver = null;
         mLockPatternUtils = null;
         mUpdateMonitor = null;
         mCallback = null;
