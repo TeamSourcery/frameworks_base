@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Slog;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -91,7 +92,7 @@ import com.android.systemui.statusbar.policy.NetworkController;
         mMobileType     = (ImageView) findViewById(R.id.mobile_type);
         mMobileText	= (TextView)  findViewById(R.id.signal_text);
         mWiFiText       = (TextView)  findViewById(R.id.wifi_signal_text);
-        mSpacer         =             findViewById(R.id.spacer);
+        
         
         mHandler = new Handler();
         
