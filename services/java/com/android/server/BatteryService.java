@@ -18,12 +18,13 @@ package com.android.server;
 
 import com.android.internal.app.IBatteryStats;
 import com.android.server.am.BatteryStatsService;
-
+import android.database.ContentObserver;
 import android.app.ActivityManagerNative;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.os.BatteryManager;
 import android.os.Binder;
 import android.os.FileUtils;
@@ -122,6 +123,7 @@ class BatteryService extends Binder {
     private int mDischargeStartLevel;
 
     private Led mLed;
+    private boolean mLedPulseEnabled;
 
     private boolean mSentLowBatteryBroadcast = false;
 
@@ -143,6 +145,9 @@ class BatteryService extends Binder {
         if (new File("/sys/devices/virtual/switch/invalid_charger/state").exists()) {
             mInvalidChargerObserver.startObserving("DEVPATH=/devices/virtual/switch/invalid_charger");
         }
+
+         SettingsObserver observer = new SettingsObserver(new Handler());
+ 	 observer.observe();
 
         // set initial status
         update();
@@ -542,6 +547,10 @@ class BatteryService extends Binder {
         }
     }
 
+        private synchronized void updateLedPulse() {
+ 	     mLed.updateLightsLocked();
+ 	}
+
     class Led {
         private LightsService mLightsService;
         private LightsService.Light mBatteryLight;
@@ -582,11 +591,14 @@ class BatteryService extends Binder {
                 if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
                     // Solid red when battery is charging
                     mBatteryLight.setColor(mBatteryLowARGB);
-                } else {
+                 } else if (mLedPulseEnabled) {
                     // Flash red when battery is low and not charging
                     mBatteryLight.setFlashing(mBatteryLowARGB, LightsService.LIGHT_FLASH_TIMED,
                             mBatteryLedOn, mBatteryLedOff);
-                }
+                  } else {
+ 		    // "Pulse low battery light" is disabled, no lights.
+ 		     mBatteryLight.turnOff();
+                  }
             } else if (status == BatteryManager.BATTERY_STATUS_CHARGING
                     || status == BatteryManager.BATTERY_STATUS_FULL) {
                 if (status == BatteryManager.BATTERY_STATUS_FULL || level >= 90) {
@@ -599,6 +611,33 @@ class BatteryService extends Binder {
             } else {
                 // No lights if not charging and not low
                 mBatteryLight.turnOff();
+            }
+        }
+    }
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.BATTERY_LIGHT_PULSE), false, this);
+            update();
+        }
+
+        @Override public void onChange(boolean selfChange) {
+            update();
+        }
+
+        public void update() {
+            ContentResolver resolver = mContext.getContentResolver();
+            boolean pulseEnabled = Settings.System.getInt(resolver,
+                        Settings.System.BATTERY_LIGHT_PULSE, 1) != 0;
+            if (mLedPulseEnabled != pulseEnabled) {
+                mLedPulseEnabled = pulseEnabled;
+                updateLedPulse();
             }
         }
     }
