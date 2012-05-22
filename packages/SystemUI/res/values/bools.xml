@@ -3,4 +3,5 @@
 	<bool name="config_recents_thumbnail_image_fits_to_xy">false</bool>
 	<bool name="config_recents_thumbnail_image_fits_to_xy_webos">false</bool>
         <bool name="config_recents_thumbnail_image_fits_to_xy_sense4">false</bool>
+        <bool name="config_recents_thumbnail_image_fits_to_xy_win7">false</bool>
 </resources>

@@ -45,6 +45,11 @@
     <dimen name="status_bar_recents_thumbnail_width_sense4">157.0dip</dimen>
     <dimen name="status_bar_recents_thumbnail_height_sense4">242.0dip</dimen>
 
+     <!-- Dimensions for win7 View -->
+    <dimen name="status_bar_recents_thumbnail_width_win7">192.0dip</dimen>
+    <dimen name="status_bar_recents_thumbnail_height_win7">305.0dip</dimen>
+
+
      <!-- Width of recents panel -->
     <dimen name="status_bar_recents_width">600dp</dimen>
     <!-- Padding for text descriptions -->

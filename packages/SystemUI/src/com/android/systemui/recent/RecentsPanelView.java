@@ -146,6 +146,9 @@ public class RecentsPanelView extends RelativeLayout implements OnItemClickListe
                 }
                 else if (recent_style == 2) {
                     convertView = mInflater.inflate(R.layout.status_bar_recent_item_sense4, parent, false);
+               }
+                else if (recent_style == 3) {
+                    convertView = mInflater.inflate(R.layout.status_bar_recent_item_win7, parent, false);
                 }
                 else {
                     convertView = mInflater.inflate(R.layout.status_bar_recent_item, parent, false);
@@ -274,10 +277,15 @@ public class RecentsPanelView extends RelativeLayout implements OnItemClickListe
             if(Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.RECENT_APP_SWITCHER,0) == 2) {
                 mRecentsScrim.setBackgroundResource(R.drawable.status_bar_recents_background_solid_sense4);
+            } 
+            else {
+             if(Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.RECENT_APP_SWITCHER,0) == 3) {
+                mRecentsScrim.setBackgroundResource(R.drawable.status_bar_recents_background_solid_win7);
             }
             else {
                 mRecentsScrim.setBackgroundResource(R.drawable.status_bar_recents_background_solid);
-            }
+            }}
         } else {
             mRecentsScrim.setBackgroundDrawable(null);
         }
@@ -366,6 +374,10 @@ public class RecentsPanelView extends RelativeLayout implements OnItemClickListe
         else if (recent_style == 2) {
         	mFitThumbnailToXY = res.getBoolean(R.bool.config_recents_thumbnail_image_fits_to_xy_sense4);
         	mThumbnailWidth = Math.round(res.getDimension(R.dimen.status_bar_recents_thumbnail_width_sense4));
+        }
+        else if (recent_style == 3) {
+        	mFitThumbnailToXY = res.getBoolean(R.bool.config_recents_thumbnail_image_fits_to_xy_win7);
+        	mThumbnailWidth = Math.round(res.getDimension(R.dimen.status_bar_recents_thumbnail_width_win7));
         }
         else {
             mFitThumbnailToXY = res.getBoolean(R.bool.config_recents_thumbnail_image_fits_to_xy);

@@ -571,6 +571,10 @@ private boolean checkAutoBrightNess() {
  	    mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(
  	            R.layout.status_bar_recent_panel_sense4, tmpRoot, false);
  	 }
+        else if (recent_style == 3) {
+ 	    mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(
+ 	            R.layout.status_bar_recent_panel_win7, tmpRoot, false);
+ 	 }
         else {
             mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(
                     R.layout.status_bar_recent_panel, tmpRoot, false);

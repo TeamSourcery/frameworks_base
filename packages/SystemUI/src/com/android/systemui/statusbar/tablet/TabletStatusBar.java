@@ -336,6 +336,10 @@ public class TabletStatusBar extends StatusBar implements
             mRecentsPanel = (RecentsPanelView) View.inflate(context,
  	       R.layout.status_bar_recent_panel_sense4, null);
         }
+        else if (recent_style == 3) {
+            mRecentsPanel = (RecentsPanelView) View.inflate(context,
+ 	       R.layout.status_bar_recent_panel_win7, null);
+        }
         else {
             mRecentsPanel = (RecentsPanelView) View.inflate(context,
                     R.layout.status_bar_recent_panel, null);

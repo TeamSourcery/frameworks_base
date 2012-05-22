@@ -2773,7 +2773,7 @@ public final class Settings {
  	 * 0 = Stock
  	 * 1 = WebOS
  	 * 2 = Sense 4
- 	 * 	
+ 	 * 3 = windows7	
          * @hide
 	 */
          public static final String RECENT_APP_SWITCHER = "recent_app_switcher";
