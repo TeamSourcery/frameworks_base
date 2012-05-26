@@ -15,7 +15,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;;
+import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.CharacterStyle;
@@ -136,7 +136,7 @@ public class WifiText extends TextView {
         style = Settings.System.getInt(getContext().getContentResolver(),
                 Settings.System.STATUSBAR_WIFI_SIGNAL_TEXT, STYLE_HIDE);
 
-        if (style == STYLE_SHOW) {
+         if (style == STYLE_SHOW) {
         	// Rssi signals are from -100 to -55.  need to normalize this
         	float max = Math.abs(MAX_RSSI);
         	float min = Math.abs(MIN_RSSI);
@@ -144,9 +144,23 @@ public class WifiText extends TextView {
         	signal = min - Math.abs(mRssi);
         	signal = ((signal / (min - max)) * 100f);
         	mRssi = (signal > 100f ? 100 : Math.round(signal));
-            String result = Integer.toString(mRssi);
-
-            setText(result + "% ");
+            setText(Integer.toString(mRssi));
+            SpannableStringBuilder formatted = new SpannableStringBuilder(
+                    Integer.toString(mRssi) + "%");
+            CharacterStyle style = new RelativeSizeSpan(0.7f); // beautiful
+                                                               // formatting
+            if (mRssi < 10) { // mRssi < 10, 2nd char is %
+                formatted.setSpan(style, 1, 2,
+                        Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            } else if (mRssi < 100) { // mRssi 10-99, 3rd char is %
+                formatted.setSpan(style, 2, 3,
+                        Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            } else { // mRssi 100, 4th char is %
+                formatted.setSpan(style, 3, 4,
+                        Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            }
+            setText(formatted);
+            
         } 
     }
 }

@@ -361,8 +361,9 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
 
         String customIconUri = Settings.System.getString(getContext().getContentResolver(),
  	             Settings.System.LOCKSCREEN_CUSTOM_APP_ICONS[index]);
- 	if(customIconUri != null && !customIconUri.equals("")) {
-                if (customIconUri.startsWith("file")) {
+
+ 	 if(customIconUri != null && !customIconUri.equals("")) {
+             if (customIconUri.startsWith("file")) {
                     // it's an icon the user chose from the gallery here
                     File icon = new File(Uri.parse(customIconUri).getPath());
                     if(icon.exists()) {

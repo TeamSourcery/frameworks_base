@@ -109,6 +109,8 @@ public class Clock extends TextView {
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
         settingsObserver.observe();
         updateSettings();
+        // Make sure we update to the current time
+        updateClock();
     }
 
     @Override

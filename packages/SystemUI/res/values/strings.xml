@@ -393,5 +393,7 @@
 
     <!-- for Sense 4.0 style multitasking mod -->
     <string name="recent_apps_title">Recent apps</string>
+
+     <string name="toggle_navbar">Toggle NavBar</string>
     
 </resources>

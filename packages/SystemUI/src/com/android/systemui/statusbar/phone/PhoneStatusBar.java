@@ -54,6 +54,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Slog;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.IWindowManager;
@@ -118,7 +119,7 @@ public class PhoneStatusBar extends StatusBar {
     private static final int MSG_HIDE_INTRUDER = 1003;
     private static final int MSG_OPEN_RECENTS_PANEL = 1020;
     private static final int MSG_CLOSE_RECENTS_PANEL = 1021;
-private static final int MSG_SAMSUNG_MAGIC = 2000;
+    private static final int MSG_SAMSUNG_MAGIC = 2000;
 
     // will likely move to a resource or other tunable param at some point
     private static final int INTRUDER_ALERT_DECAY_MS = 10000;
@@ -180,11 +181,8 @@ private static final int MSG_SAMSUNG_MAGIC = 2000;
     TextView mNoNotificationsTitle;
     View mClearButton;
     
-    
     View mSettingsButton;
-    
-
-   
+     
     TogglesView mQuickToggles;
     BrightnessController mBrightness;
 
@@ -202,8 +200,9 @@ private static final int MSG_SAMSUNG_MAGIC = 2000;
 
     // the date view
     DateView mDateView;
-    
-
+   
+   
+ 
     // for immersive activities
     private View mIntruderAlertView;
 
@@ -244,7 +243,7 @@ private static final int MSG_SAMSUNG_MAGIC = 2000;
     int mLinger = 0;
     Runnable mPostCollapseCleanup = null;
 
-private int mIsBrightNessMode = 0;
+    private int mIsBrightNessMode = 0;
     private boolean mIsStatusBarBrightNess;
     private boolean mIsAutoBrightNess;
     private BrightNessContentObserver mBrightNessContentObs = new BrightNessContentObserver();
@@ -255,6 +254,12 @@ private int mIsBrightNessMode = 0;
 
 
     LinearLayout mCenterClockLayout;
+
+    // last theme that was applied in order to detect theme change (as opposed
+    // to some other configuration change).
+
+    private boolean mRecreating = false;
+
 
     // for disabling the status bar
     int mDisabled = 0;
@@ -314,7 +319,7 @@ private int mIsBrightNessMode = 0;
         updateDisplaySize(); // populates mDisplayMetrics
         loadDimens();
 
-        mIconSize = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_icon_size);
+        //mIconSize = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_icon_size);
         mScreenWidth = (float) context.getResources().getDisplayMetrics().widthPixels;
         mMinBrightness = context.getResources().getInteger(
                 com.android.internal.R.integer.config_screenBrightnessDim);
@@ -367,11 +372,11 @@ private int mIsBrightNessMode = 0;
         mNoNotificationsTitle.setVisibility(View.GONE); // disabling for now
 
        // mTxtLayout = (LinearLayout) expanded.findViewById(R.id.txtlayout);
-     //   mTxtParams = (RelativeLayout.LayoutParams) mTxtLayout.getLayoutParams();
+       // mTxtParams = (RelativeLayout.LayoutParams) mTxtLayout.getLayoutParams();
         
         mClearButton = expanded.findViewById(R.id.clear_all_button);
         mClearButton.setOnClickListener(mClearButtonListener);
-mClearButton.setAlpha(0f);
+        mClearButton.setAlpha(0f);
         mClearButton.setEnabled(false);
         mDateView = (DateView) expanded.findViewById(R.id.date);
         mSettingsButton = expanded.findViewById(R.id.settings_button);
@@ -493,10 +498,15 @@ private boolean checkAutoBrightNess() {
     }
 
     private void doBrightNess(MotionEvent e) {
-        int screenBrightness = checkMinMax(Float.valueOf((e.getRawX() * mPropFactor.floatValue()))
-                .intValue());
-        Settings.System.putInt(mContext.getContentResolver(), "screen_brightness", screenBrightness);
-        // Log.e(TAG, "Screen brightness: " + screenBrightness);
+        int screenBrightness;
+         try {
+             screenBrightness = checkMinMax(Float.valueOf((e.getRawX() * mPropFactor.floatValue()))
+                    .intValue());
+             Settings.System.putInt(mContext.getContentResolver(), "screen_brightness",
+ 	             screenBrightness);
+        } catch (NullPointerException e2) {
+            return;
+        }
         try {
             IPowerManager pw = IPowerManager.Stub.asInterface(ServiceManager.getService("power"));
             if (pw != null) {
@@ -600,8 +610,10 @@ private boolean checkAutoBrightNess() {
     }
 
     public int getStatusBarHeight() {
-        final Resources res = mContext.getResources();
-        return res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+        Slog.d(TAG,"Status Bar Height:"+mNaturalBarHeight);
+        return mNaturalBarHeight;
+        /*final Resources res = mContext.getResources();
+         return res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height); */
     }
 
     private View.OnClickListener mRecentsClickListener = new View.OnClickListener() {
@@ -758,8 +770,8 @@ private boolean checkAutoBrightNess() {
             try {
                 notification.notification.fullScreenIntent.send();
             } catch (PendingIntent.CanceledException e) {
-            }
-        } else {
+             }
+        } else if (!mRecreating) {
             // usual case: status bar visible & not immersive
 
             // show the ticker
@@ -767,7 +779,7 @@ private boolean checkAutoBrightNess() {
         }
 
         // Recalculate the position of the sliding windows and the titles.
-        setAreThereNotifications();
+        reDrawHeader();
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
     }
 
@@ -874,8 +886,8 @@ private boolean checkAutoBrightNess() {
             tick(notification);
         }
 
-        // Recalculate the position of the sliding windows and the titles.
-        setAreThereNotifications();
+       // Recalculate the position of the sliding windows and the titles.
+        reDrawHeader();
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
     }
 
@@ -896,7 +908,7 @@ private boolean checkAutoBrightNess() {
             }
         }
 
-        setAreThereNotifications();
+        reDrawHeader();
     }
 
     @Override
@@ -2046,7 +2058,6 @@ private boolean checkAutoBrightNess() {
         if (mNavigationBarView == null) {
             pw.println("null");
         } else {
-            mNavigationBarView.dump(fd, pw, args);
         }
 
         if (DUMPTRUCK) {
@@ -2617,8 +2628,10 @@ private boolean checkAutoBrightNess() {
         mIsStatusBarBrightNess = Settings.System.getInt(mStatusBarView.getContext()
                 .getContentResolver(),
                 Settings.System.STATUS_BAR_BRIGHTNESS_TOGGLE, 0) == 1;
-        fontSize = Settings.System.getInt(cr, Settings.System.STATUSBAR_FONT_SIZE, 16) ;
-        
+       
+        loadDimens();
+ 	fontSize = Settings.System.getInt(cr, Settings.System.STATUSBAR_FONT_SIZE, 16) ;
+
         Clock clock = (Clock) mStatusBarView.findViewById(R.id.clock);
         if (clock != null) {
             clock.setTextSize(fontSize);
@@ -2627,8 +2640,11 @@ private boolean checkAutoBrightNess() {
         if (cclock != null) {
             cclock.setTextSize(fontSize);
          }
-
-   }      
+            reDrawHeader();
+   }   
+   
+   private void reDrawHeader() {
+   }
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -2679,14 +2695,25 @@ private boolean checkAutoBrightNess() {
         mNaturalBarHeight = res.getDimensionPixelSize(
                 com.android.internal.R.dimen.status_bar_height);
 
+     float sbOffsetpx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, res.getDisplayMetrics());
+         //assume stock font size is 16 - get number of pixels
+         int sbSizeOffset = (int) (mNaturalBarHeight -  sbOffsetpx);
+         int fontSize = Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_FONT_SIZE, 16) ;
+ 	 float fontSizepx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, fontSize, res.getDisplayMetrics());
+ 	 mNaturalBarHeight = (int) (sbSizeOffset + fontSizepx);
+
         int newIconSize = res.getDimensionPixelSize(
                 com.android.internal.R.dimen.status_bar_icon_size);
+
+         sbSizeOffset = (int) (newIconSize - sbOffsetpx);
+ 	 newIconSize = (int) (sbSizeOffset + fontSizepx);
+
         int newIconHPadding = res.getDimensionPixelSize(
                 R.dimen.status_bar_icon_padding);
 
         if (newIconHPadding != mIconHPadding || newIconSize != mIconSize) {
-            // Slog.d(TAG, "size=" + newIconSize + " padding=" +
-            // newIconHPadding);
+             Slog.d(TAG, "size=" + newIconSize + " padding=" +
+ 	     newIconHPadding + " Height:"+mNaturalBarHeight);
             mIconHPadding = newIconHPadding;
             mIconSize = newIconSize;
             // reloadAllNotificationIcons(); // reload the tray
