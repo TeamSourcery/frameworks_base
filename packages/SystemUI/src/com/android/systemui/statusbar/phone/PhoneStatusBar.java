@@ -17,6 +17,7 @@
 package com.android.systemui.statusbar.phone;
 
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
@@ -53,6 +54,7 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.util.Slog;
 import android.util.TypedValue;
 import android.view.Display;
@@ -177,12 +179,12 @@ public class PhoneStatusBar extends StatusBar {
     WindowManager.LayoutParams mExpandedParams;
     ScrollView mScrollView;
     View mExpandedContents;
+
     // top bar
     TextView mNoNotificationsTitle;
     View mClearButton;
-    
     View mSettingsButton;
-     
+   
     TogglesView mQuickToggles;
     BrightnessController mBrightness;
 
@@ -200,9 +202,7 @@ public class PhoneStatusBar extends StatusBar {
 
     // the date view
     DateView mDateView;
-   
-   
- 
+    
     // for immersive activities
     private View mIntruderAlertView;
 
@@ -371,9 +371,7 @@ public class PhoneStatusBar extends StatusBar {
         mNoNotificationsTitle = (TextView) expanded.findViewById(R.id.noNotificationsTitle);
         mNoNotificationsTitle.setVisibility(View.GONE); // disabling for now
 
-       // mTxtLayout = (LinearLayout) expanded.findViewById(R.id.txtlayout);
-       // mTxtParams = (RelativeLayout.LayoutParams) mTxtLayout.getLayoutParams();
-        
+               
         mClearButton = expanded.findViewById(R.id.clear_all_button);
         mClearButton.setOnClickListener(mClearButtonListener);
         mClearButton.setAlpha(0f);
@@ -382,8 +380,7 @@ public class PhoneStatusBar extends StatusBar {
         mSettingsButton = expanded.findViewById(R.id.settings_button);
         mSettingsButton.setOnClickListener(mSettingsButtonListener);
         mSettingsButton.setOnLongClickListener(mSettingsLongClickListener);
-        
-
+         
         mScrollView = (ScrollView) expanded.findViewById(R.id.scroll);
 
         mQuickToggles = (TogglesView) expanded.findViewById(R.id.quick_toggles);
@@ -415,7 +412,7 @@ public class PhoneStatusBar extends StatusBar {
                 expanded.addView(mQuickToggles);
                 mExpandedContents = mQuickToggles;
             }
-if (layout_type == 2) {
+            if (layout_type == 2) {
                 expanded.addView(mQuickToggles);
  	        expanded.addView(drawer_header_hr2);
  	        expanded.addView(drawer_header);
@@ -476,7 +473,7 @@ if (layout_type == 2) {
                 Settings.System.STATUSBAR_TOGGLES_VISIBILITY, 1) == 1 ? View.VISIBLE : View.GONE);
         mQuickToggles.setBar(this);
 
-mIsStatusBarBrightNess = Settings.System.getInt(mStatusBarView.getContext()
+        mIsStatusBarBrightNess = Settings.System.getInt(mStatusBarView.getContext()
                 .getContentResolver(),
                 Settings.System.STATUS_BAR_BRIGHTNESS_TOGGLE, 0) == 1;
         if (mIsStatusBarBrightNess) {
@@ -491,7 +488,7 @@ mIsStatusBarBrightNess = Settings.System.getInt(mStatusBarView.getContext()
         return sb;
     }
 
-private boolean checkAutoBrightNess() {
+    private boolean checkAutoBrightNess() {
         return Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.SCREEN_BRIGHTNESS_MODE,
                 Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
@@ -2644,8 +2641,12 @@ private boolean checkAutoBrightNess() {
    }   
    
    private void reDrawHeader() {
-   }
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+                       
+         View drawer_header_hr2 = mExpandedView.findViewById(R.id.drawer_header_hr2);
+        setAreThereNotifications();
+      }
+
+   private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)
