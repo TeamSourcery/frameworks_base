@@ -17,6 +17,7 @@
 package com.android.internal.policy.impl;
 
 import android.app.ActivityManager;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -73,10 +74,18 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
     private static final int STAY_ON_WHILE_GRABBED_TIMEOUT = 30000;
     
     public static final int LAYOUT_STOCK = 2;
-    public static final int LAYOUT_QUAD = 6;
+    public static final int LAYOUT_AOSP = 1;
+    public static final int LAYOUT_HONEY = 0;
+    public static final int LAYOUT_TRI = 3;
+    public static final int LAYOUT_QUAD = 4;
+    public static final int LAYOUT_HEPTA = 5;
+    public static final int LAYOUT_HEXA = 6;
+    public static final int LAYOUT_SEPTA = 7;
     public static final int LAYOUT_OCTO = 8;
-    public static final int LAYOUT_AOSP = 0;
-    
+
+    private boolean mLockscreen4Tab = false || (Settings.System.getInt(
+       mContext.getContentResolver(),
+       Settings.System.LOCKSCREEN_4TAB, 0) == 1);
 
     private int mLockscreenTargets = LAYOUT_STOCK;
 
@@ -97,7 +106,9 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
 
     private KeyguardStatusViewManager mStatusViewManager;
     private UnlockWidgetCommonMethods mUnlockWidgetMethods;
+    private UnlockWidgetCommonMethods mUnlockWidgetMethods2;
     private View mUnlockWidget;
+    private View mUnlockWidget2;
 
     private TextView mCarrier;
  private DigitalClock mDigitalClock;
@@ -105,6 +116,9 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
     private Drawable[] lockDrawables;
     
     ArrayList<Target> lockTargets = new ArrayList<Target>();
+
+   private String mCustomAppActivity = (Settings.System.getString(mContext.getContentResolver(),
+           Settings.System.LOCKSCREEN_CUSTOM_APP_ACTIVITY));
 
     private interface UnlockWidgetCommonMethods {
         // Update resources based on phone state
@@ -181,6 +195,54 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
         }
     }
 
+    class SlidingTabMethods2 implements SlidingTab.OnTriggerListener, UnlockWidgetCommonMethods {
+        private final SlidingTab mSlidingTab2;
+
+        SlidingTabMethods2(SlidingTab slidingTab) {
+            mSlidingTab2 = slidingTab;
+        }
+
+        public void updateResources() {
+        }
+
+        /** {@inheritDoc} */
+		public void onTrigger(View v, int whichHandle) {
+			if (whichHandle == SlidingTab.OnTriggerListener.LEFT_HANDLE) {
+				Intent callIntent = new Intent(Intent.ACTION_DIAL);
+				callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				getContext().startActivity(callIntent);
+				mCallback.goToUnlockScreen();
+			} else if (whichHandle == SlidingTab.OnTriggerListener.RIGHT_HANDLE) {
+                          Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                intent.setClassName("com.android.mms", "com.android.mms.ui.ConversationList");
+                mContext.startActivity(intent);
+                mCallback.goToUnlockScreen();
+				if (mCustomAppActivity != null) {
+					runActivity(mCustomAppActivity);
+				}
+			}
+		}
+
+        /** {@inheritDoc} */
+		public void onGrabbedStateChange(View v, int grabbedState) {
+			mCallback.pokeWakelock();
+		}
+
+        public View getView() {
+            return mSlidingTab2;
+        }
+
+        public void reset(boolean animate) {
+            mSlidingTab2.reset(animate);
+        }
+
+        public void ping() {
+        }
+    }
+ 
     class WaveViewMethods implements WaveView.OnTriggerListener, UnlockWidgetCommonMethods {
 
         private final WaveView mWaveView;
@@ -343,7 +405,11 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
         String action = ACTION_NULL;
         Drawable icon;
         String customAppIntentUri;
-        final int index;
+         final Integer index;
+
+        public Target() {
+            this.index = null;
+        }
 
         public Target(int index) {
             this.index = index;
@@ -354,6 +420,8 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
         }
 
         Drawable getDrawable() {
+           if(index == null) return null;
+
             int resId;
             Drawable drawable = null;
             PackageManager pm = getContext().getPackageManager();
@@ -490,6 +558,11 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
 
             int numTargets = mLockscreenTargets;
 
+            int numPadding = 0;
+            if(numTargets == LAYOUT_TRI) numPadding = 1;
+                else if(numTargets == LAYOUT_QUAD) numPadding = 2;
+                else if(numTargets == LAYOUT_HEPTA) numPadding = 3;
+
             for (int i = 0; i < numTargets; i++) {
                 String settingUri = Settings.System.getString(mContext.getContentResolver(),
                         Settings.System.LOCKSCREEN_CUSTOM_APP_ACTIVITIES[i]);
@@ -521,6 +594,10 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
                 }
                 t.setDrawable();
                 targets.add(t);
+            }
+
+             for (int i = 0; i < numPadding; i++) {
+                targets.add(new Target());
             }
 
             if (unlockTarget == -1)
@@ -591,7 +668,9 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
         switch (mLockscreenTargets) {
             default:
             case LAYOUT_STOCK:
+            case LAYOUT_TRI:
             case LAYOUT_QUAD:
+            case LAYOUT_HEPTA:
                 if (landscape)
                     inflater.inflate(R.layout.keyguard_screen_tab_unlock_land, this,
                             true);
@@ -600,6 +679,8 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
                             true);
                 break;
 
+            case LAYOUT_HEXA:
+            case LAYOUT_SEPTA:
             case LAYOUT_OCTO:
                 if (landscape)
                     inflater.inflate(R.layout.keyguard_screen_tab_octounlock_land, this,
@@ -609,14 +690,22 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
                             true);
                 break;
 
- case LAYOUT_AOSP:
+             case LAYOUT_AOSP:
                if (landscape)
- 	           inflater.inflate(R.layout.keyguard_screen_aosp_unlock_land, this,
+ 	           inflater.inflate(R.layout.keyguard_screen_slidingtab_unlock_land, this,
  	                  true);
  	          else
- 	            inflater.inflate(R.layout.keyguard_screen_aosp_unlock, this,
+ 	            inflater.inflate(R.layout.keyguard_screen_slidingtab_unlock, this,
  	                  true);
  	          break;
+              case LAYOUT_HONEY:
+            	if (landscape)
+                    inflater.inflate(R.layout.keyguard_screen_honeycomb_unlock_land, this,
+                            true);
+                else 
+                    inflater.inflate(R.layout.keyguard_screen_honeycomb_unlock, this,
+                            true);
+                break;
 
         }
 
@@ -631,9 +720,11 @@ private static final int COLOR_WHITE = 0xFFFFFFFF;
         mSilentMode = isSilentMode();
 
         mCarrier = (TextView) findViewById(R.id.carrier);
-mDigitalClock = (DigitalClock) findViewById(R.id.time);
+        mDigitalClock = (DigitalClock) findViewById(R.id.time);
 
         mUnlockWidget = findViewById(R.id.unlock_widget);
+        mUnlockWidget2 = findViewById(R.id.unlock_widget2);
+ 	if(mUnlockWidget2 == null) Log.e("HELP", "ERROR UNLOCKWIDGET2 IS NULL");
         if (mUnlockWidget instanceof SlidingTab) {
             SlidingTab slidingTabView = (SlidingTab) mUnlockWidget;
             slidingTabView.setHoldAfterTrigger(true, false);
@@ -646,6 +737,27 @@ mDigitalClock = (DigitalClock) findViewById(R.id.time);
             SlidingTabMethods slidingTabMethods = new SlidingTabMethods(slidingTabView);
             slidingTabView.setOnTriggerListener(slidingTabMethods);
             mUnlockWidgetMethods = slidingTabMethods;
+            SlidingTab slidingTabView2 = (SlidingTab) mUnlockWidget2;
+            slidingTabView2.setHoldAfterTrigger(true, false);
+            slidingTabView2.setLeftHintText(R.string.lockscreen_phone_label);
+            slidingTabView2.setLeftTabResources(
+                    R.drawable.ic_jog_dial_answer,
+                    R.drawable.jog_tab_target_green,
+                    R.drawable.jog_tab_bar_left_generic,
+                    R.drawable.jog_tab_left_generic);
+            slidingTabView2.setRightHintText(R.string.lockscreen_custom_label);
+            slidingTabView2.setRightTabResources(
+                    R.drawable.ic_jog_dial_custom,
+                    R.drawable.jog_tab_target_green,
+                    R.drawable.jog_tab_bar_right_generic,
+                    R.drawable.jog_tab_right_generic);
+            SlidingTabMethods2 slidingTabMethods2 = new SlidingTabMethods2(slidingTabView2);
+            slidingTabView2.setOnTriggerListener(slidingTabMethods2);
+            mUnlockWidgetMethods2 = slidingTabMethods2;
+            if (mLockscreen4Tab)
+                slidingTabView2.setVisibility(View.VISIBLE);
+            else	
+                slidingTabView2.setVisibility(View.GONE);
         } else if (mUnlockWidget instanceof WaveView) {
             WaveView waveView = (WaveView) mUnlockWidget;
             WaveViewMethods waveViewMethods = new WaveViewMethods(waveView);
@@ -869,4 +981,15 @@ updateSettings();
             if (DEBUG) Log.d(TAG, "KeyguardStatusViewManager.updateColors() failed: NullPointerException");
         }
     }
+        private void runActivity(String uri) {
+		try {
+			Intent i = Intent.parseUri(uri, 0);
+			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+					| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+			mContext.startActivity(i);
+			mCallback.goToUnlockScreen();
+		} catch (URISyntaxException e) {
+		} catch (ActivityNotFoundException e) {
+		}
+	}
 }

@@ -20,7 +20,16 @@
 <!-- This is the screen that shows the 9 circle unlock widget and instructs
      the user how to unlock their device, or make an emergency call.  This
      is the portrait layout.  -->
-
+<RelativeLayout
+ xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   android:gravity="center_horizontal">
+ 	 	
+<com.android.internal.policy.impl.LockscreenWallpaper
+   android:id="@+id/lockscreen_wallpaper"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent" />
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:orientation="vertical"
@@ -32,7 +41,7 @@
     <com.android.internal.widget.DigitalClock android:id="@+id/time"
         android:layout_marginTop="8dip"
         android:layout_marginBottom="12dip"
-        android:layout_gravity="right">
+        android:layout_gravity="center_horizontal">
 
         <!-- Because we can't have multi-tone fonts, we render two TextViews, one on
         top of the other. Hence the redundant layout... -->
@@ -66,7 +75,7 @@
         android:id="@+id/date"
         android:layout_width="0dip"
         android:layout_gravity="fill_horizontal"
-        android:gravity="right"
+        android:gravity="center_horizontal"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -79,7 +88,7 @@
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="@dimen/keyguard_lockscreen_status_line_font_size"
-        android:layout_gravity="right"
+        android:layout_gravity="center_horizontal"
         android:drawablePadding="4dip"
         />
         
@@ -87,7 +96,7 @@
         android:id="@+id/status1"
         android:layout_width="0dip"
         android:layout_gravity="fill_horizontal"
-        android:gravity="right"
+        android:gravity="center_horizontal"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -99,7 +108,7 @@
     <TextView android:id="@+id/carrier"
         android:layout_width="0dip"
         android:layout_gravity="fill_horizontal"
-        android:gravity="right"
+        android:gravity="center_horizontal"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -109,11 +118,11 @@
     <LinearLayout
         style="?android:attr/buttonBarStyle"
         android:orientation="vertical"
-        android:layout_gravity="right">
+        android:layout_gravity="center_horizontal">
 
         <Button android:id="@+id/emergencyCallButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_gravity="right"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="0dip"
             android:layout_weight="1"
@@ -125,7 +134,7 @@
 
         <Button android:id="@+id/forgotPatternButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_gravity="right"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="0dip"
             android:layout_weight="1"
@@ -175,3 +184,4 @@
     />
 
 </GridLayout>
+</RelativeLayout>
