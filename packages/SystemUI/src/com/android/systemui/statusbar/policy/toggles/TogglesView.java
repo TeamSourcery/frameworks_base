@@ -54,25 +54,25 @@ public class TogglesView extends LinearLayout {
     private static final String TOGGLE_SILENT = "SILENT";
     private static final String TOGGLE_TORCH = "TORCH";
     private static final String TOGGLE_SYNC = "SYNC";
-    private static final String TOGGLE_FCHARGE = "FCHARGE";
+    private static final String TOGGLE_TETHER = "TETHER";
     private int mWidgetsPerRow = 2;
 
     private boolean useAltButtonLayout = false;
 
     private StatusBar sb;
 
-     public static final String STOCK_TOGGLES = TOGGLE_WIFI + TOGGLE_DELIMITER + TOGGLE_BLUETOOTH
+    public static final String STOCK_TOGGLES = TOGGLE_WIFI + TOGGLE_DELIMITER + TOGGLE_BLUETOOTH
             + TOGGLE_DELIMITER + TOGGLE_GPS + TOGGLE_DELIMITER + TOGGLE_AUTOROTATE;
 
     View mBrightnessSlider;
-    
+
     LinearLayout mToggleSpacer;
 
     private static final LinearLayout.LayoutParams PARAMS_BRIGHTNESS = new LinearLayout.LayoutParams(
-           LayoutParams.MATCH_PARENT, 90);
+            LayoutParams.MATCH_PARENT, 90);
 
     private static final LinearLayout.LayoutParams PARAMS_TOGGLE = new LinearLayout.LayoutParams(
-             LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f);
+            LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f);
 
     private static final LinearLayout.LayoutParams PARAMS_TOGGLE_SCROLL = new LinearLayout.LayoutParams(
             LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f);
@@ -119,8 +119,9 @@ public class TogglesView extends LinearLayout {
                 newToggle = new TorchToggle(mContext);
             else if (splitToggle.equals(TOGGLE_SYNC))
                 newToggle = new SyncToggle(mContext);
-            else if (splitToggle.equals(TOGGLE_FCHARGE))
- 	        newToggle = new FChargeToggle(mContext);
+            else if (splitToggle.equals(TOGGLE_TETHER))
+                newToggle = new USBTetherToggle(mContext);
+
             if (newToggle != null)
                 toggles.add(newToggle);
         }
@@ -155,14 +156,13 @@ public class TogglesView extends LinearLayout {
             rows.get(rows.size() - 1).addView(toggles.get(i).getView(),
                     (useAltButtonLayout ? PARAMS_TOGGLE_SCROLL : PARAMS_TOGGLE));
         }
-        
-         if (!useAltButtonLayout && (toggles.size() % 2 != 0)) {
+
+        if (!useAltButtonLayout && (toggles.size() % 2 != 0)) {
             // we are using switches, and have an uneven number - let's add a
             // spacer
             mToggleSpacer = new LinearLayout(mContext);
             rows.get(rows.size() - 1).addView(mToggleSpacer, PARAMS_TOGGLE);
 
-        	
         }
         if (useAltButtonLayout) {
             LinearLayout togglesRowLayout;
@@ -189,7 +189,7 @@ public class TogglesView extends LinearLayout {
         if (mBrightnessLocation == BRIGHTNESS_LOC_BOTTOM)
             addBrightness();
 
-         final int layout_type = Settings.System.getInt(mContext.getContentResolver(),
+        final int layout_type = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_LAYOUT, 0);
         if (!sb.isTablet() && layout_type != 2)
             addSeparator();
@@ -271,7 +271,8 @@ public class TogglesView extends LinearLayout {
         // 2);
         // use 2 for regular layout, 6 for buttons
         // TODO: make buttons scrollable so we can have more than 6
-        // ZB Edit - Temp make mWidgetsPerRow 100 for altWidgetLayout. A more elegant solution
+        // ZB Edit - Temp make mWidgetsPerRow 100 for altWidgetLayout. A more
+        // elegant solution
         // will need to be implemented in the main loop.
 
         mWidgetsPerRow = useAltButtonLayout ? 100 : 2;

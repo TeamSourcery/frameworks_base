@@ -67,7 +67,7 @@ import com.android.systemui.statusbar.policy.Clock.SettingsObserver;
 
     int durationSpeedOn = 500;
     int durationSpeedOff = 50;
-    int mGlowBGColor = 0;
+    int mGlowBGColor = Integer.MIN_VALUE;
 
     Runnable mCheckLongPress = new Runnable() {
         public void run() {
@@ -168,8 +168,7 @@ import com.android.systemui.statusbar.policy.Clock.SettingsObserver;
             mDrawingAlpha = BUTTON_QUIESCENT_ALPHA;
         }
     }
-
-
+    
     public float getDrawingAlpha() {
         if (mGlowBG == null)
             return 0;
@@ -363,7 +362,7 @@ import com.android.systemui.statusbar.policy.Clock.SettingsObserver;
             updateSettings();
         }
 
-        @Override
+       @Override
         public void onChange(boolean selfChange) {
             updateSettings();
         }
@@ -373,30 +372,26 @@ import com.android.systemui.statusbar.policy.Clock.SettingsObserver;
         ContentResolver resolver = mContext.getContentResolver();
 
         durationSpeedOff = Settings.System.getInt(resolver,
-                Settings.System.NAVIGATION_BAR_GLOW_DURATION[0], 50);
+                Settings.System.NAVIGATION_BAR_GLOW_DURATION[0], 10);
         durationSpeedOn = Settings.System.getInt(resolver,
-                Settings.System.NAVIGATION_BAR_GLOW_DURATION[1], 500);
+                Settings.System.NAVIGATION_BAR_GLOW_DURATION[1], 100);
         BUTTON_QUIESCENT_ALPHA = Settings.System.getFloat(resolver,
                 Settings.System.NAVIGATION_BAR_BUTTON_ALPHA,
                 0.6f);
         setDrawingAlpha(BUTTON_QUIESCENT_ALPHA);
-
-       try {
+        
+        if (mGlowBG != null) {
+            int defaultColor = mContext.getResources().getColor(
+                    com.android.internal.R.color.holo_blue_light);
             mGlowBGColor = Settings.System.getInt(resolver,
-                    Settings.System.NAVIGATION_BAR_GLOW_TINT);
-            if (mGlowBG != null) { 
-            	if (mGlowBGColor == Integer.MIN_VALUE) {
-            		mGlowBG.setColorFilter(null);
-            	} else {
-                mGlowBG.setColorFilter(null);
-                mGlowBG.setColorFilter(mGlowBGColor, PorterDuff.Mode.SRC_ATOP);
-            	}
+                    Settings.System.NAVIGATION_BAR_GLOW_TINT, defaultColor);
+            
+            if (mGlowBGColor == Integer.MIN_VALUE) {
+                mGlowBGColor = defaultColor;
             }
-        } catch (SettingNotFoundException e1) {
-            mGlowBGColor = Integer.MIN_VALUE;
+            mGlowBG.setColorFilter(null);
+            mGlowBG.setColorFilter(mGlowBGColor, PorterDuff.Mode.SRC_ATOP);
         }
-
-        invalidate();
 
         try {
             int color = Settings.System.getInt(resolver, Settings.System.NAVIGATION_BAR_TINT);
@@ -410,6 +405,6 @@ import com.android.systemui.statusbar.policy.Clock.SettingsObserver;
             }
         } catch (SettingNotFoundException e) {
         }
-
+        invalidate();
     }
 }

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import android.animation.ObjectAnimator;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.Dialog;
@@ -37,6 +36,7 @@ import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.content.res.CustomTheme;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
@@ -76,6 +76,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -183,7 +184,11 @@ public class PhoneStatusBar extends StatusBar {
     // top bar
     TextView mNoNotificationsTitle;
     View mClearButton;
+    RelativeLayout.LayoutParams mClearParams;
+
     View mSettingsButton;
+    RelativeLayout.LayoutParams mSettingswClearParams;
+    RelativeLayout.LayoutParams mSettingswoClearParams;
    
     TogglesView mQuickToggles;
     BrightnessController mBrightness;
@@ -257,7 +262,7 @@ public class PhoneStatusBar extends StatusBar {
 
     // last theme that was applied in order to detect theme change (as opposed
     // to some other configuration change).
-
+    CustomTheme mCurrentTheme;
     private boolean mRecreating = false;
 
 
@@ -295,6 +300,11 @@ public class PhoneStatusBar extends StatusBar {
 
         mWindowManager = IWindowManager.Stub.asInterface(
                 ServiceManager.getService(Context.WINDOW_SERVICE));
+
+        CustomTheme currentTheme = mContext.getResources().getConfiguration().customTheme;
+ 	  if (currentTheme != null) {
+ 	      mCurrentTheme = (CustomTheme)currentTheme.clone();
+         }
 
         super.start(); // calls makeStatusBarView()
 
@@ -373,13 +383,16 @@ public class PhoneStatusBar extends StatusBar {
 
                
         mClearButton = expanded.findViewById(R.id.clear_all_button);
+        mClearParams = (RelativeLayout.LayoutParams) mClearButton.getLayoutParams();
         mClearButton.setOnClickListener(mClearButtonListener);
-        mClearButton.setAlpha(0f);
         mClearButton.setEnabled(false);
+        mClearButton.setVisibility(View.GONE);
         mDateView = (DateView) expanded.findViewById(R.id.date);
         mSettingsButton = expanded.findViewById(R.id.settings_button);
         mSettingsButton.setOnClickListener(mSettingsButtonListener);
         mSettingsButton.setOnLongClickListener(mSettingsLongClickListener);
+        mSettingswoClearParams = (RelativeLayout.LayoutParams) mSettingsButton.getLayoutParams();
+        mSettingswClearParams = new RelativeLayout.LayoutParams(mSettingswoClearParams);
          
         mScrollView = (ScrollView) expanded.findViewById(R.id.scroll);
 
@@ -644,8 +657,14 @@ public class PhoneStatusBar extends StatusBar {
     }
 
     private void repositionNavigationBar() {
-        if (mNavigationBarView == null)
-            return;
+        if (mNavigationBarView == null) return;
+
+        CustomTheme newTheme = mContext.getResources().getConfiguration().customTheme;
+        if (newTheme != null &&
+               (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
+             // Nevermind, this will be re-created
+             return;
+         }
 
         prepareNavigationBarView();
 
@@ -1201,17 +1220,8 @@ public class PhoneStatusBar extends StatusBar {
                     + " any=" + any + " clearable=" + clearable);
         }
 
-         if (mClearButton.isShown()) {
-	       if (clearable != (mClearButton.getAlpha() == 1.0f)) {
-	            ObjectAnimator.ofFloat(mClearButton, "alpha",
-	              clearable ? 1.0f : 0.0f)
-	               .setDuration(250)
-	                   .start();
-	          }
-	        } else {
-	  	            mClearButton.setAlpha(clearable ? 1.0f : 0.0f);
-	  	
-       }
+        mClearButton.setVisibility(clearable ? View.VISIBLE : View.GONE);
+        mSettingsButton.setLayoutParams(clearable ? mSettingswClearParams : mSettingswoClearParams);
         mClearButton.setEnabled(clearable);
 
         /*
@@ -2147,6 +2157,10 @@ public class PhoneStatusBar extends StatusBar {
         WindowManagerImpl.getDefault().addView(mTrackingView, lp);
     }
 
+    void onBarViewDetached() {
+         WindowManagerImpl.getDefault().removeView(mTrackingView);
+     }
+ 
     void onTrackingViewAttached() {
         WindowManager.LayoutParams lp;
         int pixelFormat;
@@ -2182,6 +2196,9 @@ public class PhoneStatusBar extends StatusBar {
                         ViewGroup.LayoutParams.MATCH_PARENT));
         mExpandedDialog.getWindow().setBackgroundDrawable(null);
         mExpandedDialog.show();
+    }
+
+    void onTrackingViewDetached() {
     }
 
     void setNotificationIconVisibility(boolean visible, int anim) {
@@ -2323,7 +2340,8 @@ public class PhoneStatusBar extends StatusBar {
         if (DEBUG) {
             Slog.d(TAG, "updateDisplaySize: " + mDisplayMetrics);
         }
-        updateExpandedSize();
+        if (!mRecreating)
+ 	     updateExpandedSize();
     }
 
     void updateExpandedSize() {
@@ -2670,24 +2688,41 @@ public class PhoneStatusBar extends StatusBar {
     private void setIntruderAlertVisibility(boolean vis) {
         mIntruderAlertView.setVisibility(vis ? View.VISIBLE : View.GONE);
     }
-
+    
     /**
-     * Reload some of our resources when the configuration changes. We don't
-     * reload everything when the configuration changes -- we probably should,
-     * but getting that smooth is tough. Someday we'll fix that. In the
+     * Reload some of our resources when the configuration changes.
+     *
+     * We don't reload everything when the configuration changes -- we probably
+     * should, but getting that smooth is tough.  Someday we'll fix that.  In the
      * meantime, just update the things that we know change.
      */
     void updateResources() {
         final Context context = mContext;
         final Resources res = context.getResources();
 
-        if (mClearButton instanceof TextView) {
-            ((TextView) mClearButton)
-                    .setText(context.getText(R.string.status_bar_clear_all_button));
-        }
-        mNoNotificationsTitle.setText(context.getText(R.string.status_bar_no_notifications_title));
+        // detect theme change.
+        CustomTheme newTheme = res.getConfiguration().customTheme;
+        if (newTheme != null &&
+                (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
+            mCurrentTheme = (CustomTheme)newTheme.clone();
+            StatusBar.resetColors(mContext);
 
-        loadDimens();
+ 	    // restart system ui on theme change
+ 	    try {
+ 	      Runtime.getRuntime().exec("pkill -TERM -f  com.android.systemui");
+ 	    } catch (IOException e) {
+ 	    // we're screwed here fellas
+            }
+
+         } else {
+
+        if (mClearButton instanceof TextView) {
+                ((TextView)mClearButton).setText(context.getText(R.string.status_bar_clear_all_button));
+            }
+            mNoNotificationsTitle.setText(context.getText(R.string.status_bar_no_notifications_title));
+
+            loadDimens();
+        }
     }
 
     protected void loadDimens() {

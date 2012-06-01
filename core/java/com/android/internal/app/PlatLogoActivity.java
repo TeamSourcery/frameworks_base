@@ -64,7 +64,7 @@ public class PlatLogoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        mToast = Toast.makeText(this, "Android 4.0: Ice Cream Sandwich", Toast.LENGTH_SHORT);
+        mToast = Toast.makeText(this, "Android 4.0.4: ICSourcery V3.0", Toast.LENGTH_SHORT);
 
         mContent = new ImageView(this);
         mContent.setImageResource(com.android.internal.R.drawable.platlogo);

@@ -60,7 +60,7 @@ public class HoloClock extends FrameLayout {
 
     protected int mClockStyle = STYLE_CLOCK_RIGHT;
     
-    protected int mClockColor = com.android.internal.R.color.holo_blue_light;
+    protected int mClockColor;
 
     public HoloClock(Context context) {
         this(context, null);
@@ -221,12 +221,14 @@ public class HoloClock extends FrameLayout {
 
     protected void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
+        int defaultColor = getResources().getColor(
+                com.android.internal.R.color.holo_blue_light);
 
         mClockColor = Settings.System.getInt(resolver, Settings.System.STATUSBAR_CLOCK_COLOR,
-                0xFF33B5E5);
+                defaultColor);
         if (mClockColor == Integer.MIN_VALUE) {
             // flag to reset the color
-            mClockColor = 0xFF33B5E5;
+            mClockColor = defaultColor;
         }
         updateClockColor(mClockColor);
 

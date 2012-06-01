@@ -74,6 +74,7 @@ import android.view.WindowManagerPolicy;
 
 import com.android.internal.app.IBatteryStats;
 import com.android.internal.app.ShutdownThread;
+import com.android.internal.app.ThemeUtils;
 import com.android.server.am.BatteryStatsService;
 
 public class PowerManagerService extends IPowerManager.Stub
@@ -200,6 +201,7 @@ private static final String TAGF = "LightFilter";
     private Intent mScreenOnIntent;
     private LightsService mLightsService;
     private Context mContext;
+    private Context mUiContext;
     private LightsService.Light mLcdLight;
     private LightsService.Light mButtonLight;
     private LightsService.Light mKeyboardLight;
@@ -2816,7 +2818,7 @@ private Runnable mLightFilterTask = new Runnable() {
         Runnable runnable = new Runnable() {
             public void run() {
                 synchronized (this) {
-                    ShutdownThread.reboot(mContext, finalReason, false);
+                    ShutdownThread.reboot(getUiContext(), finalReason, false);
                 }
                 
             }
@@ -2852,6 +2854,13 @@ private Runnable mLightFilterTask = new Runnable() {
             Log.wtf(TAG, e);
         }
     }
+
+     private Context getUiContext() {
+        if (mUiContext == null) {
+            mUiContext = ThemeUtils.createUiContext(mContext);
+        }
+        return mUiContext != null ? mUiContext : mContext;
+     }
 
     private void goToSleepLocked(long time, int reason) {
 

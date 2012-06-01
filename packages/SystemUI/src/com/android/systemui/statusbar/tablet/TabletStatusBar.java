@@ -16,8 +16,11 @@
 
 package com.android.systemui.statusbar.tablet;
 
+import java.io.File;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import android.animation.LayoutTransition;
@@ -36,6 +39,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.content.res.CustomTheme;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
@@ -53,6 +57,7 @@ import android.os.ServiceManager;
 import android.os.storage.StorageManager;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.util.Slog;
 import android.view.Display;
 import android.view.Gravity;
@@ -69,6 +74,7 @@ import android.view.WindowManager;
 import android.view.WindowManagerImpl;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.ScrollView;
@@ -205,6 +211,11 @@ public class TabletStatusBar extends StatusBar implements
 
     private StorageManager mStorageManager;
 
+    // last theme that was applied in order to detect theme change (as opposed
+    // to some other configuration change).
+    CustomTheme mCurrentTheme;
+    private boolean mRecreating = false;
+ 	 	
     protected void addPanelWindows() {
         final Context context = mContext;
         final Resources res = mContext.getResources();
@@ -450,15 +461,37 @@ public class TabletStatusBar extends StatusBar implements
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
  	settingsObserver.observe();
     }
-
+   
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
-        mHeightReceiver.updateHeight(); // display size may have changed
-        loadDimens();
-        mNotificationPanelParams.height = getNotificationPanelHeight();
-        WindowManagerImpl.getDefault().updateViewLayout(mNotificationPanel,
-                mNotificationPanelParams);
-        mRecentsPanel.updateValuesFromResources();
+        // detect theme change.
+        CustomTheme newTheme = mContext.getResources().getConfiguration().customTheme;
+        if (newTheme != null &&
+                (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
+            mCurrentTheme = (CustomTheme)newTheme.clone();
+            StatusBar.resetColors(mContext);
+
+            // restart systemui
+            try {
+                Runtime.getRuntime().exec("pkill -TERM -f  com.android.systemui");
+            } catch (IOException e) {
+                // we're screwed here fellas
+            }
+        }
+        if (mShowStatusBar) {
+            mHeightReceiver.updateHeight(); // display size may have changed
+            loadDimens();
+            mNotificationPanelParams.height = getNotificationPanelHeight();
+            WindowManagerImpl.getDefault().updateViewLayout(mNotificationPanel,
+                    mNotificationPanelParams);
+            mRecentsPanel.updateValuesFromResources();
+        } else { // statusbar hidden - so don't reset height on rotate/config change
+        	onBarHeightChanged(0);
+        	mNotificationPanelParams.height = getNotificationPanelHeight();
+            WindowManagerImpl.getDefault().updateViewLayout(mNotificationPanel,
+                    mNotificationPanelParams);
+            mRecentsPanel.updateValuesFromResources();
+        }
     }
 
     protected void loadDimens() {
@@ -492,6 +525,11 @@ public class TabletStatusBar extends StatusBar implements
 
         mWindowManager = IWindowManager.Stub.asInterface(
                 ServiceManager.getService(Context.WINDOW_SERVICE));
+
+    CustomTheme currentTheme = mContext.getResources().getConfiguration().customTheme;
+        if (currentTheme != null) {
+            mCurrentTheme = (CustomTheme)currentTheme.clone();
+        }
 
         // This guy will listen for HDMI plugged broadcasts so we can resize the
         // status bar as appropriate.
@@ -684,7 +722,7 @@ public class TabletStatusBar extends StatusBar implements
 
     public void onBarHeightChanged(int height) {
         final WindowManager.LayoutParams lp
-                = (WindowManager.LayoutParams)mStatusBarView.getLayoutParams();
+                = (WindowManager.LayoutParams)mStatusBarContainer.getLayoutParams();
         if (lp == null) {
             // haven't been added yet
             return;
@@ -692,7 +730,7 @@ public class TabletStatusBar extends StatusBar implements
         if (lp.height != height) {
             lp.height = height;
             final WindowManager wm = WindowManagerImpl.getDefault();
-            wm.updateViewLayout(mStatusBarView, lp);
+            wm.updateViewLayout(mStatusBarContainer, lp);
         }
     }
 
@@ -871,7 +909,7 @@ public class TabletStatusBar extends StatusBar implements
                 notification.notification.fullScreenIntent.send();
             } catch (PendingIntent.CanceledException e) {
             }
-        } else {
+        } else if (!mRecreating) {
             tick(key, notification, true);
         }
 
