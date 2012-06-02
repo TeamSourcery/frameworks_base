@@ -36,8 +36,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
                 android:singleLine="true"
-                android:gravity="center_vertical|left"
-                android:paddingLeft="16dp"
+                android:gravity="center_vertical|center"
+                android:paddingLeft="50dp"
                 />
 
             <!-- <com.android.systemui.statusbar.phone.CarrierLabel android:layout_width="0dp" 
