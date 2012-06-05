@@ -39,7 +39,8 @@
 
    <com.android.internal.widget.DigitalClock android:id="@+id/time"
         android:layout_marginTop="@dimen/keyguard_lockscreen_status_line_clockfont_top_margin"
-        android:layout_marginBottom="12dip"
+        android:layout_marginBottom="@dimen/keyguard_lockscreen_status_line_clockfont_bottom_margin"
+        android:layout_marginRight="@dimen/keyguard_lockscreen_status_line_font_right_margin"
         android:layout_gravity="center_horizontal">
 
         <!-- Because we can't have multi-tone fonts, we render two TextViews, one on
@@ -51,7 +52,6 @@
             android:ellipsize="none"
             android:textSize="@dimen/keyguard_lockscreen_clock_font_size"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginBottom="6dip"
             android:textColor="@color/lockscreen_clock_background"
             />
 
@@ -62,11 +62,8 @@
             android:ellipsize="none"
             android:textSize="@dimen/keyguard_lockscreen_clock_font_size"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginBottom="6dip"
             android:textColor="@color/lockscreen_clock_foreground"
-            android:layout_alignLeft="@id/timeDisplayBackground"
-            android:layout_alignTop="@id/timeDisplayBackground"
-            />
+           />
 
     </com.android.internal.widget.DigitalClock>
 
