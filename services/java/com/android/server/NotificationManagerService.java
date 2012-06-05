@@ -1393,7 +1393,7 @@ public class NotificationManagerService extends INotificationManager.Stub
             mQuietHoursEnd = Settings.System.getInt(resolver,
                     Settings.System.QUIET_HOURS_END, 0);
             mQuietHoursMute = Settings.System.getInt(resolver,
-                    Settings.System.QUIET_HOURS_MUTE, 0) != 0;
+                    Settings.System.QUIET_HOURS_NOTIFICATIONS, 0) != 0;
             mQuietHoursStill = Settings.System.getInt(resolver,
                     Settings.System.QUIET_HOURS_STILL, 0) != 0;
             mQuietHoursDim = Settings.System.getInt(resolver,
