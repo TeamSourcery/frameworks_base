@@ -66,6 +66,8 @@ public class Clock extends TextView {
 
     protected int mWeekday = WEEKDAY_STYLE_GONE;
 
+    private final boolean DEBUG = false;
+
     protected boolean mShowClockDuringLockscreen = false;
     protected int mClockColor = com.android.internal.R.color.holo_blue_light;
 

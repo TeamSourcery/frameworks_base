@@ -138,7 +138,7 @@
         />
 
     <!-- Column 1 -->
-    <Space android:layout_width="64dip" android:layout_rowSpan="8" />
+    <Space android:layout_width="16dip" android:layout_rowSpan="9" />
 
     <!-- Column 2 -->
     <com.android.internal.widget.multiwaveview.MultiWaveView

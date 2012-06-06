@@ -17,16 +17,6 @@
 */
 -->
 
-<RelativeLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:layout_width="match_parent"
-   android:layout_height="match_parent"
-   android:gravity="center_horizontal">
-  	 	
-<com.android.internal.policy.impl.LockscreenWallpaper
-  android:id="@+id/lockscreen_wallpaper"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent" />
 <!-- This is the screen that shows the 9 circle unlock widget and instructs
      the user how to unlock their device, or make an emergency call.  This
      is the portrait layout.  -->
@@ -37,11 +27,11 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal">
 
-   <com.android.internal.widget.DigitalClock android:id="@+id/time"
+    <com.android.internal.widget.DigitalClock android:id="@+id/time"
         android:layout_marginTop="@dimen/keyguard_lockscreen_status_line_clockfont_top_margin"
         android:layout_marginBottom="@dimen/keyguard_lockscreen_status_line_clockfont_bottom_margin"
         android:layout_marginRight="@dimen/keyguard_lockscreen_status_line_font_right_margin"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="right">
 
         <!-- Because we can't have multi-tone fonts, we render two TextViews, one on
         top of the other. Hence the redundant layout... -->
@@ -63,13 +53,14 @@
             android:textSize="@dimen/keyguard_lockscreen_clock_font_size"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/lockscreen_clock_foreground"
-           />
+            />
 
     </com.android.internal.widget.DigitalClock>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="right"
+        android:layout_marginRight="@dimen/keyguard_lockscreen_status_line_font_right_margin">
 
         <TextView
             android:id="@+id/date"
@@ -96,10 +87,10 @@
     </LinearLayout>
 
 
-	
     <TextView
         android:id="@+id/status1"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="right"
+        android:layout_marginRight="@dimen/keyguard_lockscreen_status_line_font_right_margin"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -171,7 +162,7 @@
         layout="@layout/keyguard_transport_control"
         android:layout_row="0"
         android:layout_column="0"
-        android:layout_rowSpan="5"
+        android:layout_rowSpan="4"
         android:layout_columnSpan="1"
         android:layout_gravity="fill"
         android:layout_width="0dip"
@@ -181,7 +172,7 @@
     <!-- Area to overlay FaceLock -->
     <TextView android:id="@+id/faceLockAreaView"
         android:visibility="invisible"
-        android:layout_row="5"
+        android:layout_row="4"
         android:layout_column="0"
         android:layout_rowSpan="1"
         android:layout_columnSpan="1"
@@ -194,4 +185,3 @@
     />
 
 </GridLayout>
-</RelativeLayout>

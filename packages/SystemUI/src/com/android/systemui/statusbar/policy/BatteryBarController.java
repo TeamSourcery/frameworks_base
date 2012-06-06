@@ -121,7 +121,15 @@ Prefs.setLastBatteryLevel(context, mBatteryLevel);
 @Override
      protected void onConfigurationChanged(Configuration newConfig) {
          super.onConfigurationChanged(newConfig);
-         mBatteryLevel = Prefs.getLastBatteryLevel(getContext());
+          if (isAttached) {
+ 	      getHandler().postDelayed(new Runnable() {
+ 	       @Override
+ 	        public void run() {
+                  updateSettings();
+ 	          }
+ 	     }, 500);
+ 	 	
+        }
      }
 
     public void addBars() {
@@ -146,6 +154,7 @@ Prefs.setLastBatteryLevel(context, mBatteryLevel);
             params.height = pixels;
         setLayoutParams(params);
 
+        mBatteryLevel = Prefs.getLastBatteryLevel(getContext());
         if (mStyle == STYLE_REGULAR) {
             addView(new BatteryBar(mContext, mBatteryCharging, mBatteryLevel, isVertical),
                    new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
