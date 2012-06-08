@@ -2977,6 +2977,11 @@ public final class Settings {
         public static final String NAVIGATION_BAR_GLOW_TINT = "navigation_bar_glow_tint";
 
          /**
+         * Widgets to show, should be separated by |
+ 	 */
+        public static final String NAVIGATION_BAR_WIDGETS = "navigation_bar_widgets";
+
+         /**
          * Boolean value whether to link ringtone and notification volumes
          * 
          * @hide
@@ -3405,6 +3410,14 @@ public final class Settings {
 	* @hide
 	*/
 	public static final String LED_SCREEN_ON = "led_screen_on";
+
+        /**
+        * The hostname for this device
+ 	* @hide
+ 	*/
+        public static final String DEVICE_HOSTNAME = "device_hostname";
+ 		
+
 
         /**
          * Setting to allow mock locations and location provider status to be injected into the

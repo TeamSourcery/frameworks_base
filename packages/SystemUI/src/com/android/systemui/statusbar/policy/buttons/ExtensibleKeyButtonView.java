@@ -31,6 +31,8 @@ import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.R;
 
+import com.android.systemui.statusbar.phone.NavigationBarView;
+import com.android.systemui.statusbar.policy.KeyButtonView;
 
 
 public class ExtensibleKeyButtonView extends KeyButtonView {
@@ -44,6 +46,7 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         final static String ACTION_SCREENSHOT = "**screenshot**";
 	final static String ACTION_KILL = "**kill**";
 	final static String ACTION_NULL = "**null**";
+        final static String ACTION_WIDGETS = "**widgets**";
 
     private static final String TAG = "Key.Ext";
 
@@ -172,8 +175,12 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         		
         		mHandler.postDelayed(mKillTask, ViewConfiguration.getGlobalActionKeyTimeout());
         		return;
-        		
-        	 } else if (mClickAction.equals(ACTION_SCREENSHOT)) {
+                
+                 } else if (mClickAction.equals(ACTION_WIDGETS)) {
+ 	           Intent toggleWidgets = new Intent(
+ 	                 NavigationBarView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
+ 	           mContext.sendBroadcast(toggleWidgets);
+               	 } else if (mClickAction.equals(ACTION_SCREENSHOT)) {
  	           mHandler.post(mTakeScreenshot);
                    } else {  // we must have a custom uri
         		 try {
@@ -219,6 +226,11 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         	} else if (mLongpress.equals(ACTION_KILL)) {        		
         		mHandler.postDelayed(mKillTask, 0);  
         		return true;
+                 } else if (mLongpress.equals(ACTION_WIDGETS)) {
+ 	                Intent toggleWidgets = new Intent(
+ 	                       NavigationBarView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
+ 	                mContext.sendBroadcast(toggleWidgets);
+ 	                 return true;
         	} else if (mLongpress.equals(ACTION_RECENTS)) {
         		try {
                     mBarService.toggleRecentApps();

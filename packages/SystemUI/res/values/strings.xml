@@ -396,5 +396,7 @@
     <string name="recent_apps_title">Recent apps</string>
 
      <string name="toggle_navbar">Toggle NavBar</string>
+
+    <string name="widgets">Widgets</string>
     
 </resources>
