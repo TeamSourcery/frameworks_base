@@ -87,7 +87,6 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
     private final static int EVENT_PLAYSTATUS_CHANGED = 0x1;
     private final static int EVENT_TRACK_CHANGED = 0x2;
 
-    
     private final static String DEFAULT_METADATA_STRING = "Unknown";
     private final static String DEFAULT_METADATA_NUMBER = "0";
 
@@ -111,8 +110,6 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            BluetoothDevice device =
-                    intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                                                BluetoothAdapter.ERROR);
@@ -126,6 +123,8 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
                 }
             } else if (action.equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) {
                 synchronized (this) {
+                    BluetoothDevice device =
+                    intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if (mAudioDevices.containsKey(device)) {
                         int state = mAudioDevices.get(device);
                         handleSinkStateChange(device, state, BluetoothA2dp.STATE_DISCONNECTED);
@@ -147,11 +146,11 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
                             avrcpVolumeUpNative(path);
                         } else if (newVolLevel < oldVolLevel) {
                             avrcpVolumeDownNative(path);
-                       }
+                        }
                     }
                 }
             } else if (metachanged_intents.contains(action)) {
-               try {
+                try {
                     if(DBG) {
                         Log.d(TAG, "action: " + action);
 
@@ -168,7 +167,7 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
                             }
                         }
                     }
-               
+
                     // check if there are special extra keys that we will use
                     if (has_special_extra_keys.contains(action)) {
                         if (special_extra_keys.containsKey(action + "_track")) {
@@ -193,7 +192,7 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
                         }
 
                         long extra;
-                         if (special_extra_keys.containsKey(action + "_id")){
+                        if (special_extra_keys.containsKey(action + "_id")){
                             extra = intent.getLongExtra(special_extra_keys.get(action + "_id"), 0);
                         }
                         else {
@@ -212,9 +211,9 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
                             extra = 0;
                         mMediaNumber = String.valueOf(extra);
                     }
-                    
+
                     if (mTrackName == null)
- 	 	        mTrackName = DEFAULT_METADATA_STRING;
+                        mTrackName = DEFAULT_METADATA_STRING;
                     if (mArtistName == null)
                         mArtistName = DEFAULT_METADATA_STRING;
                     if (mAlbumName == null)
@@ -224,6 +223,7 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
                     if (extra < 0)
                         extra = 0;
                     mMediaCount = String.valueOf(extra);
+
                     extra = intent.getLongExtra("duration", 0);
                     if (extra < 0)
                         extra = 0;
@@ -348,14 +348,14 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
 
                     int state = intent.getIntExtra("state", 2);
 
-                   if ((state == 0) || (state == 1))
+                    if ((state == 0) || (state == 1))
                         playStatusState = true;
                     else
                         playStatusState = false;
 
-                boolean playStatus = playStatusPlaying || playStatusPlaystate || playStatusState;
+                    boolean playStatus = playStatusPlaying || playStatusPlaystate || playStatusState;
 
-                mPosition = intent.getLongExtra("position", 0);
+                    mPosition = intent.getLongExtra("position", 0);
                     if (mPosition < 0)
                         mPosition = 0;
                     mPlayStatus = convertedPlayStatus(playStatus, mPosition);
@@ -392,12 +392,12 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
     private synchronized void sendMetaData(String path) {
         if(DBG) {
             Log.d(TAG, "sendMetaData "+ path);
-            }
+        }
         sendMetaDataNative(path);
     }
 
     private synchronized void sendEvent(String path, int eventId, long data) {
-         if(DBG)
+        if(DBG)
             Log.d(TAG, "sendEvent "+path+ " data "+ data);
         sendEventNative(path, eventId, data);
     }
@@ -452,7 +452,7 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
         mIntentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         mIntentFilter.addAction(AudioManager.VOLUME_CHANGED_ACTION);
 
-         Resources res = mContext.getResources();
+        Resources res = mContext.getResources();
         try {
             /* AVRCP 1.3 Intents */
             metachanged_intents = Arrays.asList(res.getStringArray(R.array.avrcp_meta_changed_intents));
@@ -569,7 +569,7 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
                     }
                 }
         }
-         mAudioManager.setParameters(BLUETOOTH_ENABLED + "=true");
+        mAudioManager.setParameters(BLUETOOTH_ENABLED + "=true");
         mAudioManager.setParameters("A2dpSuspended=false");
     }
 
@@ -719,7 +719,7 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
     public synchronized boolean suspendSink(BluetoothDevice device) {
         mContext.enforceCallingOrSelfPermission(BLUETOOTH_ADMIN_PERM,
                             "Need BLUETOOTH_ADMIN permission");
-       if (DBG) log("suspendSink(" + device + "), mTargetA2dpState: "+ mTargetA2dpState);
+        if (DBG) log("suspendSink(" + device + "), mTargetA2dpState: "+ mTargetA2dpState);
         if (device == null || mAudioDevices == null) {
             return false;
         }
@@ -893,7 +893,7 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
 
             if (DBG) log("A2DP state : device: " + device + " State:" + prevState + "->" + state);
 
-             mBluetoothService.sendConnectionStateChange(device, BluetoothProfile.A2DP, state,
+            mBluetoothService.sendConnectionStateChange(device, BluetoothProfile.A2DP, state,
                                                         prevState);
         }
         if (prevState == BluetoothA2dp.STATE_CONNECTING &&
@@ -904,7 +904,6 @@ public class BluetoothA2dpService extends IBluetoothA2dp.Stub {
             }
         }
     }
-
 
     private void handleSinkPlayingStateChange(BluetoothDevice device, int state, int prevState) {
         Intent intent = new Intent(BluetoothA2dp.ACTION_PLAYING_STATE_CHANGED);

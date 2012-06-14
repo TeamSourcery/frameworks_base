@@ -2101,6 +2101,26 @@ public final class Settings {
          */
         public static final String POINTER_SPEED = "pointer_speed";
 
+        /**
+        * Carrier Text MIUI Styles
+        * 0 = off, 1 = stock carrier, 2 = custom carrier
+        * @hide
+        */
+        public static final String TOP_CARRIER_LABEL = "top_carrier_label";
+	 	
+        /**
+        * Carrier Text MIUI Styles Color
+        * @hide
+        */
+        public static final String TOP_CARRIER_LABEL_COLOR = "top_carrier_label_color";
+
+        /**
+         * Custom Carrier text on the systemui.
+         * 
+         * @hide
+         */
+        public static final String CUSTOM_CARRIER_TEXT = "custom_carrier_text";
+
         
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
