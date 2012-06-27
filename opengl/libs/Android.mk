@@ -79,7 +79,9 @@ endif
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES := GLES_CM/gl.cpp.arm
+LOCAL_SRC_FILES := \
+  GLES_CM/gl.cpp.arm \
+#
 
 LOCAL_SHARED_LIBRARIES += libcutils libEGL
 LOCAL_CFLAGS += $(FLTO_FLAG) -ffast-math
@@ -110,7 +112,9 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES := GLES2/gl2.cpp.arm
+LOCAL_SRC_FILES := \
+  GLES2/gl2.cpp.arm \
+#
 
 LOCAL_CFLAGS += $(FLTO_FLAG) -ffast-math
 LOCAL_SHARED_LIBRARIES += libcutils libEGL
@@ -140,7 +144,9 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES := ETC1/etc1.cpp
+LOCAL_SRC_FILES := \
+  ETC1/etc1.cpp \
+#
 
 LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE:= libETC1
@@ -153,7 +159,9 @@ include $(BUILD_HOST_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES := ETC1/etc1.cpp
+LOCAL_SRC_FILES :=  \
+  ETC1/etc1.cpp \
+#
 
 LOCAL_CFLAGS += $(FLTO_FLAG) -ffast-math
 LOCAL_LDLIBS := $(FLTO_FLAG) -lpthread -ldl
