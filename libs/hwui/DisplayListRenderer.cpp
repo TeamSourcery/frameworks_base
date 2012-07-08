@@ -221,7 +221,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
         indent[i] = ' ';
     }
     indent[count] = '\0';
-    LOGD("%sStart display list (%p)", (char*) indent + 2, this);
+    ALOGD("%sStart display list (%p)", (char*) indent + 2, this);
 
     int saveCount = renderer.getSaveCount() - 1;
 
@@ -233,21 +233,21 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
         switch (op) {
             case DrawGLFunction: {
                 Functor *functor = (Functor *) getInt();
-                LOGD("%s%s %p", (char*) indent, OP_NAMES[op], functor);
+                ALOGD("%s%s %p", (char*) indent, OP_NAMES[op], functor);
             }
             break;
             case Save: {
                 int rendererNum = getInt();
-                LOGD("%s%s %d", (char*) indent, OP_NAMES[op], rendererNum);
+                ALOGD("%s%s %d", (char*) indent, OP_NAMES[op], rendererNum);
             }
             break;
             case Restore: {
-                LOGD("%s%s", (char*) indent, OP_NAMES[op]);
+                ALOGD("%s%s", (char*) indent, OP_NAMES[op]);
             }
             break;
             case RestoreToCount: {
                 int restoreCount = saveCount + getInt();
-                LOGD("%s%s %d", (char*) indent, OP_NAMES[op], restoreCount);
+                ALOGD("%s%s %d", (char*) indent, OP_NAMES[op], restoreCount);
             }
             break;
             case SaveLayer: {
@@ -257,7 +257,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f4 = getFloat();
                 SkPaint* paint = getPaint();
                 int flags = getInt();
-                LOGD("%s%s %.2f, %.2f, %.2f, %.2f, %p, 0x%x", (char*) indent,
+                ALOGD("%s%s %.2f, %.2f, %.2f, %.2f, %p, 0x%x", (char*) indent,
                     OP_NAMES[op], f1, f2, f3, f4, paint, flags);
             }
             break;
@@ -268,41 +268,41 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f4 = getFloat();
                 int alpha = getInt();
                 int flags = getInt();
-                LOGD("%s%s %.2f, %.2f, %.2f, %.2f, %d, 0x%x", (char*) indent,
+                ALOGD("%s%s %.2f, %.2f, %.2f, %.2f, %d, 0x%x", (char*) indent,
                     OP_NAMES[op], f1, f2, f3, f4, alpha, flags);
             }
             break;
             case Translate: {
                 float f1 = getFloat();
                 float f2 = getFloat();
-                LOGD("%s%s %.2f, %.2f", (char*) indent, OP_NAMES[op], f1, f2);
+                ALOGD("%s%s %.2f, %.2f", (char*) indent, OP_NAMES[op], f1, f2);
             }
             break;
             case Rotate: {
                 float rotation = getFloat();
-                LOGD("%s%s %.2f", (char*) indent, OP_NAMES[op], rotation);
+                ALOGD("%s%s %.2f", (char*) indent, OP_NAMES[op], rotation);
             }
             break;
             case Scale: {
                 float sx = getFloat();
                 float sy = getFloat();
-                LOGD("%s%s %.2f, %.2f", (char*) indent, OP_NAMES[op], sx, sy);
+                ALOGD("%s%s %.2f, %.2f", (char*) indent, OP_NAMES[op], sx, sy);
             }
             break;
             case Skew: {
                 float sx = getFloat();
                 float sy = getFloat();
-                LOGD("%s%s %.2f, %.2f", (char*) indent, OP_NAMES[op], sx, sy);
+                ALOGD("%s%s %.2f, %.2f", (char*) indent, OP_NAMES[op], sx, sy);
             }
             break;
             case SetMatrix: {
                 SkMatrix* matrix = getMatrix();
-                LOGD("%s%s %p", (char*) indent, OP_NAMES[op], matrix);
+                ALOGD("%s%s %p", (char*) indent, OP_NAMES[op], matrix);
             }
             break;
             case ConcatMatrix: {
                 SkMatrix* matrix = getMatrix();
-                LOGD("%s%s %p", (char*) indent, OP_NAMES[op], matrix);
+                ALOGD("%s%s %p", (char*) indent, OP_NAMES[op], matrix);
             }
             break;
             case ClipRect: {
@@ -311,7 +311,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f3 = getFloat();
                 float f4 = getFloat();
                 int regionOp = getInt();
-                LOGD("%s%s %.2f, %.2f, %.2f, %.2f, %d", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %.2f, %.2f, %.2f, %.2f, %d", (char*) indent, OP_NAMES[op],
                     f1, f2, f3, f4, regionOp);
             }
             break;
@@ -319,7 +319,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 DisplayList* displayList = getDisplayList();
                 uint32_t width = getUInt();
                 uint32_t height = getUInt();
-                LOGD("%s%s %p, %dx%d, %d", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %p, %dx%d, %d", (char*) indent, OP_NAMES[op],
                     displayList, width, height, level + 1);
                 renderer.outputDisplayList(displayList, level + 1);
             }
@@ -329,7 +329,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float x = getFloat();
                 float y = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %p, %.2f, %.2f, %p", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %p, %.2f, %.2f, %p", (char*) indent, OP_NAMES[op],
                     layer, x, y, paint);
             }
             break;
@@ -338,7 +338,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float x = getFloat();
                 float y = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %p, %.2f, %.2f, %p", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %p, %.2f, %.2f, %p", (char*) indent, OP_NAMES[op],
                     bitmap, x, y, paint);
             }
             break;
@@ -346,7 +346,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 SkBitmap* bitmap = getBitmap();
                 SkMatrix* matrix = getMatrix();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %p, %p, %p", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %p, %p, %p", (char*) indent, OP_NAMES[op],
                     bitmap, matrix, paint);
             }
             break;
@@ -361,7 +361,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f7 = getFloat();
                 float f8 = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %p, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %p",
+                ALOGD("%s%s %p, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %p",
                     (char*) indent, OP_NAMES[op], bitmap, f1, f2, f3, f4, f5, f6, f7, f8, paint);
             }
             break;
@@ -375,7 +375,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 bool hasColors = getInt();
                 int* colors = hasColors ? getInts(colorsCount) : NULL;
                 SkPaint* paint = getPaint();
-                LOGD("%s%s", (char*) indent, OP_NAMES[op]);
+                ALOGD("%s%s", (char*) indent, OP_NAMES[op]);
             }
             break;
             case DrawPatch: {
@@ -394,14 +394,14 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float right = getFloat();
                 float bottom = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %.2f, %.2f, %.2f, %.2f", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %.2f, %.2f, %.2f, %.2f", (char*) indent, OP_NAMES[op],
                         left, top, right, bottom);
             }
             break;
             case DrawColor: {
                 int color = getInt();
                 int xferMode = getInt();
-                LOGD("%s%s 0x%x %d", (char*) indent, OP_NAMES[op], color, xferMode);
+                ALOGD("%s%s 0x%x %d", (char*) indent, OP_NAMES[op], color, xferMode);
             }
             break;
             case DrawRect: {
@@ -410,7 +410,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f3 = getFloat();
                 float f4 = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %.2f, %.2f, %.2f, %.2f, %p", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %.2f, %.2f, %.2f, %.2f, %p", (char*) indent, OP_NAMES[op],
                     f1, f2, f3, f4, paint);
             }
             break;
@@ -422,7 +422,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f5 = getFloat();
                 float f6 = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %p",
+                ALOGD("%s%s %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %p",
                     (char*) indent, OP_NAMES[op], f1, f2, f3, f4, f5, f6, paint);
             }
             break;
@@ -431,7 +431,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f2 = getFloat();
                 float f3 = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %.2f, %.2f, %.2f, %p",
+                ALOGD("%s%s %.2f, %.2f, %.2f, %p",
                     (char*) indent, OP_NAMES[op], f1, f2, f3, paint);
             }
             break;
@@ -441,7 +441,7 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f3 = getFloat();
                 float f4 = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %.2f, %.2f, %.2f, %.2f, %p",
+                ALOGD("%s%s %.2f, %.2f, %.2f, %.2f, %p",
                     (char*) indent, OP_NAMES[op], f1, f2, f3, f4, paint);
             }
             break;
@@ -454,28 +454,28 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float f6 = getFloat();
                 int i1 = getInt();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %d, %p",
+                ALOGD("%s%s %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %d, %p",
                     (char*) indent, OP_NAMES[op], f1, f2, f3, f4, f5, f6, i1, paint);
             }
             break;
             case DrawPath: {
                 SkPath* path = getPath();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %p, %p", (char*) indent, OP_NAMES[op], path, paint);
+                ALOGD("%s%s %p, %p", (char*) indent, OP_NAMES[op], path, paint);
             }
             break;
             case DrawLines: {
                 int count = 0;
                 float* points = getFloats(count);
                 SkPaint* paint = getPaint();
-                LOGD("%s%s", (char*) indent, OP_NAMES[op]);
+                ALOGD("%s%s", (char*) indent, OP_NAMES[op]);
             }
             break;
             case DrawPoints: {
                 int count = 0;
                 float* points = getFloats(count);
                 SkPaint* paint = getPaint();
-                LOGD("%s%s", (char*) indent, OP_NAMES[op]);
+                ALOGD("%s%s", (char*) indent, OP_NAMES[op]);
             }
             break;
             case DrawText: {
@@ -484,30 +484,30 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float x = getFloat();
                 float y = getFloat();
                 SkPaint* paint = getPaint();
-                LOGD("%s%s %s, %d, %d, %.2f, %.2f, %p", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %s, %d, %d, %.2f, %.2f, %p", (char*) indent, OP_NAMES[op],
                     text.text(), text.length(), count, x, y, paint);
             }
             break;
             case ResetShader: {
-                LOGD("%s%s", (char*) indent, OP_NAMES[op]);
+                ALOGD("%s%s", (char*) indent, OP_NAMES[op]);
             }
             break;
             case SetupShader: {
                 SkiaShader* shader = getShader();
-                LOGD("%s%s %p", (char*) indent, OP_NAMES[op], shader);
+                ALOGD("%s%s %p", (char*) indent, OP_NAMES[op], shader);
             }
             break;
             case ResetColorFilter: {
-                LOGD("%s%s", (char*) indent, OP_NAMES[op]);
+                ALOGD("%s%s", (char*) indent, OP_NAMES[op]);
             }
             break;
             case SetupColorFilter: {
                 SkiaColorFilter *colorFilter = getColorFilter();
-                LOGD("%s%s %p", (char*) indent, OP_NAMES[op], colorFilter);
+                ALOGD("%s%s %p", (char*) indent, OP_NAMES[op], colorFilter);
             }
             break;
             case ResetShadow: {
-                LOGD("%s%s", (char*) indent, OP_NAMES[op]);
+                ALOGD("%s%s", (char*) indent, OP_NAMES[op]);
             }
             break;
             case SetupShadow: {
@@ -515,18 +515,18 @@ void DisplayList::output(OpenGLRenderer& renderer, uint32_t level) {
                 float dx = getFloat();
                 float dy = getFloat();
                 int color = getInt();
-                LOGD("%s%s %.2f, %.2f, %.2f, 0x%x", (char*) indent, OP_NAMES[op],
+                ALOGD("%s%s %.2f, %.2f, %.2f, 0x%x", (char*) indent, OP_NAMES[op],
                     radius, dx, dy, color);
             }
             break;
             default:
-                LOGD("Display List error: op not handled: %s%s",
+                ALOGD("Display List error: op not handled: %s%s",
                     (char*) indent, OP_NAMES[op]);
                 break;
         }
     }
 
-    LOGD("%sDone", (char*) indent + 2);
+    ALOGD("%sDone", (char*) indent + 2);
 }
 
 /**

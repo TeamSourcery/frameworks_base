@@ -310,8 +310,6 @@ public class ImageWallpaper extends WallpaperService {
             mLastXTranslation = xPixels;
             mLastYTranslation = yPixels;
 
-           
-
             if (mIsHwAccelerated) {
                 if (!drawWallpaperWithOpenGL(sh, availw, availh, xPixels, yPixels)) {
                     drawWallpaperWithCanvas(sh, availw, availh, xPixels, yPixels);

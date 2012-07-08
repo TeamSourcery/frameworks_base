@@ -111,7 +111,7 @@ static void clearDecryptHandle(DecryptHandle* handle) {
 }
 
 int BpDrmManagerService::addUniqueId(bool isNative) {
-    LOGV("add uniqueid");
+    ALOGV("add uniqueid");
     Parcel data, reply;
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
     data.writeInt32(isNative);
@@ -120,7 +120,7 @@ int BpDrmManagerService::addUniqueId(bool isNative) {
 }
 
 void BpDrmManagerService::removeUniqueId(int uniqueId) {
-    LOGV("remove uniqueid");
+    ALOGV("remove uniqueid");
     Parcel data, reply;
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
     data.writeInt32(uniqueId);
@@ -143,7 +143,7 @@ void BpDrmManagerService::removeClient(int uniqueId) {
 
 status_t BpDrmManagerService::setDrmServiceListener(
             int uniqueId, const sp<IDrmServiceListener>& drmServiceListener) {
-    LOGV("setDrmServiceListener");
+    ALOGV("setDrmServiceListener");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -154,7 +154,7 @@ status_t BpDrmManagerService::setDrmServiceListener(
 }
 
 status_t BpDrmManagerService::installDrmEngine(int uniqueId, const String8& drmEngineFile) {
-    LOGV("Install DRM Engine");
+    ALOGV("Install DRM Engine");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -167,7 +167,7 @@ status_t BpDrmManagerService::installDrmEngine(int uniqueId, const String8& drmE
 
 DrmConstraints* BpDrmManagerService::getConstraints(
             int uniqueId, const String8* path, const int action) {
-    LOGV("Get Constraints");
+    ALOGV("Get Constraints");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -198,7 +198,7 @@ DrmConstraints* BpDrmManagerService::getConstraints(
 }
 
 DrmMetadata* BpDrmManagerService::getMetadata(int uniqueId, const String8* path) {
-    LOGV("Get Metadata");
+    ALOGV("Get Metadata");
     Parcel data, reply;
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
     data.writeInt32(uniqueId);
@@ -227,7 +227,7 @@ DrmMetadata* BpDrmManagerService::getMetadata(int uniqueId, const String8* path)
 }
 
 bool BpDrmManagerService::canHandle(int uniqueId, const String8& path, const String8& mimeType) {
-    LOGV("Can Handle");
+    ALOGV("Can Handle");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -242,7 +242,7 @@ bool BpDrmManagerService::canHandle(int uniqueId, const String8& path, const Str
 }
 
 DrmInfoStatus* BpDrmManagerService::processDrmInfo(int uniqueId, const DrmInfo* drmInfo) {
-    LOGV("Process DRM Info");
+    ALOGV("Process DRM Info");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -293,7 +293,7 @@ DrmInfoStatus* BpDrmManagerService::processDrmInfo(int uniqueId, const DrmInfo* 
 }
 
 DrmInfo* BpDrmManagerService::acquireDrmInfo(int uniqueId, const DrmInfoRequest* drmInforequest) {
-    LOGV("Acquire DRM Info");
+    ALOGV("Acquire DRM Info");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -341,7 +341,7 @@ DrmInfo* BpDrmManagerService::acquireDrmInfo(int uniqueId, const DrmInfoRequest*
 status_t BpDrmManagerService::saveRights(
             int uniqueId, const DrmRights& drmRights,
             const String8& rightsPath, const String8& contentPath) {
-    LOGV("Save Rights");
+    ALOGV("Save Rights");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -369,7 +369,7 @@ status_t BpDrmManagerService::saveRights(
 }
 
 String8 BpDrmManagerService::getOriginalMimeType(int uniqueId, const String8& path) {
-    LOGV("Get Original MimeType");
+    ALOGV("Get Original MimeType");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -382,7 +382,7 @@ String8 BpDrmManagerService::getOriginalMimeType(int uniqueId, const String8& pa
 
 int BpDrmManagerService::getDrmObjectType(
             int uniqueId, const String8& path, const String8& mimeType) {
-    LOGV("Get Drm object type");
+    ALOGV("Get Drm object type");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -396,7 +396,7 @@ int BpDrmManagerService::getDrmObjectType(
 }
 
 int BpDrmManagerService::checkRightsStatus(int uniqueId, const String8& path, int action) {
-    LOGV("checkRightsStatus");
+    ALOGV("checkRightsStatus");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -411,7 +411,7 @@ int BpDrmManagerService::checkRightsStatus(int uniqueId, const String8& path, in
 
 status_t BpDrmManagerService::consumeRights(
             int uniqueId, DecryptHandle* decryptHandle, int action, bool reserve) {
-    LOGV("consumeRights");
+    ALOGV("consumeRights");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -428,7 +428,7 @@ status_t BpDrmManagerService::consumeRights(
 
 status_t BpDrmManagerService::setPlaybackStatus(
             int uniqueId, DecryptHandle* decryptHandle, int playbackStatus, int64_t position) {
-    LOGV("setPlaybackStatus");
+    ALOGV("setPlaybackStatus");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -446,7 +446,7 @@ status_t BpDrmManagerService::setPlaybackStatus(
 bool BpDrmManagerService::validateAction(
             int uniqueId, const String8& path,
             int action, const ActionDescription& description) {
-    LOGV("validateAction");
+    ALOGV("validateAction");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -462,7 +462,7 @@ bool BpDrmManagerService::validateAction(
 }
 
 status_t BpDrmManagerService::removeRights(int uniqueId, const String8& path) {
-    LOGV("removeRights");
+    ALOGV("removeRights");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -474,7 +474,7 @@ status_t BpDrmManagerService::removeRights(int uniqueId, const String8& path) {
 }
 
 status_t BpDrmManagerService::removeAllRights(int uniqueId) {
-    LOGV("removeAllRights");
+    ALOGV("removeAllRights");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -485,7 +485,7 @@ status_t BpDrmManagerService::removeAllRights(int uniqueId) {
 }
 
 int BpDrmManagerService::openConvertSession(int uniqueId, const String8& mimeType) {
-    LOGV("openConvertSession");
+    ALOGV("openConvertSession");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -498,7 +498,7 @@ int BpDrmManagerService::openConvertSession(int uniqueId, const String8& mimeTyp
 
 DrmConvertedStatus* BpDrmManagerService::convertData(
             int uniqueId, int convertId, const DrmBuffer* inputData) {
-    LOGV("convertData");
+    ALOGV("convertData");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -532,7 +532,7 @@ DrmConvertedStatus* BpDrmManagerService::convertData(
 }
 
 DrmConvertedStatus* BpDrmManagerService::closeConvertSession(int uniqueId, int convertId) {
-    LOGV("closeConvertSession");
+    ALOGV("closeConvertSession");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -565,7 +565,7 @@ DrmConvertedStatus* BpDrmManagerService::closeConvertSession(int uniqueId, int c
 
 status_t BpDrmManagerService::getAllSupportInfo(
             int uniqueId, int* length, DrmSupportInfo** drmSupportInfoArray) {
-    LOGV("Get All Support Info");
+    ALOGV("Get All Support Info");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -601,7 +601,7 @@ status_t BpDrmManagerService::getAllSupportInfo(
 
 DecryptHandle* BpDrmManagerService::openDecryptSession(
             int uniqueId, int fd, off64_t offset, off64_t length) {
-    LOGV("Entering BpDrmManagerService::openDecryptSession");
+    ALOGV("Entering BpDrmManagerService::openDecryptSession");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -621,7 +621,7 @@ DecryptHandle* BpDrmManagerService::openDecryptSession(
 }
 
 DecryptHandle* BpDrmManagerService::openDecryptSession(int uniqueId, const char* uri) {
-    LOGV("Entering BpDrmManagerService::openDecryptSession");
+    ALOGV("Entering BpDrmManagerService::openDecryptSession");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -635,13 +635,40 @@ DecryptHandle* BpDrmManagerService::openDecryptSession(int uniqueId, const char*
         handle = new DecryptHandle();
         readDecryptHandleFromParcelData(handle, reply);
     } else {
-        LOGV("no decryptHandle is generated in service side");
+        ALOGV("no decryptHandle is generated in service side");
+    }
+    return handle;
+}
+
+DecryptHandle* BpDrmManagerService::openDecryptSession(
+            int uniqueId, const DrmBuffer& buf, const String8& mimeType) {
+    ALOGV("Entering BpDrmManagerService::openDecryptSession");
+    Parcel data, reply;
+
+    data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
+    data.writeInt32(uniqueId);
+    if (buf.data != NULL && buf.length > 0) {
+        data.writeInt32(buf.length);
+        data.write(buf.data, buf.length);
+    } else {
+        data.writeInt32(0);
+    }
+    data.writeString8(mimeType);
+
+    remote()->transact(OPEN_DECRYPT_SESSION_FOR_STREAMING, data, &reply);
+
+    DecryptHandle* handle = NULL;
+    if (0 != reply.dataAvail()) {
+        handle = new DecryptHandle();
+        readDecryptHandleFromParcelData(handle, reply);
+    } else {
+        ALOGV("no decryptHandle is generated in service side");
     }
     return handle;
 }
 
 status_t BpDrmManagerService::closeDecryptSession(int uniqueId, DecryptHandle* decryptHandle) {
-    LOGV("closeDecryptSession");
+    ALOGV("closeDecryptSession");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -657,7 +684,7 @@ status_t BpDrmManagerService::closeDecryptSession(int uniqueId, DecryptHandle* d
 status_t BpDrmManagerService::initializeDecryptUnit(
             int uniqueId, DecryptHandle* decryptHandle,
             int decryptUnitId, const DrmBuffer* headerInfo) {
-    LOGV("initializeDecryptUnit");
+    ALOGV("initializeDecryptUnit");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -677,7 +704,7 @@ status_t BpDrmManagerService::initializeDecryptUnit(
 status_t BpDrmManagerService::decrypt(
             int uniqueId, DecryptHandle* decryptHandle, int decryptUnitId,
             const DrmBuffer* encBuffer, DrmBuffer** decBuffer, DrmBuffer* IV) {
-    LOGV("decrypt");
+    ALOGV("decrypt");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -699,7 +726,7 @@ status_t BpDrmManagerService::decrypt(
     remote()->transact(DECRYPT, data, &reply);
 
     const status_t status = reply.readInt32();
-    LOGV("Return value of decrypt() is %d", status);
+    ALOGV("Return value of decrypt() is %d", status);
 
     const int size = reply.readInt32();
     (*decBuffer)->length = size;
@@ -710,7 +737,7 @@ status_t BpDrmManagerService::decrypt(
 
 status_t BpDrmManagerService::finalizeDecryptUnit(
             int uniqueId, DecryptHandle* decryptHandle, int decryptUnitId) {
-    LOGV("finalizeDecryptUnit");
+    ALOGV("finalizeDecryptUnit");
     Parcel data, reply;
 
     data.writeInterfaceToken(IDrmManagerService::getInterfaceDescriptor());
@@ -727,7 +754,7 @@ status_t BpDrmManagerService::finalizeDecryptUnit(
 ssize_t BpDrmManagerService::pread(
             int uniqueId, DecryptHandle* decryptHandle, void* buffer,
             ssize_t numBytes, off64_t offset) {
-    LOGV("read");
+    ALOGV("read");
     Parcel data, reply;
     int result;
 
@@ -752,12 +779,12 @@ IMPLEMENT_META_INTERFACE(DrmManagerService, "drm.IDrmManagerService");
 status_t BnDrmManagerService::onTransact(
             uint32_t code, const Parcel& data,
             Parcel* reply, uint32_t flags) {
-    LOGV("Entering BnDrmManagerService::onTransact with code %d", code);
+    ALOGV("Entering BnDrmManagerService::onTransact with code %d", code);
 
     switch (code) {
     case ADD_UNIQUEID:
     {
-        LOGV("BnDrmManagerService::onTransact :ADD_UNIQUEID");
+        ALOGV("BnDrmManagerService::onTransact :ADD_UNIQUEID");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
         int uniqueId = addUniqueId(data.readInt32());
         reply->writeInt32(uniqueId);
@@ -766,7 +793,7 @@ status_t BnDrmManagerService::onTransact(
 
     case REMOVE_UNIQUEID:
     {
-        LOGV("BnDrmManagerService::onTransact :REMOVE_UNIQUEID");
+        ALOGV("BnDrmManagerService::onTransact :REMOVE_UNIQUEID");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
         removeUniqueId(data.readInt32());
         return DRM_NO_ERROR;
@@ -774,7 +801,7 @@ status_t BnDrmManagerService::onTransact(
 
     case ADD_CLIENT:
     {
-        LOGV("BnDrmManagerService::onTransact :ADD_CLIENT");
+        ALOGV("BnDrmManagerService::onTransact :ADD_CLIENT");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
         addClient(data.readInt32());
         return DRM_NO_ERROR;
@@ -782,7 +809,7 @@ status_t BnDrmManagerService::onTransact(
 
     case REMOVE_CLIENT:
     {
-        LOGV("BnDrmManagerService::onTransact :REMOVE_CLIENT");
+        ALOGV("BnDrmManagerService::onTransact :REMOVE_CLIENT");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
         removeClient(data.readInt32());
         return DRM_NO_ERROR;
@@ -790,7 +817,7 @@ status_t BnDrmManagerService::onTransact(
 
     case SET_DRM_SERVICE_LISTENER:
     {
-        LOGV("BnDrmManagerService::onTransact :SET_DRM_SERVICE_LISTENER");
+        ALOGV("BnDrmManagerService::onTransact :SET_DRM_SERVICE_LISTENER");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -805,7 +832,7 @@ status_t BnDrmManagerService::onTransact(
 
     case INSTALL_DRM_ENGINE:
     {
-        LOGV("BnDrmManagerService::onTransact :INSTALL_DRM_ENGINE");
+        ALOGV("BnDrmManagerService::onTransact :INSTALL_DRM_ENGINE");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -818,7 +845,7 @@ status_t BnDrmManagerService::onTransact(
 
     case GET_CONSTRAINTS_FROM_CONTENT:
     {
-        LOGV("BnDrmManagerService::onTransact :GET_CONSTRAINTS_FROM_CONTENT");
+        ALOGV("BnDrmManagerService::onTransact :GET_CONSTRAINTS_FROM_CONTENT");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -850,7 +877,7 @@ status_t BnDrmManagerService::onTransact(
 
     case GET_METADATA_FROM_CONTENT:
     {
-        LOGV("BnDrmManagerService::onTransact :GET_METADATA_FROM_CONTENT");
+        ALOGV("BnDrmManagerService::onTransact :GET_METADATA_FROM_CONTENT");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -882,7 +909,7 @@ status_t BnDrmManagerService::onTransact(
 
     case CAN_HANDLE:
     {
-        LOGV("BnDrmManagerService::onTransact :CAN_HANDLE");
+        ALOGV("BnDrmManagerService::onTransact :CAN_HANDLE");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -897,7 +924,7 @@ status_t BnDrmManagerService::onTransact(
 
     case PROCESS_DRM_INFO:
     {
-        LOGV("BnDrmManagerService::onTransact :PROCESS_DRM_INFO");
+        ALOGV("BnDrmManagerService::onTransact :PROCESS_DRM_INFO");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -945,7 +972,7 @@ status_t BnDrmManagerService::onTransact(
 
     case ACQUIRE_DRM_INFO:
     {
-        LOGV("BnDrmManagerService::onTransact :ACQUIRE_DRM_INFO");
+        ALOGV("BnDrmManagerService::onTransact :ACQUIRE_DRM_INFO");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -993,7 +1020,7 @@ status_t BnDrmManagerService::onTransact(
 
     case SAVE_RIGHTS:
     {
-        LOGV("BnDrmManagerService::onTransact :SAVE_RIGHTS");
+        ALOGV("BnDrmManagerService::onTransact :SAVE_RIGHTS");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1023,7 +1050,7 @@ status_t BnDrmManagerService::onTransact(
 
     case GET_ORIGINAL_MIMETYPE:
     {
-        LOGV("BnDrmManagerService::onTransact :GET_ORIGINAL_MIMETYPE");
+        ALOGV("BnDrmManagerService::onTransact :GET_ORIGINAL_MIMETYPE");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1036,7 +1063,7 @@ status_t BnDrmManagerService::onTransact(
 
     case GET_DRM_OBJECT_TYPE:
     {
-        LOGV("BnDrmManagerService::onTransact :GET_DRM_OBJECT_TYPE");
+        ALOGV("BnDrmManagerService::onTransact :GET_DRM_OBJECT_TYPE");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1050,7 +1077,7 @@ status_t BnDrmManagerService::onTransact(
 
     case CHECK_RIGHTS_STATUS:
     {
-        LOGV("BnDrmManagerService::onTransact :CHECK_RIGHTS_STATUS");
+        ALOGV("BnDrmManagerService::onTransact :CHECK_RIGHTS_STATUS");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1064,7 +1091,7 @@ status_t BnDrmManagerService::onTransact(
 
     case CONSUME_RIGHTS:
     {
-        LOGV("BnDrmManagerService::onTransact :CONSUME_RIGHTS");
+        ALOGV("BnDrmManagerService::onTransact :CONSUME_RIGHTS");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1084,7 +1111,7 @@ status_t BnDrmManagerService::onTransact(
 
     case SET_PLAYBACK_STATUS:
     {
-        LOGV("BnDrmManagerService::onTransact :SET_PLAYBACK_STATUS");
+        ALOGV("BnDrmManagerService::onTransact :SET_PLAYBACK_STATUS");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1104,7 +1131,7 @@ status_t BnDrmManagerService::onTransact(
 
     case VALIDATE_ACTION:
     {
-        LOGV("BnDrmManagerService::onTransact :VALIDATE_ACTION");
+        ALOGV("BnDrmManagerService::onTransact :VALIDATE_ACTION");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1121,7 +1148,7 @@ status_t BnDrmManagerService::onTransact(
 
     case REMOVE_RIGHTS:
     {
-        LOGV("BnDrmManagerService::onTransact :REMOVE_RIGHTS");
+        ALOGV("BnDrmManagerService::onTransact :REMOVE_RIGHTS");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         int uniqueId = data.readInt32();
@@ -1134,7 +1161,7 @@ status_t BnDrmManagerService::onTransact(
 
     case REMOVE_ALL_RIGHTS:
     {
-        LOGV("BnDrmManagerService::onTransact :REMOVE_ALL_RIGHTS");
+        ALOGV("BnDrmManagerService::onTransact :REMOVE_ALL_RIGHTS");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const status_t status = removeAllRights(data.readInt32());
@@ -1145,7 +1172,7 @@ status_t BnDrmManagerService::onTransact(
 
     case OPEN_CONVERT_SESSION:
     {
-        LOGV("BnDrmManagerService::onTransact :OPEN_CONVERT_SESSION");
+        ALOGV("BnDrmManagerService::onTransact :OPEN_CONVERT_SESSION");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1158,7 +1185,7 @@ status_t BnDrmManagerService::onTransact(
 
     case CONVERT_DATA:
     {
-        LOGV("BnDrmManagerService::onTransact :CONVERT_DATA");
+        ALOGV("BnDrmManagerService::onTransact :CONVERT_DATA");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1193,7 +1220,7 @@ status_t BnDrmManagerService::onTransact(
 
     case CLOSE_CONVERT_SESSION:
     {
-        LOGV("BnDrmManagerService::onTransact :CLOSE_CONVERT_SESSION");
+        ALOGV("BnDrmManagerService::onTransact :CLOSE_CONVERT_SESSION");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1223,7 +1250,7 @@ status_t BnDrmManagerService::onTransact(
 
     case GET_ALL_SUPPORT_INFO:
     {
-        LOGV("BnDrmManagerService::onTransact :GET_ALL_SUPPORT_INFO");
+        ALOGV("BnDrmManagerService::onTransact :GET_ALL_SUPPORT_INFO");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1257,7 +1284,7 @@ status_t BnDrmManagerService::onTransact(
 
     case OPEN_DECRYPT_SESSION:
     {
-        LOGV("BnDrmManagerService::onTransact :OPEN_DECRYPT_SESSION");
+        ALOGV("BnDrmManagerService::onTransact :OPEN_DECRYPT_SESSION");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1278,7 +1305,7 @@ status_t BnDrmManagerService::onTransact(
 
     case OPEN_DECRYPT_SESSION_FROM_URI:
     {
-        LOGV("BnDrmManagerService::onTransact :OPEN_DECRYPT_SESSION_FROM_URI");
+        ALOGV("BnDrmManagerService::onTransact :OPEN_DECRYPT_SESSION_FROM_URI");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1292,14 +1319,38 @@ status_t BnDrmManagerService::onTransact(
             clearDecryptHandle(handle);
             delete handle; handle = NULL;
         } else {
-            LOGV("NULL decryptHandle is returned");
+            ALOGV("NULL decryptHandle is returned");
+        }
+        return DRM_NO_ERROR;
+    }
+
+    case OPEN_DECRYPT_SESSION_FOR_STREAMING:
+    {
+        ALOGV("BnDrmManagerService::onTransact :OPEN_DECRYPT_SESSION_FOR_STREAMING");
+        CHECK_INTERFACE(IDrmManagerService, data, reply);
+
+        const int uniqueId = data.readInt32();
+        const int bufferSize = data.readInt32();
+        DrmBuffer buf((bufferSize > 0) ? (char *)data.readInplace(bufferSize) : NULL,
+                bufferSize);
+        const String8 mimeType(data.readString8());
+
+        DecryptHandle* handle = openDecryptSession(uniqueId, buf, mimeType);
+
+        if (handle != NULL) {
+            writeDecryptHandleToParcelData(handle, reply);
+            clearDecryptHandle(handle);
+            delete handle;
+            handle = NULL;
+        } else {
+            ALOGV("NULL decryptHandle is returned");
         }
         return DRM_NO_ERROR;
     }
 
     case CLOSE_DECRYPT_SESSION:
     {
-        LOGV("BnDrmManagerService::onTransact :CLOSE_DECRYPT_SESSION");
+        ALOGV("BnDrmManagerService::onTransact :CLOSE_DECRYPT_SESSION");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1314,7 +1365,7 @@ status_t BnDrmManagerService::onTransact(
 
     case INITIALIZE_DECRYPT_UNIT:
     {
-        LOGV("BnDrmManagerService::onTransact :INITIALIZE_DECRYPT_UNIT");
+        ALOGV("BnDrmManagerService::onTransact :INITIALIZE_DECRYPT_UNIT");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1340,7 +1391,7 @@ status_t BnDrmManagerService::onTransact(
 
     case DECRYPT:
     {
-        LOGV("BnDrmManagerService::onTransact :DECRYPT");
+        ALOGV("BnDrmManagerService::onTransact :DECRYPT");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1384,7 +1435,7 @@ status_t BnDrmManagerService::onTransact(
 
     case FINALIZE_DECRYPT_UNIT:
     {
-        LOGV("BnDrmManagerService::onTransact :FINALIZE_DECRYPT_UNIT");
+        ALOGV("BnDrmManagerService::onTransact :FINALIZE_DECRYPT_UNIT");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
@@ -1401,7 +1452,7 @@ status_t BnDrmManagerService::onTransact(
 
     case PREAD:
     {
-        LOGV("BnDrmManagerService::onTransact :READ");
+        ALOGV("BnDrmManagerService::onTransact :READ");
         CHECK_INTERFACE(IDrmManagerService, data, reply);
 
         const int uniqueId = data.readInt32();
