@@ -25,7 +25,7 @@
     android:gravity="center_vertical"
     android:baselineAligned="false"
     >
-    <com.android.systemui.statusbar.policy.Clock
+    <com.android.systemui.statusbar.policy.ClockStock
         android:id="@+id/clock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -65,11 +65,27 @@
         android:layout_weight="1"
         />
 
-    <ImageView android:id="@+id/clear_all_button"
+    <FrameLayout
         android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:scaleType="center"
-        android:src="@drawable/ic_notify_clear"
-        android:contentDescription="@string/accessibility_clear_all"
-        />            
+        android:layout_height="48dp">
+
+
+    <TextView
+           android:id="@+id/brightness_percent"
+           android:layout_height="48dp"
+           android:layout_width="wrap_content"
+           android:layout_gravity="bottom"
+           android:gravity="bottom"
+           android:textSize="11dp"
+           android:visibility="invisible"
+            />
+        <ImageView android:id="@+id/clear_all_button"
+           android:layout_width="48dp"
+           android:layout_height="48dp"
+           android:scaleType="center"
+           android:src="@drawable/ic_notify_clear"
+           android:contentDescription="@string/accessibility_clear_all"
+        />
+    </FrameLayout>
+
 </LinearLayout>
