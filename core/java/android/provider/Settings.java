@@ -2376,6 +2376,12 @@ public final class Settings {
         public static final String STATUS_BAR_LAYOUT = "statusbar_layout";
 
         /**
+        * @hide
+        * Whether to tint a toggle to indicate it has been pressed
+        */	
+        public static final String STATUSBAR_TOGGLES_TINT_ON_CLICK = "statusbar_tint_on_click";
+
+        /**
          * @hide
          * AM/PM Style for clock options
          * 0 - Normal AM/PM
