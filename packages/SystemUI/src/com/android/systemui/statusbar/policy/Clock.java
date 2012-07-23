@@ -194,7 +194,8 @@ public class Clock extends TextView {
         
         SpannableStringBuilder formatted = new SpannableStringBuilder(result);
 
-        if (mAmPmStyle != AM_PM_STYLE_NORMAL) {
+        if (!b24) {
+         if (mAmPmStyle != AM_PM_STYLE_NORMAL) {
             if (mAmPmStyle == AM_PM_STYLE_GONE) {
                 formatted.delete(result.length() - 3, result.length());
             } else {
@@ -205,6 +206,7 @@ public class Clock extends TextView {
                 }
             }
         }
+      }
         if (mWeekdayStyle != WEEKDAY_STYLE_NORMAL) {
         	if (todayIs != null) {
         		if (mWeekdayStyle == WEEKDAY_STYLE_GONE) {
