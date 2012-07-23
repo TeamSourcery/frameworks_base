@@ -2438,6 +2438,12 @@ public final class Settings {
          */
         public static final String STATUSBAR_CLOCK_STYLE = "statusbar_clock_style";
 
+         /**
+         * 
+         * @hide
+         */
+        public static final String STATUSBAR_CLOCK_COLOR = "statusbar_clock_color";
+
         /**
          * @hide
          * Shows weekday before clock time
@@ -2531,7 +2537,7 @@ public final class Settings {
                 "navigation_custom_app_icon_4",
         };
         
-    /**
+         /**
          * Whether to show the battery bar
          * 
          * @hide

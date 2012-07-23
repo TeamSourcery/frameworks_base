@@ -118,8 +118,13 @@ public class KeyButtonView extends ImageView {
     }
     
     public void setGlowBackground(int id) {
-       /* mGlowBG = getResources().getDrawable(id);
+        mGlowBG = getResources().getDrawable(id);
         if (mGlowBG != null) {
+            setDrawingAlpha(BUTTON_QUIESCENT_ALPHA);
+            mGlowWidth = mGlowBG.getIntrinsicWidth();
+            mGlowHeight = mGlowBG.getIntrinsicHeight();
+        }
+          /* if (mGlowBG != null) {
             int defaultColor = mContext.getResources().getColor(
                     com.android.internal.R.color.holo_blue_light);
             //ContentResolver resolver = mContext.getContentResolver();

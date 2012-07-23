@@ -105,6 +105,7 @@ public class NavigationBarView extends LinearLayout {
     final static String ACTION_MENU = "**menu**";
     final static String ACTION_POWER = "**power**";
     final static String ACTION_RECENTS = "**recents**";
+    final static String ACTION_SCREENSHOT = "**screenshot**";
     final static String ACTION_KILL = "**kill**";
     final static String ACTION_NULL = "**null**";
 
@@ -880,6 +881,9 @@ public class NavigationBarView extends LinearLayout {
 
                 return getResources().getDrawable(R.drawable.ic_sysbar_power);
             }
+          } else if (uri.equals(ACTION_SCREENSHOT)) {
+ 	 	 	
+               return getResources().getDrawable(R.drawable.ic_sysbar_screenshot);
         }
 
         return getResources().getDrawable(R.drawable.ic_sysbar_null);
