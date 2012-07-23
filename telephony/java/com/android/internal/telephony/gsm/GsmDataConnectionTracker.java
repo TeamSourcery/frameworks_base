@@ -134,6 +134,8 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
     private static final String INTENT_RECONNECT_ALARM =
         "com.android.internal.telephony.gprs-reconnect";
     private static final String INTENT_RECONNECT_ALARM_EXTRA_TYPE = "reconnect_alarm_extra_type";
+    private static final String INTENT_RECONNECT_ALARM_EXTRA_RETRY_COUNT =
+        "reconnect_alaram_extra_retry_count";
 
     private static final String INTENT_DATA_STALL_ALARM =
         "com.android.internal.telephony.gprs-data-stall";
@@ -148,16 +150,23 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
 
     @Override
     protected void onActionIntentReconnectAlarm(Intent intent) {
-        if (DBG) log("GPRS reconnect alarm. Previous state was " + mState);
-
         String reason = intent.getStringExtra(INTENT_RECONNECT_ALARM_EXTRA_REASON);
         int connectionId = intent.getIntExtra(INTENT_RECONNECT_ALARM_EXTRA_TYPE, -1);
+        int retryCount = intent.getIntExtra(INTENT_RECONNECT_ALARM_EXTRA_RETRY_COUNT, 0);
 
         DataConnectionAc dcac= mDataConnectionAsyncChannels.get(connectionId);
 
+        if (DBG) {
+            log("onActionIntentReconnectAlarm: mState=" + mState + " reason=" + reason +
+                    " connectionId=" + connectionId + " retryCount=" + retryCount);
+        }
+
         if (dcac != null) {
             for (ApnContext apnContext : dcac.getApnListSync()) {
+                apnContext.setDataConnectionAc(null);
+                apnContext.setDataConnection(null);
                 apnContext.setReason(reason);
+                apnContext.setRetryCount(retryCount);
                 if (apnContext.getState() == State.FAILED) {
                     apnContext.setState(State.IDLE);
                 }
@@ -205,7 +214,6 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
         p.getContext().getContentResolver().registerContentObserver(
                 Telephony.Carriers.CONTENT_URI, true, mApnObserver);
 
-        mApnContexts = new ConcurrentHashMap<String, ApnContext>();
         initApnContextsAndDataConnection();
         broadcastMessenger();
     }
@@ -491,6 +499,12 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
             if (DBG) log("enableApnType: return APN_ALREADY_ACTIVE");
             return Phone.APN_ALREADY_ACTIVE;
         }
+        if (mPhone.mCM.needsOldRilFeature("singlepdp") && !Phone.APN_TYPE_DEFAULT.equals(apnType)) {
+            ApnContext defContext = mApnContexts.get(Phone.APN_TYPE_DEFAULT);
+            if (defContext.isEnabled()) {
+                setEnabled(apnTypeToId(Phone.APN_TYPE_DEFAULT), false);
+            }
+        }
         setEnabled(apnTypeToId(apnType), true);
         if (DBG) {
             log("enableApnType: new apn request for type " + apnType +
@@ -525,6 +539,9 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
 
         if (apnContext != null) {
             setEnabled(apnTypeToId(type), false);
+            if (mPhone.mCM.needsOldRilFeature("singlepdp") && !Phone.APN_TYPE_DEFAULT.equals(type)) {
+                setEnabled(apnTypeToId(Phone.APN_TYPE_DEFAULT), true);
+            }
             if (apnContext.getState() != State.IDLE && apnContext.getState() != State.FAILED) {
                 if (DBG) log("diableApnType: return APN_REQUEST_STARTED");
                 return Phone.APN_REQUEST_STARTED;
@@ -672,9 +689,14 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
                         break;
                     }
                 }
-                configureRetry(dcac.dataConnection, hasDefault);
+                configureRetry(dcac.dataConnection, hasDefault, 0);
             }
         }
+
+        // Be sure retry counts for Apncontexts and DC's are sync'd.
+        // When DCT/ApnContexts are refactored and we cleanup retrying
+        // this won't be needed.
+        resetAllRetryCounts();
 
         // Only check for default APN state
         for (ApnContext apnContext : mApnContexts.values()) {
@@ -1076,7 +1098,8 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
 
         // configure retry count if no other Apn is using the same connection.
         if (refCount == 0) {
-            configureRetry(dc, apn.canHandleType(Phone.APN_TYPE_DEFAULT));
+            configureRetry(dc, apn.canHandleType(Phone.APN_TYPE_DEFAULT),
+                    apnContext.getRetryCount());
         }
         apnContext.setDataConnectionAc(dcac);
         apnContext.setDataConnection(dc);
@@ -1177,6 +1200,28 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
     }
 
     /**
+     * Clear data call entries with duplicate call ids.
+     * The function will retain the first found unique call id.
+     *
+     * @param dataCalls
+     * @return unique set of dataCalls.
+     */
+    private ArrayList<DataCallState> clearDuplicates(
+            ArrayList<DataCallState> dataCalls) {
+        // clear duplicate cid's
+        ArrayList<Integer> cids = new ArrayList<Integer>();
+        ArrayList<DataCallState> uniqueCalls = new ArrayList<DataCallState>();
+        for (DataCallState dc : dataCalls) {
+            if (!cids.contains(dc.cid)) {
+                uniqueCalls.add(dc);
+                cids.add(dc.cid);
+            }
+        }
+        log("Number of DataCallStates:" + dataCalls.size() + "Unique count:" + uniqueCalls.size());
+        return uniqueCalls;
+    }
+
+    /**
      * @param ar is the result of RIL_REQUEST_DATA_CALL_LIST
      * or RIL_UNSOL_DATA_CALL_LIST_CHANGED
      */
@@ -1194,6 +1239,11 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
             return;
         }
         if (DBG) log("onDataStateChanged(ar): DataCallState size=" + dataCallStates.size());
+
+        dataCallStates = clearDuplicates(dataCallStates);
+
+        boolean isAnyDataCallDormant = false;
+        boolean isAnyDataCallActive = false;
 
         // Create a hash map to store the dataCallState of each DataConnectionAc
         HashMap<DataCallState, DataConnectionAc> dataCallStateToDcac;
@@ -1215,6 +1265,9 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
                 loge("onDataStateChanged(ar): No associated DataConnection ignore");
                 continue;
             }
+
+            if (newState.active == DATA_CONNECTION_ACTIVE_PH_LINK_UP) isAnyDataCallActive = true;
+            if (newState.active == DATA_CONNECTION_ACTIVE_PH_LINK_DOWN) isAnyDataCallDormant = true;
 
             // The list of apn's associated with this DataConnection
             Collection<ApnContext> apns = dcac.getApnListSync();
@@ -1301,6 +1354,32 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
             }
         }
 
+        if (isAnyDataCallDormant && !isAnyDataCallActive) {
+            // There is no way to indicate link activity per APN right now. So
+            // Link Activity will be considered dormant only when all data calls
+            // are dormant.
+            // If a single data call is in dormant state and none of the data
+            // calls are active broadcast overall link state as dormant.
+            mActivity = Activity.DORMANT;
+            if (DBG) {
+                log("onDataStateChanged: Data Activity updated to DORMANT. stopNetStatePoll");
+            }
+            stopNetStatPoll();
+            stopDataStallAlarm();
+        } else {
+            mActivity = Activity.NONE;
+            if (DBG) {
+                log("onDataStateChanged: Data Activity updated to NONE. " +
+                         "isAnyDataCallActive = " + isAnyDataCallActive +
+                         " isAnyDataCallDormant = " + isAnyDataCallDormant);
+            }
+            if (isAnyDataCallActive) {
+                startNetStatPoll();
+                startDataStallAlarm(DATA_STALL_NOT_SUSPECTED);
+            }
+        }
+        mPhone.notifyDataActivity();
+
         if (apnsToCleanup.size() != 0) {
             // Add an event log when the network drops PDP
             int cid = getCellLocationId();
@@ -1323,12 +1402,14 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
                 + ", reason:" + apnContext.getReason());
         }
         apnContext.setState(State.CONNECTED);
+        mActiveApn = apnContext.getApnSetting();
+
         // setState(State.CONNECTED);
         mPhone.notifyDataConnection(apnContext.getReason(), apnContext.getApnType());
         startNetStatPoll();
         startDataStallAlarm(DATA_STALL_NOT_SUSPECTED);
         // reset reconnect timer
-        apnContext.getDataConnection().resetRetryCount();
+        apnContext.setRetryCount(0);
     }
 
     // TODO: For multiple Active APNs not exactly sure how to do this.
@@ -1536,7 +1617,7 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
             } else if (sent == 0 && received > 0) {
                 newActivity = Activity.DATAIN;
             } else {
-                newActivity = Activity.NONE;
+                newActivity = (mActivity == Activity.DORMANT) ? mActivity : Activity.NONE;
             }
 
             if (mActivity != newActivity && mIsScreenOn) {
@@ -1599,6 +1680,10 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
             loge("reconnectAfterFail: apnContext == null, impossible");
             return;
         }
+        if (DBG) {
+            log("reconnectAfterFail: lastFailCause=" + lastFailCauseCode +
+                    " retryOverride=" + retryOverride + " apnContext=" + apnContext);
+        }
         if ((apnContext.getState() == State.FAILED) &&
             (apnContext.getDataConnection() != null)) {
             if (!apnContext.getDataConnection().isRetryNeeded()) {
@@ -1614,7 +1699,7 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
                     if (DBG) log("reconnectAfterFail: activate failed, Reregistering to network");
                     mReregisterOnReconnectFailure = true;
                     mPhone.getServiceStateTracker().reRegisterNetwork(null);
-                    apnContext.getDataConnection().resetRetryCount();
+                    apnContext.setRetryCount(0);
                     return;
                 }
             }
@@ -1625,6 +1710,11 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
             if (nextReconnectDelay < 0) {
                 nextReconnectDelay = apnContext.getDataConnection().getRetryTimer();
                 apnContext.getDataConnection().increaseRetryCount();
+                if (DBG) {
+                    log("reconnectAfterFail: increaseRetryCount=" +
+                            apnContext.getDataConnection().getRetryCount() +
+                            " nextReconnectDelay=" + nextReconnectDelay);
+                }
             }
             startAlarmForReconnect(nextReconnectDelay, apnContext);
 
@@ -1641,16 +1731,11 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
 
     private void startAlarmForReconnect(int delay, ApnContext apnContext) {
 
-        if (DBG) {
-            log("Schedule alarm for reconnect: activate failed. Scheduling next attempt for "
-                + (delay / 1000) + "s");
-        }
-
         DataConnectionAc dcac = apnContext.getDataConnectionAc();
 
         if ((dcac == null) || (dcac.dataConnection == null)) {
             // should not happen, but just in case.
-            loge("null dcac or dc.");
+            loge("startAlarmForReconnect: null dcac or dc.");
             return;
         }
 
@@ -1659,12 +1744,29 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
 
         Intent intent = new Intent(INTENT_RECONNECT_ALARM + '.' +
                                    dcac.dataConnection.getDataConnectionId());
-        intent.putExtra(INTENT_RECONNECT_ALARM_EXTRA_REASON, apnContext.getReason());
-        intent.putExtra(INTENT_RECONNECT_ALARM_EXTRA_TYPE,
-                        dcac.dataConnection.getDataConnectionId());
+        String reason = apnContext.getReason();
+        intent.putExtra(INTENT_RECONNECT_ALARM_EXTRA_REASON, reason);
+        int connectionId = dcac.dataConnection.getDataConnectionId();
+        intent.putExtra(INTENT_RECONNECT_ALARM_EXTRA_TYPE, connectionId);
+
+        // TODO: Until a real fix is created, which probably entails pushing
+        // retires into the DC itself, this fix gets the retry count and
+        // puts it in the reconnect alarm. When the reconnect alarm fires
+        // onActionIntentReconnectAlarm is called which will use the value saved
+        // here and save it in the ApnContext and send the EVENT_CONNECT message
+        // which invokes setupData. Then setupData will use the value in the ApnContext
+        // and to tell the DC to set the retry count in the retry manager.
+        int retryCount = dcac.dataConnection.getRetryCount();
+        intent.putExtra(INTENT_RECONNECT_ALARM_EXTRA_RETRY_COUNT, retryCount);
+
+        if (DBG) {
+            log("startAlarmForReconnect: next attempt in " + (delay / 1000) + "s" +
+                    " reason='" + reason + "' connectionId=" + connectionId +
+                    " retryCount=" + retryCount);
+        }
 
         PendingIntent alarmIntent = PendingIntent.getBroadcast (mPhone.getContext(), 0,
-                                                                intent, 0);
+                                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
         dcac.setReconnectIntentSync(alarmIntent);
         am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + delay, alarmIntent);
@@ -1699,7 +1801,7 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
         intent.putExtra(DATA_STALL_ALARM_TAG_EXTRA, mDataStallAlarmTag);
         mDataStallAlarmIntent = PendingIntent.getBroadcast(mPhone.getContext(), 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        am.set(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + delayInMs, mDataStallAlarmIntent);
     }
 
@@ -1940,9 +2042,7 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
         // Make sure our reconnect delay starts at the initial value
         // next time the radio comes on
 
-        for (DataConnection dc : mDataConnections.values()) {
-            dc.resetRetryCount();
-        }
+        resetAllRetryCounts();
         mReregisterOnReconnectFailure = false;
 
         if (mPhone.getSimulatedRadioControl() != null) {
@@ -2285,7 +2385,11 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
         return conn;
     }
 
-    private void configureRetry(DataConnection dc, boolean forDefault) {
+    private void configureRetry(DataConnection dc, boolean forDefault, int retryCount) {
+        if (DBG) {
+            log("configureRetry: forDefault=" + forDefault + " retryCount=" + retryCount +
+                    " dc=" + dc);
+        }
         if (dc == null) return;
 
         if (!dc.configureRetry(getReryConfig(forDefault))) {
@@ -2305,6 +2409,7 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
                 }
             }
         }
+        dc.setRetryCount(retryCount);
     }
 
     private void destroyDataConnections() {
@@ -2360,13 +2465,37 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
                 mPreferredApn = null;
             }
         }
+
+        // If the currently active data connect can handle the requested type, try it first
+        if ((mActiveApn != null) && mActiveApn.canHandleType(requestedApnType)) {
+            if (DBG) log("buildWaitingApns: X added already active apnList=" + apnList);
+            apnList.add(mActiveApn);
+        }
+
         if (mAllApns != null) {
+            // Use the preferred APN if it can handle the type being requested
+            if (canSetPreferApn && mPreferredApn != null) {
+                if (DBG) {
+                    log("buildWaitingApns: Preferred APN:" + operator + ":"
+                        + mPreferredApn.numeric + ":" + mPreferredApn);
+                }
+                if ((mPreferredApn.numeric.equals(operator) && mPreferredApn.canHandleType(requestedApnType)) &&
+                    (mPreferredApn.bearer == 0 || mPreferredApn.bearer == networkType) && 
+                    !apnList.contains(mPreferredApn))
+                {
+                    apnList.add(mPreferredApn);
+                    if (DBG) log("buildWaitingApns: X added preferred apnList=" + apnList);
+                }
+            }
+
+            // Add all the rest of the apns that can handle the requested type
             for (ApnSetting apn : mAllApns) {
-                if (apn.canHandleType(requestedApnType)) {
-                    if (apn.bearer == 0 || apn.bearer == networkType) {
-                        if (DBG) log("apn info : " +apn.toString());
-                        apnList.add(apn);
-                    }
+                if ((apn.canHandleType(requestedApnType)) &&
+                    (apn.bearer == 0 || apn.bearer == networkType) &&
+                    !apnList.contains(apn))
+                {
+                    if (DBG) log("apn info : " +apn.toString());
+                    apnList.add(apn);
                 }
             }
         } else {
@@ -2591,4 +2720,5 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
         pw.println(" mApnObserver=" + mApnObserver);
         pw.println(" getOverallState=" + getOverallState());
     }
+
 }
