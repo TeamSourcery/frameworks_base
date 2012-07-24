@@ -2421,6 +2421,12 @@ public final class Settings {
          * Shows the battery icon in the notification pull down
          */
         public static final String NOTIFICATION_BATTERY_DISPLAY = "notification_battery_display";
+
+	/**
+	* Setting to use lockscreen alongside secure lock
+	* @hide
+	*/
+        public static final String SHOW_LOCK_BEFORE_UNLOCK = "show_lock_before_unlock";
     }
 
     /**
