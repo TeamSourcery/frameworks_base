@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 />
             <include layout="@layout/battery_cluster_view" 
- 	        android:id="@+id/battery_cluster"
+                android:id="@+id/battery_cluster"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
@@ -108,22 +108,21 @@
             />
     </LinearLayout>
 
-   <LinearLayout
-      android:id="@+id/center_clock_layout"
-      android:gravity="center"
-      android:orientation="horizontal"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent">
-          <com.android.systemui.statusbar.policy.ClockCenter
-              android:textAppearance="@style/TextAppearance.StatusBar.Clock"
- 		
-        android:gravity="center"
-        android:id="@+id/center_clock"
-        android:paddingLeft="6.0dip"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:singleLine="true" />
-     </LinearLayout>
+    <LinearLayout
+            android:id="@+id/center_clock_layout"
+	    android:gravity="center"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent">
+	        <com.android.systemui.statusbar.policy.ClockCenter
+	      	    android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+		    android:gravity="center"
+		    android:id="@+id/center_clock"
+		    android:paddingLeft="6.0dip"
+		    android:layout_width="wrap_content"
+		    android:layout_height="fill_parent"
+		    android:singleLine="true" />
+    </LinearLayout>
         
     <LinearLayout android:id="@+id/ticker"
         android:layout_width="match_parent"
@@ -167,4 +166,10 @@
                 />
         </com.android.systemui.statusbar.phone.TickerView>
     </LinearLayout>
+
+    <com.android.systemui.statusbar.policy.BatteryBarController
+        android:layout_width="match_parent"
+	android:layout_height="1dp"
+	systemui:viewLocation="1" />
+
 </com.android.systemui.statusbar.phone.PhoneStatusBarView>
