@@ -88,7 +88,7 @@ public class MediaActionSound {
     public static final int STOP_VIDEO_RECORDING  = 3;
 
     private static final int SOUND_NOT_LOADED = -1;
-
+    
     private static final String PROP_CAMERA_SOUND = "persist.sys.camera-sound";
 
     /**
@@ -119,20 +119,16 @@ public class MediaActionSound {
      * @see #START_VIDEO_RECORDING
      * @see #STOP_VIDEO_RECORDING
      */
-   public synchronized void play(int soundName) {
-        if (SystemProperties.getBoolean(PROP_CAMERA_SOUND, true)) {
-            if (soundName < 0 || soundName >= SOUND_FILES.length) {
-                throw new RuntimeException("Unknown sound requested: " + soundName);
-            }
-            if (mSoundIds[soundName] == SOUND_NOT_LOADED) {
-                mSoundIdToPlay =
-                        mSoundPool.load(SOUND_FILES[soundName], 1);
-                mSoundIds[soundName] = mSoundIdToPlay;
-            } else {
-                mSoundPool.play(mSoundIds[soundName], 1.0f, 1.0f, 0, 0, 1.0f);
-            }
+    public synchronized void load(int soundName) {
+        if (soundName < 0 || soundName >= SOUND_FILES.length) {
+            throw new RuntimeException("Unknown sound requested: " + soundName);
+        }
+        if (mSoundIds[soundName] == SOUND_NOT_LOADED) {
+            mSoundIds[soundName] =
+                    mSoundPool.load(SOUND_FILES[soundName], 1);
         }
     }
+
     /**
      * <p>Play one of the predefined platform sounds for media actions.</p>
      *
@@ -163,15 +159,17 @@ public class MediaActionSound {
      * @see #STOP_VIDEO_RECORDING
      */
     public synchronized void play(int soundName) {
-        if (soundName < 0 || soundName >= SOUND_FILES.length) {
-            throw new RuntimeException("Unknown sound requested: " + soundName);
-        }
-        if (mSoundIds[soundName] == SOUND_NOT_LOADED) {
-            mSoundIdToPlay =
-                    mSoundPool.load(SOUND_FILES[soundName], 1);
-            mSoundIds[soundName] = mSoundIdToPlay;
-        } else {
-            mSoundPool.play(mSoundIds[soundName], 1.0f, 1.0f, 0, 0, 1.0f);
+        if (SystemProperties.getBoolean(PROP_CAMERA_SOUND, true)) {
+            if (soundName < 0 || soundName >= SOUND_FILES.length) {
+                throw new RuntimeException("Unknown sound requested: " + soundName);
+            }
+            if (mSoundIds[soundName] == SOUND_NOT_LOADED) {
+                mSoundIdToPlay =
+                        mSoundPool.load(SOUND_FILES[soundName], 1);
+                mSoundIds[soundName] = mSoundIdToPlay;
+            } else {
+                mSoundPool.play(mSoundIds[soundName], 1.0f, 1.0f, 0, 0, 1.0f);
+            }
         }
     }
 
