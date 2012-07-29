@@ -1441,8 +1441,7 @@ public class Resources {
                     mTmpConfig.locale = Locale.getDefault();
                 }
                 configChanges = mConfiguration.updateFrom(mTmpConfig);
-                configChanges = mConfiguration.updateFrom(mTmpConfig);
-
+               
                 /* This is ugly, but modifying the activityInfoConfigToNative
                  * adapter would be messier */
                 if ((configChanges & ActivityInfo.CONFIG_THEME_RESOURCE) != 0) {
