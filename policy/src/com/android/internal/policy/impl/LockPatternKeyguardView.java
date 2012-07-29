@@ -26,6 +26,8 @@ import com.android.internal.widget.LockScreenWidgetCallback;
 import com.android.internal.widget.LockScreenWidgetInterface;
 import com.android.internal.widget.TransportControlView;
 
+import com.android.internal.app.ThemeUtils;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -34,6 +36,7 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -98,8 +101,10 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
 
     private boolean mScreenOn;
     private boolean mWindowFocused = false;
-    private boolean mEnableFallback = false; // assume no fallback UI until we know better
+    private Context mUiContext;
 
+    private boolean mEnableFallback = false; // assume no fallback UI until we know better
+  
     private boolean mShowLockBeforeUnlock = false || (Settings.System.getInt(
     mContext.getContentResolver(),
     Settings.System.SHOW_LOCK_BEFORE_UNLOCK, 0) ==1);
@@ -173,6 +178,12 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
          */
         Unknown
     }
+
+    private BroadcastReceiver mThemeChangeReceiver = new BroadcastReceiver() {
+         public void onReceive(Context context, Intent intent) {
+            mUiContext = null;
+         }
+    };
 
     /**
      * The current mode.
@@ -670,6 +681,12 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        ThemeUtils.registerThemeChangeReceiver(mContext, mThemeChangeReceiver);
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         mUpdateMonitor.removeCallback(mInfoCallback);
 
@@ -680,6 +697,9 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
             // e.g., when device becomes unlocked
             mBiometricUnlock.stop();
         }
+
+         mContext.unregisterReceiver(mThemeChangeReceiver);
+ 	 mUiContext = null;
 
         super.onDetachedFromWindow();
     }
@@ -1102,7 +1122,7 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
 
     private void showDialog(String title, String message) {
         mHasDialog = true;
-        final AlertDialog dialog = new AlertDialog.Builder(mContext)
+         final AlertDialog dialog = new AlertDialog.Builder(getUiContext())
             .setTitle(title)
             .setMessage(message)
             .setNeutralButton(R.string.ok, null)
@@ -1127,6 +1147,13 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
 
         showDialog(null, message);
     }
+
+    private Context getUiContext() {
+ 	 if (mUiContext == null) {
+             mUiContext = ThemeUtils.createUiContext(mContext);
+         }
+         return mUiContext != null ? mUiContext : mContext;
+     }
 
     private void showAlmostAtAccountLoginDialog() {
         final int timeoutInSeconds = (int) LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS / 1000;
