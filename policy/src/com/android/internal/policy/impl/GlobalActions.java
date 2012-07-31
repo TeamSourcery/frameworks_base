@@ -969,7 +969,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         final String[] rebootOptions = mContext.getResources().getStringArray(R.array.shutdown_reboot_options);
         final String[] rebootReasons = mContext.getResources().getStringArray(R.array.shutdown_reboot_actions);
 
-        AlertDialog d = new AlertDialog.Builder(mContext)
+         AlertDialog d = new AlertDialog.Builder(getUiContext())
                 .setSingleChoiceItems(rebootOptions, 0,
                         new DialogInterface.OnClickListener() {
                             @Override
