@@ -2357,6 +2357,9 @@ public final class Settings {
 
  	 /**
          * @hide
+         *  0 = Phone UI
+ 	 *  1 = Tablet UI
+ 	 *  2 = Phablet UI
          */
         public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
 	
@@ -2576,6 +2579,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
+
+         /**
+	 *
+	 * @hide
+	 */
+        public static final String NAVIGATION_BAR_BUTTON_ALPHA = "navigation_bar_button_alpha";
         
     }
 
