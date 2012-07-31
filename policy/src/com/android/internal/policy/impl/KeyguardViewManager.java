@@ -96,7 +96,7 @@ public class KeyguardViewManager implements KeyguardWindowController {
             mUiContext = ThemeUtils.createUiContext(mContext);
         }
         return mUiContext != null ? mUiContext : mContext;
-
+    }
     /**
      * Helper class to host the keyguard view.
      */
