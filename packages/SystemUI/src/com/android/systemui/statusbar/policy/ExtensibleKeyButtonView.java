@@ -1,8 +1,9 @@
 package com.android.systemui.statusbar.policy;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
@@ -12,16 +13,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.input.InputManager;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.Process;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.InputDevice;
@@ -34,7 +32,6 @@ import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.R;
 
-import com.android.systemui.statusbar.phone.NavigationBarView;
 
 
 public class ExtensibleKeyButtonView extends KeyButtonView {
@@ -57,6 +54,8 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
     public String mClickAction, mLongpress;
     
     public Handler mHandler;
+
+    public ActivityManager mActivityManager;
     
     public int mInjectKeycode;
 
@@ -68,6 +67,7 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         super(context, attrs);
         
         mHandler = new Handler();
+        mActivityManager = (ActivityManager) context.getSystemService(Activity.ACTIVITY_SERVICE);
         mBarService = IStatusBarService.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
         mClickAction = ClickAction;
@@ -109,48 +109,35 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         mHandler.removeCallbacks(onInjectKey_Down);
         mHandler.removeCallbacks(onInjectKey_Up);
         mHandler.post(onInjectKey_Down);
-        mHandler.post(onInjectKey_Up);
+        mHandler.postDelayed(onInjectKey_Up,10); // introduce small delay to handle key press
     }
 
-    final Runnable onInjectKey_Down = new Runnable() {
+   final Runnable onInjectKey_Down = new Runnable() {
     	public void run() {
-            KeyEvent ev = new KeyEvent (mDownTime,SystemClock.uptimeMillis(),KeyEvent.ACTION_DOWN, mInjectKeycode,1);
+    	    final KeyEvent ev = new KeyEvent(mDownTime, SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, mInjectKeycode, 0,
+                    0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                    KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
+                    InputDevice.SOURCE_KEYBOARD);
             InputManager.getInstance().injectInputEvent(ev,
                     InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
         }
     };
-    
-    final Runnable onInjectKey_Up = new Runnable() {
+
+     final Runnable onInjectKey_Up = new Runnable() {
     	public void run() {
-            KeyEvent ev = new KeyEvent (mDownTime,SystemClock.uptimeMillis(),KeyEvent.ACTION_UP, mInjectKeycode,1);
+            final KeyEvent ev = new KeyEvent(mDownTime, SystemClock.uptimeMillis(), KeyEvent.ACTION_UP, mInjectKeycode, 0,
+                    0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                    KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
+                    InputDevice.SOURCE_KEYBOARD);
             InputManager.getInstance().injectInputEvent(ev,
                     InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
         }
     };
  
-    Runnable mKillTask = new Runnable() {
+     Runnable mKillTask = new Runnable() {
         public void run() {
-            try {
-                IActivityManager mgr = ActivityManagerNative.getDefault();
-                List<RunningAppProcessInfo> apps = mgr.getRunningAppProcesses();
-                for (RunningAppProcessInfo appInfo : apps) {
-                    int uid = appInfo.uid;
-                    // Make sure it's a foreground user application (not system,
-                    // root, phone, etc.)
-                    if (uid >= Process.FIRST_APPLICATION_UID && uid <= Process.LAST_APPLICATION_UID
-                            && appInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                        // Kill the entire pid
-                        if (appInfo.pkgList != null && (apps.size() > 0)) {
-                            mgr.forceStopPackage(appInfo.pkgList[0]);
-                        } else {
-                            Process.killProcess(appInfo.pid);
-                        }
-                        break;
-                    }
-                }
-            } catch (RemoteException remoteException) {
-                // Do nothing; just let it go.
-            }
+            String packageName = mActivityManager.getRunningTasks(1).get(0).topActivity.getPackageName();
+            mActivityManager.forceStopPackage(packageName);
         }
     };
 
@@ -180,7 +167,7 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         		
         	} else if (mClickAction.equals(ACTION_KILL)) {
         		
-        		mHandler.postDelayed(mKillTask, ViewConfiguration.getGlobalActionKeyTimeout());
+        		mHandler.postDelayed(mKillTask,ViewConfiguration.getGlobalActionKeyTimeout());
         		return;
         		
         	} else if (mClickAction.equals(ACTION_WIDGETS)) {
@@ -233,7 +220,7 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         		injectKeyDelayed(KeyEvent.KEYCODE_POWER);
         		return true;
         	} else if (mLongpress.equals(ACTION_KILL)) {        		
-        		mHandler.postDelayed(mKillTask, 0);  
+        		mHandler.post(mKillTask);  
         		return true;
             } else if (mLongpress.equals(ACTION_WIDGETS)) {
             	// Widgets not yet imported to JB  - Zaphod 07/21/12

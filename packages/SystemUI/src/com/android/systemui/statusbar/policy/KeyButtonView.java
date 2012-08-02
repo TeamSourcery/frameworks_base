@@ -33,6 +33,7 @@ import android.os.SystemClock;
 import android.os.ServiceManager;
 import android.provider.Settings;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.HapticFeedbackConstants;
 import android.view.InputDevice;
