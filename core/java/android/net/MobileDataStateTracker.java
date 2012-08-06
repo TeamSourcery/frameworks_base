@@ -332,6 +332,9 @@ public class MobileDataStateTracker implements NetworkStateTracker {
         case TelephonyManager.NETWORK_TYPE_HSPA:
             networkTypeStr = "hspa";
             break;
+        case TelephonyManager.NETWORK_TYPE_HSPAP:
+ 	    networkTypeStr = "hspap";
+ 	    break;
         case TelephonyManager.NETWORK_TYPE_CDMA:
             networkTypeStr = "cdma";
             break;
@@ -345,7 +348,7 @@ public class MobileDataStateTracker implements NetworkStateTracker {
             networkTypeStr = "evdo";
             break;
         case TelephonyManager.NETWORK_TYPE_EVDO_B:
-            networkTypeStr = "evdo";
+            networkTypeStr = "evdo_b";
             break;
         case TelephonyManager.NETWORK_TYPE_IDEN:
             networkTypeStr = "iden";
