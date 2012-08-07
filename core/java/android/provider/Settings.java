@@ -2494,6 +2494,14 @@ public final class Settings {
             Secure.WIFI_WATCHDOG_PING_TIMEOUT_MS;
 
          /**
+         * whether to show the IME switcher when typing in the statusbar. Boolean value.
+         * 
+         * @hide
+         */
+        public static final String STATUS_BAR_IME_SWITCHER = "status_bar_ime_switcher";
+
+
+         /**
          * Setting to enable volume options.
          *
          * @hide
