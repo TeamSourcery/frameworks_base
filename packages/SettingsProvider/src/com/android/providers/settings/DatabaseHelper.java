@@ -33,12 +33,14 @@ import android.net.ConnectivityManager;
 import android.os.SystemProperties;
 import android.provider.Settings;
 import android.provider.Settings.Secure;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.internal.content.PackageHelper;
 import com.android.internal.telephony.BaseCommands;
 import com.android.internal.telephony.Phone;
+import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.RILConstants;
 import com.android.internal.util.XmlUtils;
 import com.android.internal.widget.LockPatternUtils;
@@ -1560,6 +1562,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             SystemProperties.get("ro.com.android.dataroaming",
                                     "false")) ? 1 : 0);
 
+            // Mobile Data default, based on build
+            loadSetting(stmt, Settings.Secure.MOBILE_DATA,
+                    "true".equalsIgnoreCase(
+                            SystemProperties.get("ro.com.android.mobiledata",
+                                    "true")) ? 1 : 0);
+
             loadBooleanSetting(stmt, Settings.Secure.INSTALL_NON_MARKET_APPS,
                     R.bool.def_install_non_market_apps);
 
@@ -1587,7 +1595,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // Set the preferred network mode to 0 = Global, CDMA default
             int type;
-            if (BaseCommands.getLteOnCdmaModeStatic() == Phone.LTE_ON_CDMA_TRUE) {
+            if (TelephonyManager.getLteOnCdmaModeStatic() == PhoneConstants.LTE_ON_CDMA_TRUE) {
                 type = Phone.NT_MODE_GLOBAL;
             } else {
                 type = SystemProperties.getInt("ro.telephony.default_network",

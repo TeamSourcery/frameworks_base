@@ -85,6 +85,8 @@ public final class ShutdownThread extends Thread {
     private PowerManager.WakeLock mCpuWakeLock;
     private PowerManager.WakeLock mScreenWakeLock;
     private Handler mHandler;
+
+    private static AlertDialog sConfirmDialog;
     
     private ShutdownThread() {
     }
