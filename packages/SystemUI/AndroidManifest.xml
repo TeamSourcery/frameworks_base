@@ -188,7 +188,7 @@
             </intent-filter>
         </activity>
 
-     <activity
+        <activity
             android:name="com.android.systemui.Torch"
             android:label="@string/toggle_torch"
             android:icon="@drawable/toggle_torch"

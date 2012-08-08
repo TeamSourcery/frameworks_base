@@ -29,9 +29,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import libcore.util.MutableInt;
-
+import android.content.Intent;
 import android.content.ContentResolver;
 import android.content.Context;
+
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -63,6 +64,18 @@ class KeyguardStatusViewManager implements OnClickListener {
     private static final int OWNER_INFO = 14;
     private static final int BATTERY_INFO = 15;
 
+    private static final int WEATHER_INFO = 16;
+
+    public static final String EXTRA_CITY = "city";
+    public static final String EXTRA_FORECAST_DATE = "forecast_date";
+    public static final String EXTRA_CONDITION = "condition";
+    public static final String EXTRA_TEMP = "temp";
+    public static final String EXTRA_HUMIDITY = "humidity";
+    public static final String EXTRA_WIND = "wind";
+    public static final String EXTRA_LOW = "todays_low";
+    public static final String EXTRA_HIGH = "todays_high";
+
+
     private boolean mLockAlwaysBattery;
 
     private StatusMode mStatus;
@@ -77,12 +90,15 @@ class KeyguardStatusViewManager implements OnClickListener {
     private TextView mOwnerInfoView;
     private TextView mAlarmStatusView;
     private TransportControlView mTransportView;
+    private WeatherPanel mWeatherPanelView;
 
     // Top-level container view for above views
     private View mContainer;
 
     // are we showing battery information?
     private boolean mShowingBatteryInfo = false;
+
+    private Intent mWeatherInfo = null; // being tricky
 
     // last known plugged in state
     private boolean mPluggedIn = false;
@@ -188,6 +204,7 @@ class KeyguardStatusViewManager implements OnClickListener {
         mEmergencyCallButton = (Button) findViewById(R.id.emergencyCallButton);
         mEmergencyCallButtonEnabledInScreen = emergencyButtonEnabledInScreen;
         mDigitalClock = (DigitalClock) findViewById(R.id.time);
+        mWeatherPanelView = (WeatherPanel) findViewById(R.id.weatherpanel);
 
         // Hide transport control view until we know we need to show it.
         if (mTransportView != null) {
@@ -278,6 +295,10 @@ class KeyguardStatusViewManager implements OnClickListener {
                     mTransientTextManager.post(string, 0, INSTRUCTION_RESET_DELAY);
                     break;
 
+               case WEATHER_INFO:
+ 	          updateWeatherInfo();
+ 	            break;
+
                 case OWNER_INFO:
                 case CARRIER_TEXT:
                 default:
@@ -319,6 +340,7 @@ class KeyguardStatusViewManager implements OnClickListener {
         mShowingBatteryInfo = mUpdateMonitor.shouldShowBatteryInfo();
         mPluggedIn = mUpdateMonitor.isDevicePluggedIn();
         mBatteryLevel = mUpdateMonitor.getBatteryLevel();
+        mWeatherInfo = mUpdateMonitor.getWeather();
         updateStatusLines(true);
     }
 
@@ -333,6 +355,7 @@ class KeyguardStatusViewManager implements OnClickListener {
         if (DEBUG) Log.v(TAG, "updateStatusLines(" + showStatusLines + ")");
         mShowingStatus = showStatusLines;
         updateAlarmInfo();
+        updateWeatherInfo();
         updateOwnerInfo();
         updateStatus1();
         updateCarrierText();
@@ -359,6 +382,37 @@ class KeyguardStatusViewManager implements OnClickListener {
             mOwnerInfoView.setVisibility(TextUtils.isEmpty(mOwnerInfoText) ? View.GONE:View.VISIBLE);
         }
     }
+
+     private void updateWeatherInfo() {
+        final ContentResolver res = getContext().getContentResolver();
+        final boolean weatherInfoEnabled = (Settings.System.getBoolean(res,
+                Settings.System.LOCKSCREEN_WEATHER, true)
+                && (Settings.System.getBoolean(res, Settings.System.USE_WEATHER, false)));
+
+        final boolean weatherLocationEnabled = Settings.System.getBoolean(res,
+                Settings.System.WEATHER_SHOW_LOCATION, false);
+
+        final int weatherInfoType = Settings.System.getInt(res,
+                Settings.System.LOCKSCREEN_WEATHER_TYPE, 0);
+
+        if (weatherInfoEnabled) {
+            if (weatherInfoType == 0) {
+                if (mWeatherPanelView != null && mWeatherInfo != null) {
+                        mWeatherPanelView.updateWeather(mWeatherInfo);
+                        mWeatherPanelView.setVisibility(weatherInfoEnabled ? View.VISIBLE : View.GONE);
+                }
+            } else {
+                if (mWeatherPanelView != null) {
+                    mWeatherPanelView.setVisibility(View.GONE);
+                }
+            }
+        } else {
+            if (mWeatherPanelView != null) {
+                mWeatherPanelView.setVisibility(View.GONE);
+            }
+        }
+    }
+
 
     private void updateStatus1() {
         if (mStatus1View != null) {
@@ -664,6 +718,11 @@ class KeyguardStatusViewManager implements OnClickListener {
             mBatteryLevel = batteryLevel;
             final MutableInt tmpIcon = new MutableInt(0);
             update(BATTERY_INFO, getAltTextMessage(tmpIcon));
+        }
+
+         public void onRefreshWeatherInfo(Intent weatherIntent) {
+            mWeatherInfo = weatherIntent;
+            update(WEATHER_INFO, null);
         }
 
         @Override

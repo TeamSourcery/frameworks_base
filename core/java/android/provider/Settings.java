@@ -2546,6 +2546,13 @@ public final class Settings {
          */
         public static final String TABLET_UI = "tablet_ui";
 
+         /**
+         * Whether to allow the device to use landscape lockscreen layouts
+         * 
+         * @hide
+         */
+        public static final String LOCKSCREEN_LANDSCAPE = "lockscreen_landscape";
+
  	 /**
          * @hide
          *  0 = Phone UI
@@ -2788,6 +2795,26 @@ public final class Settings {
 	 * @hide
 	 */
         public static final String NAVIGATION_BAR_BUTTON_ALPHA = "navigation_bar_button_alpha";
+
+         /**
+         * @hide
+         */
+        public static final String LOCKSCREEN_WEATHER = "lockscreen_weather";
+
+        /**
+         * @hide
+         */
+        public static final String LOCKSCREEN_WEATHER_TYPE = "lockscreen_weather_type";
+
+        /**
+         * @hide
+         */
+        public static final String USE_WEATHER = "use_weather";
+
+        /**
+         * @hide
+         */
+        public static final String WEATHER_SHOW_LOCATION = "weather_show_location";
 
          /**
          * How long to keep the notification LED on (in milliseconds)
