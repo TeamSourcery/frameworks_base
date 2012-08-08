@@ -1210,6 +1210,8 @@
   <java-symbol type="array" name="lockscreen_targets_when_silent" />
   <java-symbol type="array" name="lockscreen_targets_when_soundon" />
   <java-symbol type="array" name="lockscreen_targets_with_camera" />
+  <java-symbol type="array" name="shutdown_reboot_options" />
+  <java-symbol type="array" name="shutdown_reboot_actions" />
   <java-symbol type="attr" name="actionModePopupWindowStyle" />
   <java-symbol type="attr" name="dialogCustomTitleDecorLayout" />
   <java-symbol type="attr" name="dialogTitleDecorLayout" />
@@ -1235,6 +1237,8 @@
   <java-symbol type="drawable" name="ic_jog_dial_vibrate_on" />
   <java-symbol type="drawable" name="ic_lock_airplane_mode" />
   <java-symbol type="drawable" name="ic_lock_airplane_mode_off" />
+  <java-symbol type="drawable" name="ic_lock_reboot" />
+  <java-symbol type="drawable" name="ic_lock_screenshot" />
   <java-symbol type="drawable" name="ic_menu_cc" />
   <java-symbol type="drawable" name="jog_tab_bar_left_unlock" />
   <java-symbol type="drawable" name="jog_tab_bar_right_sound_off" />
@@ -1330,6 +1334,7 @@
   <java-symbol type="string" name="abbrev_wday_month_day_no_year" />
   <java-symbol type="string" name="android_upgrading_title" />
   <java-symbol type="string" name="faceunlock_multiple_failures" />
+  <java-symbol type="string" name="global_actions" />
   <java-symbol type="string" name="global_action_power_off" />
   <java-symbol type="string" name="global_actions_airplane_mode_off_status" />
   <java-symbol type="string" name="global_actions_airplane_mode_on_status" />
@@ -1337,6 +1342,10 @@
   <java-symbol type="string" name="global_action_silent_mode_off_status" />
   <java-symbol type="string" name="global_action_silent_mode_on_status" />
   <java-symbol type="string" name="global_action_toggle_silent_mode" />
+  <java-symbol type="string" name="global_action_reboot" />
+  <java-symbol type="string" name="global_action_screenshot" />
+  <java-symbol type="string" name="reboot_progress" />
+  <java-symbol type="string" name="reboot_system" />
   <java-symbol type="string" name="invalidPuk" />
   <java-symbol type="string" name="keyguard_password_enter_pin_code" />
   <java-symbol type="string" name="keyguard_password_enter_puk_code" />
@@ -1551,6 +1560,7 @@
   <java-symbol type="string" name="vpn_title" />
   <java-symbol type="string" name="vpn_title_long" />
   <java-symbol type="string" name="wallpaper_binding_label" />
+  <java-symbol type="string" name="reboot_progress" />
   <java-symbol type="style" name="Theme.Dialog.AppError" />
   <java-symbol type="style" name="Theme.Toast" />
   <java-symbol type="xml" name="storage_list" />
@@ -1683,6 +1693,67 @@
   <java-symbol type="drawable" name="maps_google_logo" />
   <java-symbol type="drawable" name="no_tile_256" />
   <java-symbol type="drawable" name="reticle" />
+
+  <!-- Weather -->
+  <java-symbol type="drawable" name="weather_na" />
+  <java-symbol type="drawable" name="weather_0" />
+  <java-symbol type="drawable" name="weather_1" />
+  <java-symbol type="drawable" name="weather_2" />
+  <java-symbol type="drawable" name="weather_3" />
+  <java-symbol type="drawable" name="weather_4" />
+  <java-symbol type="drawable" name="weather_5" />
+  <java-symbol type="drawable" name="weather_6" />
+  <java-symbol type="drawable" name="weather_7" />
+  <java-symbol type="drawable" name="weather_8" />
+  <java-symbol type="drawable" name="weather_9" />
+  <java-symbol type="drawable" name="weather_10" />
+  <java-symbol type="drawable" name="weather_11" />
+  <java-symbol type="drawable" name="weather_12" />
+  <java-symbol type="drawable" name="weather_13" />
+  <java-symbol type="drawable" name="weather_14" />
+  <java-symbol type="drawable" name="weather_15" />
+  <java-symbol type="drawable" name="weather_16" />
+  <java-symbol type="drawable" name="weather_17" />
+  <java-symbol type="drawable" name="weather_18" />
+  <java-symbol type="drawable" name="weather_19" />
+  <java-symbol type="drawable" name="weather_20" />
+  <java-symbol type="drawable" name="weather_21" />
+  <java-symbol type="drawable" name="weather_22" />
+  <java-symbol type="drawable" name="weather_23" />
+  <java-symbol type="drawable" name="weather_24" />
+  <java-symbol type="drawable" name="weather_25" />
+  <java-symbol type="drawable" name="weather_26" />
+  <java-symbol type="drawable" name="weather_27" />
+  <java-symbol type="drawable" name="weather_28" />
+  <java-symbol type="drawable" name="weather_29" />
+  <java-symbol type="drawable" name="weather_30" />
+  <java-symbol type="drawable" name="weather_31" />
+  <java-symbol type="drawable" name="weather_32" />
+  <java-symbol type="drawable" name="weather_33" />
+  <java-symbol type="drawable" name="weather_34" />
+  <java-symbol type="drawable" name="weather_35" />
+  <java-symbol type="drawable" name="weather_36" />
+  <java-symbol type="drawable" name="weather_37" />
+  <java-symbol type="drawable" name="weather_38" />
+  <java-symbol type="drawable" name="weather_39" />
+  <java-symbol type="drawable" name="weather_40" />
+  <java-symbol type="drawable" name="weather_41" />
+  <java-symbol type="drawable" name="weather_42" />
+  <java-symbol type="drawable" name="weather_43" />
+  <java-symbol type="drawable" name="weather_44" />
+  <java-symbol type="drawable" name="weather_45" />
+  <java-symbol type="drawable" name="weather_46" />
+  <java-symbol type="drawable" name="weather_47" />
+  <java-symbol type="id" name="city" />
+  <java-symbol type="id" name="condition" />
+  <java-symbol type="id" name="condition_image" />
+  <java-symbol type="id" name="current_temp" />
+  <java-symbol type="id" name="high_temp" />
+  <java-symbol type="id" name="humidity" />
+  <java-symbol type="id" name="low_temp" />
+  <java-symbol type="id" name="weatherpanel" />
+  <java-symbol type="id" name="weatherpanel_slash" />
+  <java-symbol type="id" name="winds" />
 
   <!-- From PinyinIME(!!!) -->
   <java-symbol type="string" name="inputMethod" />
@@ -3659,5 +3730,31 @@
   <public type="style" name="Widget.Holo.Light.MediaRouteButton" id="0x010301d6" />
   <public type="style" name="Widget.DeviceDefault.MediaRouteButton" id="0x010301d7" />
   <public type="style" name="Widget.DeviceDefault.Light.MediaRouteButton" id="0x010301d8" />
+
+<!-- ===============================================================
+     Resources added in JBSourcery
+     =============================================================== -->
+ <eat-comment />
+  <java-symbol type="bool" name="config_noDelayInATwoDP" />
+
+  <!-- AVRCP 1.3 Meta Data Resources -->
+
+  <java-symbol type="array" name="avrcp_meta_changed_intents" />
+  <java-symbol type="array" name="avrcp_playstate_changed_intents" />
+  <java-symbol type="array" name="avrcp_special_extra_keys" />
+  <java-symbol type="array" name="avrcp_overridable_extra_keys" />
+  <java-symbol type="string" name="com.amazon.mp3.metachanged_track" />
+  <java-symbol type="string" name="com.amazon.mp3.metachanged_artist" />
+  <java-symbol type="string" name="com.amazon.mp3.metachanged_album" />
+  <java-symbol type="string" name="com.amazon.mp3.metachanged_id" />
+  <java-symbol type="string" name="com.amazon.mp3.playstatechanged_track" />
+  <java-symbol type="string" name="com.amazon.mp3.playstatechanged_artist" />
+  <java-symbol type="string" name="com.amazon.mp3.playstatechanged_album" />
+  <java-symbol type="string" name="com.amazon.mp3.playstatechanged_id" />
+
+
+  <!-- Always show battery status on lockscreen -->
+  <java-symbol type="string" name="lockscreen_always_battery" />
+  <java-symbol type="string" name="lockscreen_always_low_battery" />
 
 </resources>

@@ -79,6 +79,8 @@ public class KeyguardUpdateMonitor {
 
     private boolean mClockVisible;
 
+    private Intent mWeather = null;
+
     private Handler mHandler;
 
     private ArrayList<InfoCallback> mInfoCallbacks = Lists.newArrayList();
@@ -98,6 +100,7 @@ public class KeyguardUpdateMonitor {
     private static final int MSG_DEVICE_PROVISIONED = 308;
     protected static final int MSG_DPM_STATE_CHANGED = 309;
     protected static final int MSG_USER_CHANGED = 310;
+    private static final int MSG_WEATHER_CHANGED = 311;
 
     protected static final boolean DEBUG_SIM_STATES = DEBUG || false;
 
@@ -207,6 +210,9 @@ public class KeyguardUpdateMonitor {
                     case MSG_USER_CHANGED:
                         handleUserChanged(msg.arg1);
                         break;
+                    case MSG_WEATHER_CHANGED:
+ 	                 handleWeatherChanged((Intent)msg.obj);
+ 	                break;
                 }
             }
         };
@@ -249,6 +255,7 @@ public class KeyguardUpdateMonitor {
         // take a guess to start
         mSimState = IccCardConstants.State.READY;
         mBatteryStatus = new BatteryStatus(BATTERY_STATUS_UNKNOWN, 100, 0, 0);
+        mWeather = new Intent();
 
         mTelephonyPlmn = getDefaultPlmn();
 
@@ -265,6 +272,7 @@ public class KeyguardUpdateMonitor {
         filter.addAction(DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED);
         filter.addAction(Intent.ACTION_USER_SWITCHED);
         filter.addAction(Intent.ACTION_USER_REMOVED);
+        filter.addAction("com.sourcery.magiccontrol.INTENT_WEATHER_UPDATE");
         context.registerReceiver(new BroadcastReceiver() {
 
             public void onReceive(Context context, Intent intent) {
@@ -306,6 +314,8 @@ public class KeyguardUpdateMonitor {
                 } else if (Intent.ACTION_USER_SWITCHED.equals(action)) {
                     mHandler.sendMessage(mHandler.obtainMessage(MSG_USER_CHANGED,
                             intent.getIntExtra(Intent.EXTRA_USERID, 0), 0));
+                } else if ("com.sourcery.magiccontrol.INTENT_WEATHER_UPDATE".equals(action)) {
+ 	 	    mHandler.sendMessage(mHandler.obtainMessage(MSG_WEATHER_CHANGED, intent));
                 }
             }
         }, filter);
@@ -422,6 +432,17 @@ public class KeyguardUpdateMonitor {
     }
 
     /**
+     * Handle {@link #MSG_WEATHER_CHANGED}
+     */
+   private void handleWeatherChanged(Intent weatherIntent) {
+        if (DEBUG) Log.d(TAG, "handleWeatherChanged");
+        mWeather = weatherIntent;
+        for (int i = 0; i < mInfoCallbacks.size(); i++) {
+            mInfoCallbacks.get(i).onRefreshWeatherInfo(weatherIntent);
+        }
+    }
+
+    /**
      * @param pluggedIn state from {@link android.os.BatteryManager#EXTRA_PLUGGED}
      * @return Whether the device is considered "plugged in."
      */
@@ -446,11 +467,12 @@ public class KeyguardUpdateMonitor {
         if (nowPluggedIn && old.level != current.level) {
             return true;
         }
-
+      
+        // commented out to allow always updating battery %
         // change where battery needs charging
-        if (!nowPluggedIn && isBatteryLow(current) && current.level != old.level) {
-            return true;
-        }
+        //if (!nowPluggedIn && isBatteryLow(current) && current.level != old.level) {
+        //    return true;
+        //}
         return false;
     }
 
@@ -512,6 +534,7 @@ public class KeyguardUpdateMonitor {
      */
     interface InfoCallback {
         void onRefreshBatteryInfo(boolean showBatteryInfo, boolean pluggedIn, int batteryLevel);
+        void onRefreshWeatherInfo(Intent weatherIntent);
         void onTimeChanged();
 
         /**
@@ -587,6 +610,8 @@ public class KeyguardUpdateMonitor {
         }
 
         public void onUserChanged(int userId) {
+        }
+        public void onRefreshWeatherInfo(Intent weatherIntent) {
         }
     }
 
@@ -678,6 +703,10 @@ public class KeyguardUpdateMonitor {
 
     public CharSequence getTelephonySpn() {
         return mTelephonySpn;
+    }
+
+    public Intent getWeather() {
+        return mWeather;
     }
 
     /**

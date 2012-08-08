@@ -66,9 +66,12 @@ public class ZygoteInit {
     private static final int LOG_BOOT_PROGRESS_PRELOAD_END = 3030;
 
     /** when preloading, GC after allocating this many bytes */
-    private static final int PRELOAD_GC_THRESHOLD = 50000;
-
-    public static final String USAGE_STRING =
+    private static final String heapgrowthlimit =
+                     SystemProperties.get("dalvik.vm.heapgrowthlimit", "16m");
+    private static final int PRELOAD_GC_THRESHOLD = Integer.parseInt(
+                     heapgrowthlimit.substring(0, heapgrowthlimit.length()-1))*1024*1024/2;
+		
+     public static final String USAGE_STRING =
             " <\"start-system-server\"|\"\" for startSystemServer>";
 
     private static LocalServerSocket sServerSocket;
@@ -97,7 +100,7 @@ public class ZygoteInit {
     private static final String PRELOADED_CLASSES = "preloaded-classes";
 
     /** Controls whether we should preload resources during zygote init. */
-    private static final boolean PRELOAD_RESOURCES = true;
+    private static final boolean PRELOAD_RESOURCES = false;
 
     /**
      * Invokes a static "main(argv[]) method on class "className".
@@ -359,6 +362,8 @@ public class ZygoteInit {
                 ar.recycle();
                 Log.i(TAG, "...preloaded " + N + " resources in "
                         + (SystemClock.uptimeMillis()-startTime) + "ms.");
+             } else {
+ 	        Log.i(TAG, "Preload resources disabled, skipped.");
             }
             mResources.finishPreloading();
         } catch (RuntimeException e) {

@@ -15,6 +15,7 @@
 
 package com.android.server;
 
+import com.android.internal.app.ThemeUtils;
 import com.android.internal.content.PackageMonitor;
 import com.android.internal.os.AtomicFile;
 import com.android.internal.os.HandlerCaller;
@@ -158,6 +159,7 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
     private static final Locale ENGLISH_LOCALE = new Locale("en");
 
     final Context mContext;
+    private Context mUiContext;
     final Resources mRes;
     final Handler mHandler;
     final InputMethodSettings mSettings;
@@ -388,6 +390,13 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
                     Settings.Secure.ENABLED_INPUT_METHODS), false, this);
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.SELECTED_INPUT_METHOD_SUBTYPE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+ 	            Settings.System.STATUS_BAR_IME_SWITCHER),
+ 	            false, new ContentObserver(mHandler) {
+ 	                public void onChange(boolean selfChange) {
+ 	                   updateFromSettingsLocked();
+ 	                }
+ 	           });
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -753,11 +762,18 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
                         mContext.getSystemService(Context.KEYGUARD_SERVICE);
                 mNotificationManager = (NotificationManager)
                         mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                 ThemeUtils.registerThemeChangeReceiver(mContext, new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        mUiContext = null;
+                    }
+                });
+
                 mStatusBar = statusBar;
                 statusBar.setIconVisibility("ime", false);
                 updateImeWindowStatusLocked();
-                mShowOngoingImeSwitcherForPhones = mRes.getBoolean(
-                        com.android.internal.R.bool.show_ongoing_ime_switcher);
+                //mShowOngoingImeSwitcherForPhones = mRes.getBoolean(
+                //        com.android.internal.R.bool.show_ongoing_ime_switcher);
                 if (mShowOngoingImeSwitcherForPhones) {
                     mWindowManagerService.setOnHardKeyboardStatusChangeListener(
                             mHardKeyboardListener);
@@ -1424,6 +1440,8 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
             mCurMethodId = null;
             unbindCurrentMethodLocked(true);
         }
+             mShowOngoingImeSwitcherForPhones = Settings.System.getInt(mContext.getContentResolver(),
+ 	            Settings.System.STATUS_BAR_IME_SWITCHER, 1) == 1;
     }
 
     /* package */ void setInputMethodLocked(String id, int subtypeId) {
@@ -2284,6 +2302,13 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
         }
     }
 
+    private Context getUiContext() {
+        if (mUiContext == null) {
+            mUiContext = ThemeUtils.createUiContext(mContext);
+        }
+        return mUiContext != null ? mUiContext : mContext;
+    }
+
     // ----------------------------------------------------------------------
 
     private void showInputMethodMenu() {
@@ -2320,7 +2345,7 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
     private void showInputMethodMenuInternal(boolean showSubtypes) {
         if (DEBUG) Slog.v(TAG, "Show switching menu");
 
-        final Context context = mContext;
+        final Context context = getUiContext();
         final PackageManager pm = context.getPackageManager();
         final boolean isScreenLocked = isScreenLocked();
 

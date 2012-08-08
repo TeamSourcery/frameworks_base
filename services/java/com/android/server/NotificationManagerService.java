@@ -70,6 +70,9 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
+
+import com.android.internal.app.ThemeUtils;
+
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -110,6 +113,7 @@ public class NotificationManagerService extends INotificationManager.Stub
     private static final boolean ENABLE_BLOCKED_TOASTS = true;
 
     final Context mContext;
+    Context mUiContext;
     final IActivityManager mAm;
     final IBinder mForegroundToken = new Binder();
 
@@ -488,6 +492,13 @@ public class NotificationManagerService extends INotificationManager.Stub
         }
     };
 
+    private BroadcastReceiver mThemeChangeReceiver = new BroadcastReceiver() {
+         @Override
+         public void onReceive(Context context, Intent intent) {
+             mUiContext = null;
+         }
+    };
+
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -495,6 +506,9 @@ public class NotificationManagerService extends INotificationManager.Stub
 
             boolean queryRestart = false;
             boolean packageChanged = false;
+
+            boolean ledScreenOn = Settings.Secure.getInt(
+ 	        mContext.getContentResolver(), Settings.Secure.LED_SCREEN_ON, 0) == 1;
             
             if (action.equals(Intent.ACTION_PACKAGE_REMOVED)
                     || action.equals(Intent.ACTION_PACKAGE_RESTARTED)
@@ -541,7 +555,7 @@ public class NotificationManagerService extends INotificationManager.Stub
                 mInCall = (intent.getStringExtra(TelephonyManager.EXTRA_STATE).equals(
                         TelephonyManager.EXTRA_STATE_OFFHOOK));
                 updateNotificationPulse();
-            } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
+            } else if (action.equals(Intent.ACTION_USER_PRESENT) && !ledScreenOn) {
                 // turn off LED when user passes through lock screen
                 mNotificationLight.turnOff();
             }
@@ -557,6 +571,12 @@ public class NotificationManagerService extends INotificationManager.Stub
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_LIGHT_PULSE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_LIGHT_OFF), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_LIGHT_ON), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_LIGHT_COLOR), false, this);
             update();
         }
 
@@ -572,9 +592,27 @@ public class NotificationManagerService extends INotificationManager.Stub
                 mNotificationPulseEnabled = pulseEnabled;
                 updateNotificationPulse();
             }
+
+             Resources resources = mContext.getResources();
+            mDefaultNotificationColor = Settings.System
+                    .getInt(mContext.getContentResolver(),
+                            Settings.System.NOTIFICATION_LIGHT_COLOR,
+                            resources.getColor(
+                                    com.android.internal.R.color.config_defaultNotificationColor));
+            
+            mDefaultNotificationLedOff = Settings.System
+                    .getInt(mContext.getContentResolver(),
+                            Settings.System.NOTIFICATION_LIGHT_OFF,
+                            resources.getInteger(com.android.internal.R.integer.config_defaultNotificationLedOff));
+
+            mDefaultNotificationLedOn = Settings.System
+                    .getInt(mContext.getContentResolver(),
+                            Settings.System.NOTIFICATION_LIGHT_ON,
+                            resources
+                                    .getInteger(com.android.internal.R.integer.config_defaultNotificationLedOn));
         }
     }
-
+  
     NotificationManagerService(Context context, StatusBarManagerService statusBar,
             LightsService lights)
     {
@@ -593,14 +631,7 @@ public class NotificationManagerService extends INotificationManager.Stub
         mNotificationLight = lights.getLight(LightsService.LIGHT_ID_NOTIFICATIONS);
         mAttentionLight = lights.getLight(LightsService.LIGHT_ID_ATTENTION);
 
-        Resources resources = mContext.getResources();
-        mDefaultNotificationColor = resources.getColor(
-                com.android.internal.R.color.config_defaultNotificationColor);
-        mDefaultNotificationLedOn = resources.getInteger(
-                com.android.internal.R.integer.config_defaultNotificationLedOn);
-        mDefaultNotificationLedOff = resources.getInteger(
-                com.android.internal.R.integer.config_defaultNotificationLedOff);
-
+       
         // Don't start allowing notifications until the setup wizard has run once.
         // After that, including subsequent boots, init with notifications turned on.
         // This works on the first boot because the setup wizard will toggle this
@@ -629,6 +660,7 @@ public class NotificationManagerService extends INotificationManager.Stub
 
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
+        ThemeUtils.registerThemeChangeReceiver(mContext, mThemeChangeReceiver);
     }
 
     void systemReady() {
@@ -1300,6 +1332,10 @@ public class NotificationManagerService extends INotificationManager.Stub
     // lock on mNotificationList
     private void updateLightsLocked()
     {
+         // Get ICSControl "flash when screen ON" flag
+ 	 boolean ledScreenOn = Settings.Secure.getInt(
+            mContext.getContentResolver(), Settings.Secure.LED_SCREEN_ON, 0) == 1;
+
         // handle notification lights
         if (mLedNotification == null) {
             // get next notification, if any
@@ -1310,7 +1346,7 @@ public class NotificationManagerService extends INotificationManager.Stub
         }
 
         // Don't flash while we are in a call or screen is on
-        if (mLedNotification == null || mInCall || mScreenOn) {
+        if (mLedNotification == null || mInCall || (mScreenOn && !ledScreenOn)) {
             mNotificationLight.turnOff();
         } else {
             int ledARGB = mLedNotification.notification.ledARGB;
@@ -1350,6 +1386,13 @@ public class NotificationManagerService extends INotificationManager.Stub
             }
         }
         return -1;
+    }
+
+     private Context getUiContext() {
+        if (mUiContext == null) {
+            mUiContext = ThemeUtils.createUiContext(mContext);
+        }
+        return mUiContext != null ? mUiContext : mContext;
     }
 
     private void updateNotificationPulse() {

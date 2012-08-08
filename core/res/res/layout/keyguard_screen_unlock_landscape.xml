@@ -32,7 +32,7 @@
     <com.android.internal.widget.DigitalClock android:id="@+id/time"
         android:layout_marginTop="8dip"
         android:layout_marginBottom="12dip"
-        android:layout_gravity="right">
+        android:layout_gravity="center_horizontal">
 
         <!-- Because we can't have multi-tone fonts, we render two TextViews, one on
         top of the other. Hence the redundant layout... -->
@@ -65,8 +65,7 @@
     <TextView
         android:id="@+id/date"
         android:layout_width="0dip"
-        android:layout_gravity="fill_horizontal"
-        android:gravity="right"
+        android:layout_gravity="center_horizontal"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -79,27 +78,31 @@
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="@dimen/keyguard_lockscreen_status_line_font_size"
-        android:layout_gravity="right"
+        android:layout_gravity="center_horizontal"
         android:drawablePadding="4dip"
         />
 
     <TextView
         android:id="@+id/status1"
         android:layout_width="0dip"
-        android:layout_gravity="fill_horizontal"
-        android:gravity="right"
+        android:layout_gravity="center_horizontal"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="@dimen/keyguard_lockscreen_status_line_font_size"
         />
 
+    <include
+        layout="@layout/weatherpanel"
+        android:layout_gravity="right"
+        android:layout_marginTop="4dip"
+        android:drawablePadding="4dip" />
+
     <Space android:layout_gravity="fill" />
 
     <TextView android:id="@+id/carrier"
         android:layout_width="0dip"
-        android:layout_gravity="fill_horizontal"
-        android:gravity="right"
+        android:layout_gravity="center_horizontal"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -109,11 +112,11 @@
     <LinearLayout
         style="?android:attr/buttonBarStyle"
         android:orientation="vertical"
-        android:layout_gravity="right">
+        android:layout_gravity="center_horizontal">
 
         <Button android:id="@+id/emergencyCallButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_gravity="right"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="0dip"
             android:layout_weight="1"
@@ -125,7 +128,7 @@
 
         <Button android:id="@+id/forgotPatternButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_gravity="right"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="0dip"
             android:layout_weight="1"
