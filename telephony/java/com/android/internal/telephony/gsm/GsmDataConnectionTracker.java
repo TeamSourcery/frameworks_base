@@ -164,11 +164,7 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
         if (dcac != null) {
             for (ApnContext apnContext : dcac.getApnListSync()) {
                 apnContext.setDataConnectionAc(null);
-<<<<<<< HEAD
  	        apnContext.setDataConnection(null);
-=======
-                apnContext.setDataConnection(null);
->>>>>>> f48658a... When reconnecting disassociate dc and apnContext.
                 apnContext.setReason(reason);
                 apnContext.setRetryCount(retryCount);
                 if (apnContext.getState() == State.FAILED) {
@@ -2429,20 +2425,11 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
 
             // Add all the rest of the apns that can handle the requested type
             for (ApnSetting apn : mAllApns) {
-<<<<<<< HEAD
-                if ((apn.canHandleType(requestedApnType)) &&
-                    (apn.bearer == 0 || apn.bearer == networkType) &&
-                    !apnList.contains(apn))
-                {
-                    if (DBG) log("apn info : " +apn.toString());
-                    apnList.add(apn);
-=======
                 if (apn.canHandleType(requestedApnType)) {
                     if (apn.bearer == 0 || apn.bearer == radioTech) {
                         if (DBG) log("apn info : " +apn.toString());
                         apnList.add(apn);
                     }
->>>>>>> a3ed3b6... Fix our interpretation of apn setting's bearer.
                 }
             }
         } else {
