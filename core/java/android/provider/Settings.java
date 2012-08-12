@@ -2819,6 +2819,27 @@ public final class Settings {
          /**
          * @hide
          */
+        public static final String NAVIGATION_BAR_TINT = "navigation_bar_tint";
+
+        /**
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_GLOW_TINT = "navigation_bar_glow_tint";
+
+        /**
+         * [0] = how long to animate glow off
+         * [1] = how long to animate glow on
+         *
+         * @hide
+         */
+        public static final String[] NAVIGATION_BAR_GLOW_DURATION = new String[] {
+            "navigation_bar_glow_duration_off",
+            "navigation_bar_glow_duration_on"
+        };
+
+         /**
+         * @hide
+         */
         public static final String LOCKSCREEN_WEATHER = "lockscreen_weather";
 
         /**
