@@ -2624,12 +2624,7 @@ public final class Settings {
        */
        public static final String STATUSBAR_TOGGLES_ALPHA = "statusbar_toggles_alpha";
 
-       /**
-       * @hide
-       */
-       public static final String STATUS_BAR_LAYOUT = "statusbar_layout";
-
-        /**
+         /**
          * @hide
          */
         public static final String STATUS_BAR_LAYOUT = "statusbar_layout";
