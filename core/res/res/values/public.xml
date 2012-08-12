@@ -3695,6 +3695,7 @@
   <public type="string" name="status_bar_notification_info_overflow" id="0x01040017" />
 
   <public type="color" name="holo_blue_light" id="0x01060012" />
+  <public type="color" name="holo_white_light" id="0x01060020" />
   <public type="color" name="holo_blue_dark" id="0x01060013" />
   <public type="color" name="holo_green_light" id="0x01060014" />
   <public type="color" name="holo_green_dark" id="0x01060015" />
