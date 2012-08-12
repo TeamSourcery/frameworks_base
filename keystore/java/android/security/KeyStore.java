@@ -22,9 +22,8 @@ import android.net.LocalSocket;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UTFDataFormatException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charsets;
-import java.nio.charset.ModifiedUtf8;
 import java.util.ArrayList;
 
 /**
@@ -76,7 +75,7 @@ public class KeyStore {
     }
 
     public byte[] get(String key) {
-        return get(getKeyBytes(key));
+        return get(getBytes(key));
     }
 
     private boolean put(byte[] key, byte[] value) {
@@ -85,7 +84,7 @@ public class KeyStore {
     }
 
     public boolean put(String key, byte[] value) {
-        return put(getKeyBytes(key), value);
+        return put(getBytes(key), value);
     }
 
     private boolean delete(byte[] key) {
@@ -94,7 +93,7 @@ public class KeyStore {
     }
 
     public boolean delete(String key) {
-        return delete(getKeyBytes(key));
+        return delete(getBytes(key));
     }
 
     private boolean contains(byte[] key) {
@@ -103,7 +102,7 @@ public class KeyStore {
     }
 
     public boolean contains(String key) {
-        return contains(getKeyBytes(key));
+        return contains(getBytes(key));
     }
 
     public byte[][] saw(byte[] prefix) {
@@ -112,13 +111,13 @@ public class KeyStore {
     }
 
     public String[] saw(String prefix) {
-        byte[][] values = saw(getKeyBytes(prefix));
+        byte[][] values = saw(getBytes(prefix));
         if (values == null) {
             return null;
         }
         String[] strings = new String[values.length];
         for (int i = 0; i < values.length; ++i) {
-            strings[i] = toKeyString(values[i]);
+            strings[i] = toString(values[i]);
         }
         return strings;
     }
@@ -134,7 +133,7 @@ public class KeyStore {
     }
 
     public boolean password(String password) {
-        return password(getPasswordBytes(password));
+        return password(getBytes(password));
     }
 
     public boolean lock() {
@@ -148,7 +147,7 @@ public class KeyStore {
     }
 
     public boolean unlock(String password) {
-        return unlock(getPasswordBytes(password));
+        return unlock(getBytes(password));
     }
 
     public boolean isEmpty() {
@@ -162,7 +161,7 @@ public class KeyStore {
     }
 
     public boolean generate(String key) {
-        return generate(getKeyBytes(key));
+        return generate(getBytes(key));
     }
 
     private boolean importKey(byte[] keyName, byte[] key) {
@@ -171,7 +170,7 @@ public class KeyStore {
     }
 
     public boolean importKey(String keyName, byte[] key) {
-        return importKey(getKeyBytes(keyName), key);
+        return importKey(getBytes(keyName), key);
     }
 
     private byte[] getPubkey(byte[] key) {
@@ -180,7 +179,7 @@ public class KeyStore {
     }
 
     public byte[] getPubkey(String key) {
-        return getPubkey(getKeyBytes(key));
+        return getPubkey(getBytes(key));
     }
 
     private boolean delKey(byte[] key) {
@@ -189,7 +188,7 @@ public class KeyStore {
     }
 
     public boolean delKey(String key) {
-        return delKey(getKeyBytes(key));
+        return delKey(getBytes(key));
     }
 
     private byte[] sign(byte[] keyName, byte[] data) {
@@ -198,7 +197,7 @@ public class KeyStore {
     }
 
     public byte[] sign(String key, byte[] data) {
-        return sign(getKeyBytes(key), data);
+        return sign(getBytes(key), data);
     }
 
     private boolean verify(byte[] keyName, byte[] data, byte[] signature) {
@@ -207,7 +206,7 @@ public class KeyStore {
     }
 
     public boolean verify(String key, byte[] data, byte[] signature) {
-        return verify(getKeyBytes(key), data, signature);
+        return verify(getBytes(key), data, signature);
     }
 
     private boolean grant(byte[] key, byte[] uid) {
@@ -216,7 +215,7 @@ public class KeyStore {
     }
 
     public boolean grant(String key, int uid) {
-         return grant(getKeyBytes(key), getUidBytes(uid));
+        return grant(getBytes(key), Integer.toString(uid).getBytes());
     }
 
     private boolean ungrant(byte[] key, byte[] uid) {
@@ -225,7 +224,7 @@ public class KeyStore {
     }
 
     public boolean ungrant(String key, int uid) {
-        return ungrant(getKeyBytes(key), getUidBytes(uid));
+        return ungrant(getBytes(key), Integer.toString(uid).getBytes());
     }
 
     public int getLastError() {
@@ -292,34 +291,11 @@ public class KeyStore {
         return null;
     }
 
-    /**
-     * ModifiedUtf8 is used for key encoding to match the
-     * implementation of NativeCrypto.ENGINE_load_private_key.
-     */
-    private static byte[] getKeyBytes(String string) {
-        try {
-            int utfCount = (int) ModifiedUtf8.countBytes(string, false);
-            byte[] result = new byte[utfCount];
-            ModifiedUtf8.encode(result, 0, string);
-            return result;
-        } catch (UTFDataFormatException e) {
-            throw new RuntimeException(e);
-        }
+    private static byte[] getBytes(String string) {
+        return string.getBytes(Charsets.UTF_8);
     }
 
-    private static String toKeyString(byte[] bytes) {
-        try {
-            return ModifiedUtf8.decode(bytes, new char[bytes.length], 0, bytes.length);
-        } catch (UTFDataFormatException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static byte[] getPasswordBytes(String password) {
-        return password.getBytes(Charsets.UTF_8);
-    }
-
-    private static byte[] getUidBytes(int uid) {
-        return Integer.toString(uid).getBytes(Charsets.UTF_8);
+    private static String toString(byte[] bytes) {
+        return new String(bytes, Charsets.UTF_8);
     }
 }

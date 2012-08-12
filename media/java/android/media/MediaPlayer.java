@@ -1152,8 +1152,6 @@ public class MediaPlayer
      * Checks whether the MediaPlayer is playing.
      *
      * @return true if currently playing, false otherwise
-     * @throws IllegalStateException if the internal player engine has not been
-     * initialized or has been released.
      */
     public native boolean isPlaying();
 

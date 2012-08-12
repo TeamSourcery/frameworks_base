@@ -65,8 +65,8 @@ public class TogglesView extends LinearLayout {
 	public static final String STOCK_TOGGLES = TOGGLE_WIFI + TOGGLE_DELIMITER
 			+ TOGGLE_BLUETOOTH + TOGGLE_DELIMITER + TOGGLE_GPS
 			+ TOGGLE_DELIMITER + TOGGLE_AUTOROTATE + TOGGLE_DELIMITER
-            + TOGGLE_DELIMITER + TOGGLE_VIBRATE
-            + TOGGLE_DELIMITER + TOGGLE_SYNC + TOGGLE_DELIMITER + TOGGLE_SILENT;
+                        + TOGGLE_VIBRATE + TOGGLE_DELIMITER + TOGGLE_SYNC 
+                        + TOGGLE_DELIMITER + TOGGLE_SILENT;
 
 	View mBrightnessSlider;
 
@@ -195,14 +195,14 @@ public class TogglesView extends LinearLayout {
 				rows.add(togglesRowLayout);
 			}
 			togglesRowLayout.setGravity(Gravity.CENTER_HORIZONTAL);
-			toggleScrollView.setHorizontalFadingEdgeEnabled(true);
-			toggleScrollView.addView(togglesRowLayout, PARAMS_TOGGLE);
-			LinearLayout ll = new LinearLayout(mContext);
-			ll.setOrientation(LinearLayout.VERTICAL);
-			ll.setGravity(Gravity.CENTER_HORIZONTAL);
-			ll.addView(toggleScrollView, PARAMS_TOGGLE_SCROLL);
-			rows.remove(rows.size() - 1);
-			rows.add(ll);
+          	        toggleScrollView.setHorizontalFadingEdgeEnabled(true);
+                        toggleScrollView.addView(togglesRowLayout, PARAMS_TOGGLE);
+         	        LinearLayout ll = new LinearLayout(mContext);
+         	        ll.setOrientation(LinearLayout.VERTICAL);
+         	        ll.setGravity(Gravity.CENTER_HORIZONTAL);
+        	        ll.addView(toggleScrollView, PARAMS_TOGGLE_SCROLL);
+        	        rows.remove(rows.size() - 1);
+        	        rows.add(ll);
 
 		}
 		if (mBrightnessLocation == BRIGHTNESS_LOC_BOTTOM)
@@ -250,25 +250,33 @@ public class TogglesView extends LinearLayout {
 		}
 
 		void observe() {
-			ContentResolver resolver = mContext.getContentResolver();
-			resolver.registerContentObserver(Settings.System
-					.getUriFor(Settings.System.STATUSBAR_TOGGLES), false, this);
-			resolver.registerContentObserver(Settings.System
-					.getUriFor(Settings.System.STATUSBAR_TOGGLES_STYLE), false,
-					this);
-			resolver.registerContentObserver(
-					Settings.System
-							.getUriFor(Settings.System.STATUSBAR_TOGGLES_BRIGHTNESS_LOC),
-					false, this);
-			resolver.registerContentObserver(
-					Settings.System
-							.getUriFor(Settings.System.STATUSBAR_TOGGLES_NUMBER_PER_ROW),
-					false, this);
-			resolver.registerContentObserver(Settings.System
-					.getUriFor(Settings.System.STATUSBAR_TOGGLES_USE_BUTTONS),
-					false, this);
-			updateSettings();
-		}
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_TOGGLES),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_TOGGLES_STYLE),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_TOGGLES_BRIGHTNESS_LOC),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_TOGGLES_NUMBER_PER_ROW),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_TOGGLES_USE_BUTTONS),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_TOGGLES_ENABLED_COLOR),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_TOGGLES_DISABLED_COLOR),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_TOGGLES_ALPHA),
+                    false, this);
+            updateSettings();
+        }
 
 		@Override
 		public void onChange(boolean selfChange) {

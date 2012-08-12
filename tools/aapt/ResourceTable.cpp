@@ -2750,12 +2750,6 @@ status_t ResourceTable::flatten(Bundle* bundle, const sp<AaptFile>& dest)
             const bool filterable = (typeName != mipmap16);
 
             const size_t N = t != NULL ? t->getOrderedConfigs().size() : 0;
-
-            // Until a non-NO_ENTRY value has been written for a resource,
-            // that resource is invalid; validResources[i] represents
-            // the item at t->getOrderedConfigs().itemAt(i).
-            Vector<bool> validResources;
-            validResources.insertAt(false, 0, N);
             
             // First write the typeSpec chunk, containing information about
             // each resource entry in this type.
@@ -2892,7 +2886,6 @@ status_t ResourceTable::flatten(Bundle* bundle, const sp<AaptFile>& dest)
                         if (amt < 0) {
                             return amt;
                         }
-                        validResources.editItemAt(ei) = true;
                     } else {
                         index[ei] = htodl(ResTable_type::NO_ENTRY);
                     }
@@ -2902,14 +2895,6 @@ status_t ResourceTable::flatten(Bundle* bundle, const sp<AaptFile>& dest)
                 tHeader = (ResTable_type*)
                     (((uint8_t*)data->editData()) + typeStart);
                 tHeader->header.size = htodl(data->getSize()-typeStart);
-            }
-
-            for (size_t i = 0; i < N; ++i) {
-                if (!validResources[i]) {
-                    sp<ConfigList> c = t->getOrderedConfigs().itemAt(i);
-                    fprintf(stderr, "warning: no entries written for %s/%s\n",
-                            String8(typeName).string(), String8(c->getName()).string());
-                }
             }
         }
 
@@ -3739,7 +3724,9 @@ sp<ResourceTable::Package> ResourceTable::getPackage(const String16& package)
 {
     sp<Package> p = mPackages.valueFor(package);
     if (p == NULL) {
-        if (mIsAppPackage) {
+        if (mBundle->getIsOverlayPackage()) {
+            p = new Package(package, 0x00);
+        } else if (mIsAppPackage) {
             if (mHaveAppPackage) {
                 fprintf(stderr, "Adding multiple application package resources; only one is allowed.\n"
                                 "Use -x to create extended resources.\n");

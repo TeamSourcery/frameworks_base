@@ -110,8 +110,8 @@ public class NsdService extends INsdManager.Stub {
         private final EnabledState mEnabledState = new EnabledState();
 
         @Override
-        protected String getWhatToString(int what) {
-            return cmdToString(what);
+        protected String getMessageInfo(Message msg) {
+            return cmdToString(msg.what);
         }
 
         /**
@@ -144,7 +144,7 @@ public class NsdService extends INsdManager.Stub {
             } else {
                 setInitialState(mDisabledState);
             }
-            setLogRecSize(25);
+            setProcessedMessagesSize(25);
             registerForNsdSetting();
         }
 

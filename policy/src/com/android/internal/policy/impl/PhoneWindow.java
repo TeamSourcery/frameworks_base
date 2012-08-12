@@ -1666,9 +1666,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
      */
     private void restorePanelState(SparseArray<Parcelable> icicles) {
         PanelFeatureState st;
-        int curFeatureId;
-        for (int i = icicles.size() - 1; i >= 0; i--) {
-            curFeatureId = icicles.keyAt(i);
+        for (int curFeatureId = icicles.size() - 1; curFeatureId >= 0; curFeatureId--) {
             st = getPanelState(curFeatureId, false /* required */);
             if (st == null) {
                 // The panel must not have been required, and is currently not around, skip it

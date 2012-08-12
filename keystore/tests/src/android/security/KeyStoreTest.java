@@ -35,9 +35,9 @@ import java.util.HashSet;
 public class KeyStoreTest extends ActivityUnitTestCase<Activity> {
     private static final String TEST_PASSWD = "12345678";
     private static final String TEST_PASSWD2 = "87654321";
-    private static final String TEST_KEYNAME = "test-key";
-    private static final String TEST_KEYNAME1 = "test-key.1";
-    private static final String TEST_KEYNAME2 = "test-key\02";
+    private static final String TEST_KEYNAME = "testkey";
+    private static final String TEST_KEYNAME1 = "testkey1";
+    private static final String TEST_KEYNAME2 = "testkey2";
     private static final byte[] TEST_KEYVALUE = "test value".getBytes(Charsets.UTF_8);
 
     // "Hello, World" in Chinese
@@ -45,12 +45,10 @@ public class KeyStoreTest extends ActivityUnitTestCase<Activity> {
     private static final byte[] TEST_I18N_VALUE = TEST_I18N_KEY.getBytes(Charsets.UTF_8);
 
     // Test vector data for signatures
-    private static final byte[] TEST_DATA =  new byte[256];
-    static {
-        for (int i = 0; i < TEST_DATA.length; i++) {
-            TEST_DATA[i] = (byte) i;
-        }
-    }
+    private static final byte[] TEST_DATA = {
+            (byte) 0x00, (byte) 0xA0, (byte) 0xFF, (byte) 0x0A, (byte) 0x00, (byte) 0xFF,
+            (byte) 0xAA, (byte) 0x55, (byte) 0x05, (byte) 0x5A,
+    };
 
     private KeyStore mKeyStore = null;
 
@@ -157,9 +155,9 @@ public class KeyStoreTest extends ActivityUnitTestCase<Activity> {
     }
 
     public void testDelete() throws Exception {
-        assertFalse(mKeyStore.delete(TEST_KEYNAME));
+        assertTrue(mKeyStore.delete(TEST_KEYNAME));
         mKeyStore.password(TEST_PASSWD);
-        assertFalse(mKeyStore.delete(TEST_KEYNAME));
+        assertTrue(mKeyStore.delete(TEST_KEYNAME));
 
         mKeyStore.put(TEST_KEYNAME, TEST_KEYVALUE);
         assertTrue(Arrays.equals(TEST_KEYVALUE, mKeyStore.get(TEST_KEYNAME)));

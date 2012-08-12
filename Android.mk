@@ -53,6 +53,7 @@ LOCAL_SRC_FILES += \
        core/java/android/content/EventLogTags.logtags \
        core/java/android/speech/tts/EventLogTags.logtags \
        core/java/android/webkit/EventLogTags.logtags \
+       telephony/java/com/android/internal/telephony/EventLogTags.logtags \
 
 # The following filters out code we are temporarily not including at all.
 # TODO: Move AWT and beans (and associated harmony code) back into libcore.
@@ -219,10 +220,12 @@ LOCAL_SRC_FILES += \
 	telephony/java/com/android/internal/telephony/IPhoneSubInfo.aidl \
 	telephony/java/com/android/internal/telephony/ITelephony.aidl \
 	telephony/java/com/android/internal/telephony/ITelephonyRegistry.aidl \
+	telephony/java/com/android/internal/telephony/IIccPhoneBook.aidl \
+	telephony/java/com/android/internal/telephony/ISms.aidl \
 	telephony/java/com/android/internal/telephony/IWapPushManager.aidl \
-	telephony/java/com/android/internal/telephony/IExtendedNetworkService.aidl \
 	wifi/java/android/net/wifi/IWifiManager.aidl \
 	wifi/java/android/net/wifi/p2p/IWifiP2pManager.aidl \
+	telephony/java/com/android/internal/telephony/IExtendedNetworkService.aidl \
 	voip/java/android/net/sip/ISipSession.aidl \
 	voip/java/android/net/sip/ISipSessionListener.aidl \
 	voip/java/android/net/sip/ISipService.aidl
@@ -353,9 +356,7 @@ include libcore/Docs.mk
 include external/junit/Common.mk
 
 non_base_dirs := \
-	../../external/apache-http/src/org/apache/http \
-	../opt/telephony/src/java/android/telephony \
-	../opt/telephony/src/java/android/telephony/gsm \
+	../../external/apache-http/src/org/apache/http
 
 # These are relative to frameworks/base
 dirs_to_check_apis := \
@@ -406,8 +407,6 @@ framework_docs_LOCAL_JAVA_LIBRARIES := \
 			core \
 			ext \
 			framework \
-			mms-common \
-			telephony-common \
                         framework2 \
 
 framework_docs_LOCAL_MODULE_CLASS := JAVA_LIBRARIES
