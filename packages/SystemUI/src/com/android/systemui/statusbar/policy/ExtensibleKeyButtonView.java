@@ -41,7 +41,6 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
 	final static String ACTION_SEARCH = "**search**";
 	final static String ACTION_MENU = "**menu**";
 	final static String ACTION_POWER = "**power**";
-        final static String ACTION_NOTIFICATIONS = "**notifications**";
 	final static String ACTION_RECENTS = "**recents**";
         final static String ACTION_SCREENSHOT = "**screenshot**";
 	final static String ACTION_KILL = "**kill**";
@@ -165,16 +164,6 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
                 } catch (RemoteException e) {            	
                 }
                 return;
-
-                } else if (mClickAction.equals(ACTION_NOTIFICATIONS)) {
- 	            try {
- 	                mBarService.toggleNotificationShade();
- 	        } catch (RemoteException e) {
- 	               // A RemoteException is like a cold
- 	               // Let's hope we don't catch one!
- 	        }
- 	 	
-                return;
         		
         	} else if (mClickAction.equals(ACTION_KILL)) {
         		
@@ -248,14 +237,6 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
                 	// let it go.
                 }
                 return true;
-                } else if (mClickAction.equals(ACTION_NOTIFICATIONS)) {
- 	            try {
- 	                mBarService.toggleNotificationShade();
- 	        } catch (RemoteException e) {
- 	                // A RemoteException is like a cold
- 	               // Let's hope we don't catch one!
- 	        }
- 	        return true;
         	} else if(mLongpress.equals(ACTION_SCREENSHOT)){
  	           mHandler.post(mTakeScreenshot);
  	           return true;
