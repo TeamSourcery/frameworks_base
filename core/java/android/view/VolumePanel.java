@@ -162,7 +162,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                 R.string.volume_icon_description_ringer,
                 R.drawable.ic_audio_ring_notif,
                 R.drawable.ic_audio_ring_notif_mute,
-                false),
+                true),
         VoiceStream(AudioManager.STREAM_VOICE_CALL,
                 R.string.volume_icon_description_incall,
                 R.drawable.ic_audio_phone, R.drawable.ic_audio_phone, false), AlarmStream(
