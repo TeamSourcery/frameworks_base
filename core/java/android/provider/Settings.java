@@ -1695,13 +1695,6 @@ public final class Settings {
         public static final String VOLUME_BLUETOOTH_SCO = "volume_bluetooth_sco";
 
         /**
-         * Whether to prevent loud volume levels when headset is first plugged in.
-         * @hide
-         */
-        public static final String SAFE_HEADSET_VOLUME_RESTORE = "safe_headset_volume_restore";
-
-
-        /**
          * Master volume (float in the range 0.0f to 1.0f).
          * @hide
          */
@@ -2105,12 +2098,6 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_DISABLED = "lockscreen.disabled";
-
-        /**
-         * Stores values for custom lockscreen targets
- 	 * @hide
-         */
-        public static final String LOCKSCREEN_TARGETS = "lockscreen_targets";
 
         /**
          * URI for the low battery sound file.
@@ -2885,7 +2872,13 @@ public final class Settings {
          * @hide
          */
         public static final String NOTIFICATION_LIGHT_COLOR = "notification_light_color";
-        
+
+       /**
+        * Sets the alpha (transparency) of notification wallpaper
+        * @hide
+        */
+        public static final String NOTIF_WALLPAPER_ALPHA = "notif_wallpaper_alpha";
+         
     }
 
 

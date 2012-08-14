@@ -111,9 +111,8 @@
 
     <include
         layout="@layout/weatherpanel"
-        android:layout_gravity="right"
-		android:layout_marginRight="@dimen/keyguard_lockscreen_status_line_font_right_margin"
-		android:drawablePadding="4dip" />
+        android:layout_gravity="center_horizontal"
+	android:drawablePadding="4dip" />
 
     <Space android:layout_gravity="fill" />
 
