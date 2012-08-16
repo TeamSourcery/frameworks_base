@@ -343,6 +343,18 @@ public class StatusBarManagerService extends IStatusBarService.Stub
         });
     }
 
+<<<<<<< HEAD
+     @Override
+     public void toggleNotificationShade() {
+         if (mBar != null) {
+             try {
+                 mBar.toggleNotificationShade();
+             } catch (RemoteException ex) {}
+        }
+    }
+
+=======
+>>>>>>> 4660624c7b8fcb8edbada096bd799ef5682e3788
     @Override
     public void toggleRecentApps() {
         if (mBar != null) {

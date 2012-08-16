@@ -209,6 +209,16 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+<<<<<<< HEAD
+    public void toggleNotificationShade() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_TOGGLE_NOTIFICATION_SHADE);
+            mHandler.obtainMessage(MSG_TOGGLE_NOTIFICATION_SHADE, 0, 0, null).sendToTarget();
+         }
+    }
+
+=======
+>>>>>>> 4660624c7b8fcb8edbada096bd799ef5682e3788
     public void toggleRecentApps() {
         synchronized (mList) {
             mHandler.removeMessages(MSG_TOGGLE_RECENT_APPS);
@@ -303,6 +313,12 @@ public class CommandQueue extends IStatusBar.Stub {
                 case MSG_SET_HARD_KEYBOARD_STATUS:
                     mCallbacks.setHardKeyboardStatus(msg.arg1 != 0, msg.arg2 != 0);
                     break;
+<<<<<<< HEAD
+                 case MSG_TOGGLE_NOTIFICATION_SHADE:
+                    mCallbacks.toggleNotificationShade();
+                    break;
+=======
+>>>>>>> 4660624c7b8fcb8edbada096bd799ef5682e3788
                 case MSG_TOGGLE_RECENT_APPS:
                     mCallbacks.toggleRecentApps();
                     break;

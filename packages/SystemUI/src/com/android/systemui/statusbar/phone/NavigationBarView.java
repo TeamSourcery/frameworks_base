@@ -874,30 +874,38 @@ public class NavigationBarView extends LinearLayout {
 
         if (uri.startsWith("**")) {
             if (uri.equals(ACTION_HOME)) {
-
                 return getResources().getDrawable(R.drawable.ic_sysbar_home);
+
             } else if (uri.equals(ACTION_BACK)) {
-
                 return getResources().getDrawable(R.drawable.ic_sysbar_back);
+
             } else if (uri.equals(ACTION_RECENTS)) {
-
                 return getResources().getDrawable(R.drawable.ic_sysbar_recent);
+
             } else if (uri.equals(ACTION_SEARCH)) {
-
                 return getResources().getDrawable(R.drawable.ic_sysbar_search);
+
             } else if (uri.equals(ACTION_MENU)) {
-
                 return getResources().getDrawable(R.drawable.ic_sysbar_menu_big);
+
             } else if (uri.equals(ACTION_KILL)) {
-
                 return getResources().getDrawable(R.drawable.ic_sysbar_killtask);
-            } else if (uri.equals(ACTION_POWER)) {
 
+            } else if (uri.equals(ACTION_POWER)) {
                 return getResources().getDrawable(R.drawable.ic_sysbar_power);
+<<<<<<< HEAD
+
+            } else if (uri.equals(ACTION_NOTIFICATIONS)) {
+ 	        return getResources().getDrawable(R.drawable.ic_sysbar_notifications);
+           
+            } else if (uri.equals(ACTION_SCREENSHOT)) {
+ 	        return getResources().getDrawable(R.drawable.ic_sysbar_screenshot);
+=======
             }
           } else if (uri.equals(ACTION_SCREENSHOT)) {
  	 	 	
                return getResources().getDrawable(R.drawable.ic_sysbar_screenshot);
+>>>>>>> 4660624c7b8fcb8edbada096bd799ef5682e3788
         }
 
         return getResources().getDrawable(R.drawable.ic_sysbar_null);

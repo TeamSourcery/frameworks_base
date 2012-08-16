@@ -700,6 +700,17 @@ public class TabletStatusBar extends BaseStatusBar implements
         mRecentsPanel.setStatusBarView(mStatusBarView);
     }
 
+<<<<<<< HEAD
+     @Override
+         public void toggleNotificationShade() {
+             int msg = (mNotificationPanel.isShowing())
+                 ? MSG_CLOSE_NOTIFICATION_PANEL : MSG_OPEN_NOTIFICATION_PANEL;
+         mHandler.removeMessages(msg);
+         mHandler.sendEmptyMessage(msg);
+     }
+
+=======
+>>>>>>> 4660624c7b8fcb8edbada096bd799ef5682e3788
     @Override
     protected void updateSearchPanel() {
         super.updateSearchPanel();
