@@ -602,7 +602,6 @@ public class PhoneStatusBar extends BaseStatusBar {
     }
 
     @Override
-<<<<<<< HEAD
     public void toggleNotificationShade() {
          int msg = (mExpandedVisible)
              ? MSG_CLOSE_NOTIFICATION_PANEL : MSG_OPEN_NOTIFICATION_PANEL;
@@ -611,8 +610,6 @@ public class PhoneStatusBar extends BaseStatusBar {
      }
  
     @Override
-=======
->>>>>>> 4660624c7b8fcb8edbada096bd799ef5682e3788
     protected void updateSearchPanel() {
         super.updateSearchPanel();
         mSearchPanelView.setStatusBarView(mNavigationBarView);

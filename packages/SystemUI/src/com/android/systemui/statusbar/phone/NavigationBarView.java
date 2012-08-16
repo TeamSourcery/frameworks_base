@@ -893,19 +893,18 @@ public class NavigationBarView extends LinearLayout {
 
             } else if (uri.equals(ACTION_POWER)) {
                 return getResources().getDrawable(R.drawable.ic_sysbar_power);
-<<<<<<< HEAD
 
             } else if (uri.equals(ACTION_NOTIFICATIONS)) {
  	        return getResources().getDrawable(R.drawable.ic_sysbar_notifications);
            
             } else if (uri.equals(ACTION_SCREENSHOT)) {
  	        return getResources().getDrawable(R.drawable.ic_sysbar_screenshot);
-=======
+
             }
           } else if (uri.equals(ACTION_SCREENSHOT)) {
  	 	 	
                return getResources().getDrawable(R.drawable.ic_sysbar_screenshot);
->>>>>>> 4660624c7b8fcb8edbada096bd799ef5682e3788
+
         }
 
         return getResources().getDrawable(R.drawable.ic_sysbar_null);

@@ -877,11 +877,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             try {
                 IStatusBarService statusbar = getStatusBarService();
                 if (statusbar != null) {
-<<<<<<< HEAD
                    // TODO: Make this an option, for testing only right now
  	           //statusbar.toggleNotificationShade();
-=======
->>>>>>> 4660624c7b8fcb8edbada096bd799ef5682e3788
                     statusbar.toggleRecentApps();
                 }
             } catch (RemoteException e) {
