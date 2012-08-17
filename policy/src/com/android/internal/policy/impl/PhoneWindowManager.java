@@ -1193,7 +1193,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mHdmiRotation = mLandscapeRotation;
         }
       }
-    }
+    
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
         boolean updateRotation = false;

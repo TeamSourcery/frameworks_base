@@ -104,6 +104,7 @@ public class NavigationBarView extends LinearLayout {
     final static String ACTION_SEARCH = "**search**";
     final static String ACTION_MENU = "**menu**";
     final static String ACTION_POWER = "**power**";
+    final static String ACTION_NOTIFICATIONS = "**notifications**";
     final static String ACTION_RECENTS = "**recents**";
     final static String ACTION_SCREENSHOT = "**screenshot**";
     final static String ACTION_KILL = "**kill**";
