@@ -921,6 +921,8 @@ public class NetworkController extends BroadcastReceiver {
         String mobileLabel = "";
         int N;
         final boolean emergencyOnly = (mServiceState != null && mServiceState.isEmergencyOnly());
+        final String customLabel = Settings.System.getString(mContext.getContentResolver(),
+ 	      Settings.System.CUSTOM_CARRIER_LABEL);
 
         if (!mHasMobileDataFeature) {
             mDataSignalIconId = mPhoneSignalIconId = 0;
