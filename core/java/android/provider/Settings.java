@@ -2637,6 +2637,16 @@ public final class Settings {
        */
        public static final String STATUSBAR_TOGGLES_ALPHA = "statusbar_toggles_alpha";
 
+       /**
+       * @hide
+       */
+       public static final String STATUSBAR_TOGGLES_TEXT_COLOR = "statusbar_toggles_text_color";
+
+       /**
+       * @hide
+       */
+       public static final String STATUSBAR_TOGGLES_BACKGROUND = "statusbar_toggles_background";
+
          /**
          * @hide
          */
