@@ -2949,6 +2949,13 @@ public final class Settings {
         * @hide
         */
         public static final String NOTIF_WALLPAPER_ALPHA = "notif_wallpaper_alpha";
+
+      /**
+         * Holds the text for the Carrier Label. An empty string will bring
+         * the default text back.
+         * @hide
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
          
     }
 
