@@ -1506,7 +1506,9 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
         // because the voice search activity will always need to insert "QUERY" into
         // it anyway.
         Bundle queryExtras = new Bundle();
-
+        if(this.mAppSearchData != null) {
+            queryExtras.putParcelable(SearchManager.APP_DATA, this.mAppSearchData);
+        }
         // Now build the intent to launch the voice search.  Add all necessary
         // extras to launch the voice recognizer, and then all the necessary extras
         // to forward the results to the searchable activity
