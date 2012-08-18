@@ -41,7 +41,9 @@ import com.android.internal.widget.ActionBarView;
 
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -49,6 +51,7 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -93,6 +96,7 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -192,6 +196,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private int mUiOptions = 0;
 
+    public static final String CUSTOM_BG_PATH = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper.jpg";
+    public static Context sourceryContext;
+
     static class WindowManagerHolder {
         static final IWindowManager sWindowManager = IWindowManager.Stub.asInterface(
                 ServiceManager.getService("window"));
@@ -201,6 +208,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     public PhoneWindow(Context context) {
         super(context);
+	sourceryContext = context;
         mLayoutInflater = LayoutInflater.from(context);
     }
 
@@ -1783,9 +1791,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private ActionBarContextView mActionModeView;
         private PopupWindow mActionModePopup;
         private Runnable mShowActionModePopup;
+	
+	public Context sourceryContext;
 
         public DecorView(Context context, int featureId) {
             super(context);
+	    sourceryContext = context;
             mFeatureId = featureId;
         }
 
@@ -2702,8 +2713,32 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         if (getContainer() == null) {
             if (mBackgroundDrawable == null) {
                 if (mBackgroundResource == 0) {
-                    mBackgroundResource = a.getResourceId(
-                            com.android.internal.R.styleable.Window_windowBackground, 0);
+			//Load custom bg image if it exists
+			File customBG = new File(CUSTOM_BG_PATH);
+            		if (!customBG.exists()) {    
+                    		mBackgroundResource = a.getResourceId(
+                            	com.android.internal.R.styleable.Window_windowBackground, 0);
+			}
+			else {
+				Log.i(TAG, "Custom Background requested");
+				final Intent intent = new Intent(Intent.ACTION_MAIN);
+				String defaultHomePackage = "com.android.launcher";
+				intent.addCategory(Intent.CATEGORY_HOME);
+				final ResolveInfo res = sourceryContext.getPackageManager().resolveActivity(intent, 0);
+				if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
+					defaultHomePackage = res.activityInfo.packageName;
+				}
+				String pkg = sourceryContext.getPackageName();
+				Log.i(TAG, "pkg value: " + pkg);
+				if (!pkg.equals("com.android.systemui") && !pkg.equals(defaultHomePackage)) {
+		    			mBackgroundDrawable = new BitmapDrawable(null, CUSTOM_BG_PATH);
+				mDecor.setWindowBackground(new BitmapDrawable(null, CUSTOM_BG_PATH));
+				}
+				else {
+					mBackgroundResource = a.getResourceId(
+                            		com.android.internal.R.styleable.Window_windowBackground, 0);
+				}
+			}
                 }
                 if (mFrameResource == 0) {
                     mFrameResource = a.getResourceId(com.android.internal.R.styleable.Window_windowFrame, 0);
@@ -2801,7 +2836,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         if (getContainer() == null) {
             Drawable drawable = mBackgroundDrawable;
             if (mBackgroundResource != 0) {
-                drawable = getContext().getResources().getDrawable(mBackgroundResource);
+		 drawable = getContext().getResources().getDrawable(mBackgroundResource);
             }
             mDecor.setWindowBackground(drawable);
             drawable = null;
