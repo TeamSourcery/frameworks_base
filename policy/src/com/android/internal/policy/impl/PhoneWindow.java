@@ -2817,7 +2817,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 		 File customBG = new File(CUSTOM_APP_WALLPAPER);
 		 File customBGLight = new File(CUSTOM_APP_WALLPAPER_LIGHT);
 		 String resName = getContext().getResources().getResourceEntryName(mBackgroundResource);
-		 Log.i("CustomBGTest", resName);
 		 if (resName.equalsIgnoreCase(DEFAULT_APP_WALLPAPER)) {
 			if (customBG.exists()) {
 		 		drawable = new BitmapDrawable(null, CUSTOM_APP_WALLPAPER);
