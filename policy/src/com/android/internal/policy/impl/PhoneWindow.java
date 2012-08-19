@@ -198,7 +198,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     public static final String CUSTOM_APP_WALLPAPER = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper.jpg";
     public static final String CUSTOM_APP_WALLPAPER_LIGHT = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper_light.jpg";
-    //public static Context sourceryContext;
+    public static final String DEFAULT_APP_WALLPAPER = "screen_background_selector_dark";
+    public static final String DEFAULT_APP_WALLPAPER_LIGHT = "screen_background_selector_light";
 
     static class WindowManagerHolder {
         static final IWindowManager sWindowManager = IWindowManager.Stub.asInterface(
@@ -2815,18 +2816,19 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             if (mBackgroundResource != 0) {
 		 File customBG = new File(CUSTOM_APP_WALLPAPER);
 		 File customBGLight = new File(CUSTOM_APP_WALLPAPER_LIGHT);
-		 String type = getContext().getResources().getResourceTypeName(mBackgroundResource);
-		 if (type.equalsIgnoreCase("layout")) {
+		 String resName = getContext().getResources().getResourceEntryName(mBackgroundResource);
+		 Log.i("CustomBGTest", resName);
+		 if (resName.equalsIgnoreCase(DEFAULT_APP_WALLPAPER)) {
 			if (customBG.exists()) {
 		 		drawable = new BitmapDrawable(null, CUSTOM_APP_WALLPAPER);
 			} else {
-				drawable = getContext().getResources().getDrawable(com.android.internal.R.drawable.screen_background_selector_dark);
+				drawable = getContext().getResources().getDrawable(mBackgroundResource);
 			}
-		 } else if (type.equalsIgnoreCase("style")) {
+		 } else if (resName.equalsIgnoreCase(DEFAULT_APP_WALLPAPER_LIGHT)) {
 			if (customBGLight.exists()) {
 		 		drawable = new BitmapDrawable(null, CUSTOM_APP_WALLPAPER_LIGHT);
 			} else {
-				drawable = getContext().getResources().getDrawable(com.android.internal.R.drawable.screen_background_selector_light);
+				drawable = getContext().getResources().getDrawable(mBackgroundResource);
 			}
 		 } else {
 		 	drawable = getContext().getResources().getDrawable(mBackgroundResource);
