@@ -196,7 +196,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private int mUiOptions = 0;
 
-    //public static final String CUSTOM_BG_PATH = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper.jpg";
+    public static final String CUSTOM_APP_WALLPAPER = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper.jpg";
+    public static final String CUSTOM_APP_WALLPAPER_LIGHT = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper_light.jpg";
     //public static Context sourceryContext;
 
     static class WindowManagerHolder {
@@ -2713,32 +2714,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         if (getContainer() == null) {
             if (mBackgroundDrawable == null) {
                 if (mBackgroundResource == 0) {
-			//Load custom bg image if it exists
-			//File customBG = new File(CUSTOM_BG_PATH);
-            		//if (!customBG.exists()) {    
                     		mBackgroundResource = a.getResourceId(
                             	com.android.internal.R.styleable.Window_windowBackground, 0);
-			//}
-			//else {
-				//Log.i(TAG, "Custom Background requested");
-				//final Intent intent = new Intent(Intent.ACTION_MAIN);
-				//String defaultHomePackage = "com.android.launcher";
-				//intent.addCategory(Intent.CATEGORY_HOME);
-				//final ResolveInfo res = sourceryContext.getPackageManager().resolveActivity(intent, 0);
-				//if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
-				//	defaultHomePackage = res.activityInfo.packageName;
-				//}
-				//String pkg = sourceryContext.getPackageName();
-				//Log.i(TAG, "pkg value: " + pkg);
-				//if (!pkg.equals("com.android.systemui") && !pkg.equals(defaultHomePackage)) {
-		    		//	mBackgroundDrawable = new BitmapDrawable(null, CUSTOM_BG_PATH);
-				//mDecor.setWindowBackground(new BitmapDrawable(null, CUSTOM_BG_PATH));
-				//}
-				//else {
-				//	mBackgroundResource = a.getResourceId(
-                            	//	com.android.internal.R.styleable.Window_windowBackground, 0);
-				//}
-			//}
                 }
                 if (mFrameResource == 0) {
                     mFrameResource = a.getResourceId(com.android.internal.R.styleable.Window_windowFrame, 0);
@@ -2836,9 +2813,26 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         if (getContainer() == null) {
             Drawable drawable = mBackgroundDrawable;
             if (mBackgroundResource != 0) {
-		 drawable = getContext().getResources().getDrawable(mBackgroundResource);
+		 File customBG = new File(CUSTOM_APP_WALLPAPER);
+		 File customBGLight = new File(CUSTOM_APP_WALLPAPER_LIGHT);
+		 String type = getContext().getResources().getResourceTypeName(mBackgroundResource);
+		 if (type.equalsIgnoreCase("layout")) {
+			if (customBG.exists()) {
+		 		drawable = new BitmapDrawable(null, CUSTOM_APP_WALLPAPER);
+			} else {
+				drawable = getContext().getResources().getDrawable(com.android.internal.R.drawable.screen_background_selector_dark);
+			}
+		 } else if (type.equalsIgnoreCase("style")) {
+			if (customBGLight.exists()) {
+		 		drawable = new BitmapDrawable(null, CUSTOM_APP_WALLPAPER_LIGHT);
+			} else {
+				drawable = getContext().getResources().getDrawable(com.android.internal.R.drawable.screen_background_selector_light);
+			}
+		 } else {
+		 	drawable = getContext().getResources().getDrawable(mBackgroundResource);
+		 }
             }
-            mDecor.setWindowBackground(drawable);
+	    mDecor.setWindowBackground(drawable);
             drawable = null;
             if (mFrameResource != 0) {
                 drawable = getContext().getResources().getDrawable(mFrameResource);
