@@ -41,9 +41,9 @@ import com.android.internal.widget.ActionBarView;
 
 import android.app.KeyguardManager;
 import android.content.Context;
-import android.content.Intent;
+//import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ResolveInfo;
+//import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -196,8 +196,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private int mUiOptions = 0;
 
-    public static final String CUSTOM_BG_PATH = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper.jpg";
-    public static Context sourceryContext;
+    //public static final String CUSTOM_BG_PATH = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper.jpg";
+    //public static Context sourceryContext;
 
     static class WindowManagerHolder {
         static final IWindowManager sWindowManager = IWindowManager.Stub.asInterface(
@@ -208,7 +208,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     public PhoneWindow(Context context) {
         super(context);
-	sourceryContext = context;
+	//sourceryContext = context;
         mLayoutInflater = LayoutInflater.from(context);
     }
 
@@ -1792,11 +1792,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private PopupWindow mActionModePopup;
         private Runnable mShowActionModePopup;
 	
-	public Context sourceryContext;
+	//public Context sourceryContext;
 
         public DecorView(Context context, int featureId) {
             super(context);
-	    sourceryContext = context;
+	    //sourceryContext = context;
             mFeatureId = featureId;
         }
 
@@ -2714,31 +2714,31 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             if (mBackgroundDrawable == null) {
                 if (mBackgroundResource == 0) {
 			//Load custom bg image if it exists
-			File customBG = new File(CUSTOM_BG_PATH);
-            		if (!customBG.exists()) {    
+			//File customBG = new File(CUSTOM_BG_PATH);
+            		//if (!customBG.exists()) {    
                     		mBackgroundResource = a.getResourceId(
                             	com.android.internal.R.styleable.Window_windowBackground, 0);
-			}
-			else {
-				Log.i(TAG, "Custom Background requested");
-				final Intent intent = new Intent(Intent.ACTION_MAIN);
-				String defaultHomePackage = "com.android.launcher";
-				intent.addCategory(Intent.CATEGORY_HOME);
-				final ResolveInfo res = sourceryContext.getPackageManager().resolveActivity(intent, 0);
-				if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
-					defaultHomePackage = res.activityInfo.packageName;
-				}
-				String pkg = sourceryContext.getPackageName();
-				Log.i(TAG, "pkg value: " + pkg);
-				if (!pkg.equals("com.android.systemui") && !pkg.equals(defaultHomePackage)) {
-		    			mBackgroundDrawable = new BitmapDrawable(null, CUSTOM_BG_PATH);
-				mDecor.setWindowBackground(new BitmapDrawable(null, CUSTOM_BG_PATH));
-				}
-				else {
-					mBackgroundResource = a.getResourceId(
-                            		com.android.internal.R.styleable.Window_windowBackground, 0);
-				}
-			}
+			//}
+			//else {
+				//Log.i(TAG, "Custom Background requested");
+				//final Intent intent = new Intent(Intent.ACTION_MAIN);
+				//String defaultHomePackage = "com.android.launcher";
+				//intent.addCategory(Intent.CATEGORY_HOME);
+				//final ResolveInfo res = sourceryContext.getPackageManager().resolveActivity(intent, 0);
+				//if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
+				//	defaultHomePackage = res.activityInfo.packageName;
+				//}
+				//String pkg = sourceryContext.getPackageName();
+				//Log.i(TAG, "pkg value: " + pkg);
+				//if (!pkg.equals("com.android.systemui") && !pkg.equals(defaultHomePackage)) {
+		    		//	mBackgroundDrawable = new BitmapDrawable(null, CUSTOM_BG_PATH);
+				//mDecor.setWindowBackground(new BitmapDrawable(null, CUSTOM_BG_PATH));
+				//}
+				//else {
+				//	mBackgroundResource = a.getResourceId(
+                            	//	com.android.internal.R.styleable.Window_windowBackground, 0);
+				//}
+			//}
                 }
                 if (mFrameResource == 0) {
                     mFrameResource = a.getResourceId(com.android.internal.R.styleable.Window_windowFrame, 0);

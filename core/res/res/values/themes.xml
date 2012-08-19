@@ -160,7 +160,8 @@ please see themes_device_defaults.xml.
         <item name="galleryItemBackground">@android:drawable/gallery_item_background</item>
         
         <!-- Window attributes -->
-        <item name="windowBackground">@android:drawable/screen_background_selector_dark</item>
+        <!-- <item name="windowBackground">@android:drawable/screen_background_selector_dark</item> -->
+	<item name="windowBackground">@android:layout/application_wallpaper</item>
         <item name="windowFrame">@null</item>
         <item name="windowNoTitle">false</item>
         <item name="windowFullscreen">false</item>
