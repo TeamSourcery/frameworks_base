@@ -100,6 +100,7 @@ import com.android.systemui.statusbar.policy.OnSizeChangedListener;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -116,7 +117,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     public static final String ACTION_STATUSBAR_START
             = "com.android.internal.policy.statusbar.START";
 
-    private static final boolean DIM_BEHIND_EXPANDED_PANEL = true;
+    private static boolean DIM_BEHIND_EXPANDED_PANEL = true;
     private static final boolean SHOW_CARRIER_LABEL = true;
 
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
@@ -267,6 +268,10 @@ public class PhoneStatusBar extends BaseStatusBar {
     private Float mPropFactor;
 
     private int mNavigationIconHints = 0;
+
+    // Location for custom wallpaper
+    private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper.jpg";
+
     private final Animator.AnimatorListener mMakeIconsInvisible = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
@@ -409,6 +414,17 @@ public class PhoneStatusBar extends BaseStatusBar {
             mIntruderAlertView.setVisibility(View.GONE);
             mIntruderAlertView.setBar(this);
         }
+
+	// Check if we are using custom wallpaper so that we can remove the main background image for true transparency
+	File file = new File(NOTIF_WALLPAPER_IMAGE_PATH);
+
+        if (file.exists()) {
+		mStatusBarWindow.setBackground(null);
+		mNotificationPanel.setBackground(null);
+		DIM_BEHIND_EXPANDED_PANEL = Settings.System.getBoolean(mStatusBarView.getContext()
+                .getContentResolver(), Settings.System.NOTIFICATION_DIMMER, false);
+	}
+
 
         updateShowSearchHoldoff();
 
