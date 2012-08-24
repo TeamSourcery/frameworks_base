@@ -2112,6 +2112,12 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_TARGETS = "lockscreen_targets";
 
+         /**
+         * Number of custom lockscreen targets
+         * @hide
+         */
+        public static final String LOCKSCREEN_TARGET_AMOUNT = "lockscreen_target_amount";
+
         /**
          * URI for the low battery sound file.
          * @hide
@@ -2734,12 +2740,6 @@ public final class Settings {
 	* @hide
 	*/
         public static final String SHOW_LOCK_BEFORE_UNLOCK = "show_lock_before_unlock";
-
-	/**
-	* Setting to enable/disable the dim feature of notification pulldown
-	* @hide
-	*/
-	public static final String NOTIFICATION_DIMMER = "notification_dimmer";
 
     /**
          * where to show the legacy menu key

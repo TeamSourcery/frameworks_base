@@ -90,10 +90,18 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
             "com.android.systemui.action_assist_icon";
 
     private static final int COLOR_WHITE = 0xFFFFFFFF;
+    public static final int LAYOUT_TRI = 2;
+    public static final int LAYOUT_QUAD = 3;
+    public static final int LAYOUT_HEPTA = 4;
+    public static final int LAYOUT_HEXA = 5;
+    public static final int LAYOUT_OCTO = 7;
+	
+    private int mLockscreenTargets;
 
     private LockPatternUtils mLockPatternUtils;
     private KeyguardUpdateMonitor mUpdateMonitor;
     private KeyguardScreenCallback mCallback;
+    private SettingsObserver mSettingsObserver;
 
     // set to 'true' to show the ring/silence target when camera isn't available
     private boolean mEnableRingSilenceFallback = false;
@@ -379,7 +387,17 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
                 }
                 // Add unlock target
                 storedDraw.add(new TargetDrawable(res, res.getDrawable(R.drawable.ic_lockscreen_unlock)));
-                for (int i = 0; i < 8 - mTargetOffset - 1; i++) {
+
+                int total = 0;
+                if (mLockscreenTargets == 2) {
+                    total = 4;
+                } else if (mLockscreenTargets == 3 || mLockscreenTargets == 5) {
+                    total = 6;
+                } else if (mLockscreenTargets == 4 || mLockscreenTargets == 7) {
+                    total = 8;
+                }
+
+                for (int i = 0; i < total - mTargetOffset - 1; i++) {
                     int tmpInset = targetInset;
                     if (i < mStoredTargets.length) {
                         String uri = mStoredTargets[i];
@@ -622,7 +640,11 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
         super(context);
         mLockPatternUtils = lockPatternUtils;
         mUpdateMonitor = updateMonitor;
-        mCallback = callback;
+         mCallback = callback;
+        mLockscreenTargets = Settings.System.getInt(mContext.getContentResolver(), Settings.System.LOCKSCREEN_TARGET_AMOUNT, LAYOUT_TRI);
+        mSettingsObserver = new SettingsObserver(new Handler());
+        mSettingsObserver.observe();
+
         mEnableMenuKeyInLockScreen = shouldEnableMenuKey();
         mCreationOrientation = configuration.orientation;
 
@@ -634,11 +656,31 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
 
         final LayoutInflater inflater = LayoutInflater.from(context);
         if (DBG) Log.v(TAG, "Creation orientation = " + mCreationOrientation);
-        if (mCreationOrientation != Configuration.ORIENTATION_LANDSCAPE) {
-            inflater.inflate(R.layout.keyguard_screen_tab_unlock, this, true);
-        } else {
-            inflater.inflate(R.layout.keyguard_screen_tab_unlock_land, this, true);
-        }
+        
+        boolean landscape = mCreationOrientation == Configuration.ORIENTATION_LANDSCAPE;
+
+        switch (mLockscreenTargets) {
+            default:
+            case LAYOUT_TRI:
+            case LAYOUT_QUAD:
+            case LAYOUT_HEPTA:
+                if (landscape)
+                    inflater.inflate(R.layout.keyguard_screen_tab_unlock_land, this,
+                            true);
+                else
+                    inflater.inflate(R.layout.keyguard_screen_tab_unlock, this,
+                            true);
+                break;
+            case LAYOUT_HEXA:
+            case LAYOUT_OCTO:
+                if (landscape)
+                    inflater.inflate(R.layout.keyguard_screen_tab_octounlock_land, this,
+                            true);
+                else
+                    inflater.inflate(R.layout.keyguard_screen_tab_octounlock, this,
+                            true);
+                break;
+            }
 
         mStatusViewManager = new KeyguardStatusViewManager(this, mUpdateMonitor, mLockPatternUtils,
                 mCallback, false);
@@ -653,6 +695,7 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
         mSilentMode = isSilentMode();
         mUnlockWidget = findViewById(R.id.unlock_widget);
         mUnlockWidgetMethods = createUnlockMethods(mUnlockWidget);
+        updateSettings();
 
         if (DBG) Log.v(TAG, "*** LockScreen accel is "
                 + (mUnlockWidget.isHardwareAccelerated() ? "on":"off"));
@@ -805,6 +848,9 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
+             resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.LOCKSCREEN_TARGET_AMOUNT), false,
+                    this);
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.LOCKSCREEN_CUSTOM_TEXT_COLOR), false,
                     this);
@@ -823,6 +869,8 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
 
         int mLockscreenColor = Settings.System.getInt(resolver,
                 Settings.System.LOCKSCREEN_CUSTOM_TEXT_COLOR, COLOR_WHITE);
+         int mLockscreenTargets = Settings.System.getInt(resolver,
+                Settings.System.LOCKSCREEN_TARGET_AMOUNT, LAYOUT_TRI);
 
         // digital clock first (see @link com.android.internal.widget.DigitalClock.updateTime())
         try {
