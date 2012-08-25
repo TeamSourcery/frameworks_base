@@ -3283,6 +3283,12 @@ public final class Settings {
          */
         public static final String ADB_ENABLED = "adb_enabled";
 
+       /**
+        * The hostname for this device
+        * @hide
+        */
+        public static final String DEVICE_HOSTNAME = "device_hostname";
+ 
         /**
          * Whether to display the ADB notification.
          * @hide
