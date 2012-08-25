@@ -55,10 +55,10 @@ public class SmsUsageMonitor {
     private static final boolean VDBG = false;
 
     /** Default checking period for SMS sent without user permission. */
-    private static final int DEFAULT_SMS_CHECK_PERIOD = 1800000;    // 30 minutes
+    private static final int DEFAULT_SMS_CHECK_PERIOD = 900000;    // 15 minutes
 
     /** Default number of SMS sent in checking period without user permission. */
-    private static final int DEFAULT_SMS_MAX_COUNT = 30;
+    private static final int DEFAULT_SMS_MAX_COUNT = 60;
 
     private final int mCheckPeriod;
     private final int mMaxAllowed;
