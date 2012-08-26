@@ -3759,4 +3759,11 @@
   <java-symbol type="string" name="lockscreen_always_battery" />
   <java-symbol type="string" name="lockscreen_always_low_battery" />
 
+  <!-- Specific colrs for sourcery magic -->
+  <public type="color" name="sourceryThemeColor" id="0x0106001c" />
+  <public type="color" name="sourceryThemeColor_dim" id="0x0106001d" />
+  <public type="color" name="sourceryTextColor1" id="0x0106001e" />
+  <public type="color" name="sourceryTextColor2" id="0x0106001f" />
+
+
 </resources>
