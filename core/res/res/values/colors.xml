@@ -189,7 +189,7 @@
     <!-- Primary changeable text color -->
     <color name="sourceryTextColor1">#ffffffff</color>
     <!-- Secondary changeable text color -->
-    <color name="sourceryTextColor1">#80ffffff</color>
+    <color name="sourceryTextColor2">#80ffffff</color>
 
     <drawable name="notification_template_icon_bg">#3333B5E5</drawable>
     <drawable name="notification_template_icon_low_bg">#0cffffff</drawable>
