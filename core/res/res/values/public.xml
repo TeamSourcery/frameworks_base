@@ -3714,6 +3714,10 @@
   <public type="color" name="holo_orange_dark" id="0x01060019" />
   <public type="color" name="holo_purple" id="0x0106001a" />
   <public type="color" name="holo_blue_bright" id="0x0106001b" />
+  <public type="color" name="sourceryThemeColor" id="0x0106001c" />
+  <public type="color" name="sourceryThemeColor_dim" id="0x0106001d" />
+  <public type="color" name="sourceryTextColor1" id="0x0106001e" />
+  <public type="color" name="sourceryTextColor2" id="0x0106001f" />
 
 <!-- ===============================================================
      Resources added in version 16 of the platform (Jelly Bean)
@@ -3758,12 +3762,5 @@
   <!-- Always show battery status on lockscreen -->
   <java-symbol type="string" name="lockscreen_always_battery" />
   <java-symbol type="string" name="lockscreen_always_low_battery" />
-
-  <!-- Specific colrs for sourcery magic -->
-  <public type="color" name="sourceryThemeColor" id="0x0106001c" />
-  <public type="color" name="sourceryThemeColor_dim" id="0x0106001d" />
-  <public type="color" name="sourceryTextColor1" id="0x0106001e" />
-  <public type="color" name="sourceryTextColor2" id="0x0106001f" />
-
 
 </resources>
