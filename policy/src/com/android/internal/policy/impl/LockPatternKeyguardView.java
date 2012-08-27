@@ -130,6 +130,7 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
 
     // The music control widget
     private TransportControlView mTransportControlView;
+    private View mInfoView;
 
     private Parcelable mSavedState;
 
@@ -243,6 +244,11 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
             if (DEBUG) Log.v(TAG, "View " + view + " requested show transports");
             view.setVisibility(View.VISIBLE);
 
+           // Hide the info views
+            if (mInfoView != null) {
+                mInfoView.setVisibility(View.INVISIBLE);
+            }
+
             // TODO: examine all widgets to derive clock status
             mUpdateMonitor.reportClockVisible(false);
 
@@ -259,6 +265,11 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
         public void requestHide(View view) {
             if (DEBUG) Log.v(TAG, "View " + view + " requested hide transports");
             view.setVisibility(View.GONE);
+
+        // Show the info views
+            if (mInfoView != null) {
+                mInfoView.setVisibility(View.VISIBLE);
+            }
 
             // TODO: examine all widgets to derive clock status
             mUpdateMonitor.reportClockVisible(true);
@@ -1000,6 +1011,7 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
             mTransportControlView.setVisibility(View.GONE); // hide until it requests being shown.
             mTransportControlView.setCallback(mWidgetCallback);
         }
+         mInfoView = view.findViewById(R.id.screen_info);
     }
 
     /**

@@ -99,6 +99,7 @@ import com.android.systemui.statusbar.policy.LocationController;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
+import com.android.systemui.statusbar.policy.WeatherPanel;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -191,6 +192,10 @@ public class PhoneStatusBar extends BaseStatusBar {
     View mSettingsButton;
     RotationToggle mRotationButton;
     BatteryControllerNotification mBatteryNotification;
+
+   //  weatherpanel(will be hidden)
+     boolean mWeatherPanelEnabled;
+     WeatherPanel mWeatherPanel;
 
     // carrier/wifi label
     private TextView mCarrierLabel;
@@ -480,6 +485,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         mSettingsButton = mStatusBarWindow.findViewById(R.id.settings_button);
         mSettingsButton.setOnClickListener(mSettingsButtonListener);
         mRotationButton = (RotationToggle) mStatusBarWindow.findViewById(R.id.rotation_lock_button);
+        mWeatherPanel = (WeatherPanel) mStatusBarWindow.findViewById(R.id.weatherpanel);
         
         mCarrierLabel = (TextView)mStatusBarWindow.findViewById(R.id.carrier_label);
         mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.INVISIBLE);
@@ -2532,6 +2538,10 @@ public class PhoneStatusBar extends BaseStatusBar {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BRIGHTNESS_SLIDER), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+ 	            Settings.System.STATUSBAR_WEATHER_STYLE), false, this);
+ 	    resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.USE_WEATHER), false, this);
         }
 
         @Override
@@ -2606,8 +2616,16 @@ public class PhoneStatusBar extends BaseStatusBar {
         return brightness;
     }
 
-    public void updateSettings() {
-        mIsStatusBarBrightNess = Settings.System.getBoolean(mStatusBarView.getContext()
-                .getContentResolver(), Settings.System.STATUS_BAR_BRIGHTNESS_SLIDER, true);
+     public void updateSettings() {
+        ContentResolver cr = mStatusBarView.getContext().getContentResolver();
+        
+        mIsStatusBarBrightNess = Settings.System.getBoolean(cr,
+                Settings.System.STATUS_BAR_BRIGHTNESS_SLIDER, true);
+        
+        mWeatherPanelEnabled = (Settings.System.getInt(cr,
+                Settings.System.STATUSBAR_WEATHER_STYLE, 2) == 1)
+                && (Settings.System.getBoolean(cr, Settings.System.USE_WEATHER, false));
+        
+        mWeatherPanel.setVisibility(mWeatherPanelEnabled ? View.VISIBLE : View.GONE);
     }
 }

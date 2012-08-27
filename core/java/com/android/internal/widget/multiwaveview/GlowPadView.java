@@ -77,35 +77,13 @@ public class GlowPadView extends View {
      */
     public final static String ICON_FILE = "icon_file";
 
-    /**
-     * Number of customizable lockscreen targets for tablets
-     * @hide
-     */
-    public final static int MAX_TABLET_TARGETS = 7;
-
-    /**
-     * Number of customizable lockscreen targets for phones
-     * @hide
-     */
-    public final static int MAX_PHONE_TARGETS = 4;
-
+    
     /**
      * Empty target used to reference unused lockscreen targets
      * @hide
      */
     public final static String EMPTY_TARGET = "empty";
-
-    /**
-     * Default stock configuration for lockscreen targets
-     * @hide
-     */
-    public final static String DEFAULT_TARGETS =
-      "empty|#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;" +
-      "component=com.google.android.googlequicksearchbox/.SearchActivity;S.icon_resource=ic_lockscreen_google_normal;" +
-      "end|empty|#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;" +
-      "component=com.android.gallery3d/com.android.camera.CameraLauncher;S.icon_resource=ic_lockscreen_camera_normal;end";
-
-
+    
     // Animation properties.
     private static final float SNAP_MARGIN_DEFAULT = 20.0f; // distance to ring before we snap to it
 

@@ -291,6 +291,11 @@ public class Clock extends TextView {
         mAmPmStyle = Settings.System.getInt(resolver,
                 Settings.System.STATUSBAR_CLOCK_AM_PM_STYLE, AM_PM_STYLE_GONE); 
 
+        mClockStyle = Settings.System.getInt(resolver,
+                Settings.System.STATUSBAR_CLOCK_STYLE, STYLE_CLOCK_RIGHT);
+        mWeekdayStyle = Settings.System.getInt(resolver,
+                Settings.System.STATUSBAR_CLOCK_WEEKDAY, WEEKDAY_STYLE_GONE);
+
         mClockColor = Settings.System.getInt(resolver,
  	              Settings.System.STATUSBAR_CLOCK_COLOR, defaultColor);
  	     if (mClockColor == Integer.MIN_VALUE) {
@@ -300,11 +305,7 @@ public class Clock extends TextView {
  	 	
         setTextColor(mClockColor);
   
-        mClockStyle = Settings.System.getInt(resolver,
-                Settings.System.STATUSBAR_CLOCK_STYLE, STYLE_CLOCK_RIGHT);
-        mWeekdayStyle = Settings.System.getInt(resolver,
-                Settings.System.STATUSBAR_CLOCK_WEEKDAY, WEEKDAY_STYLE_GONE);
-        
+               
         updateClockVisibility();
         updateClock();
     }
