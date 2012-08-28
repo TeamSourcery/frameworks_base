@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,6 +20,7 @@ class NotificationWallpaper extends FrameLayout {
     private final String TAG = "NotificationWallpaperUpdater";
 
     private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper.jpg";
+    private final String NOTIF_WALLPAPER_IMAGE_PATH_LAND = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper_land.jpg";
 
     private ImageView mNotificationWallpaperImage;
 
@@ -34,18 +36,34 @@ class NotificationWallpaper extends FrameLayout {
     }
 
     public void setNotificationWallpaper() {
-        File file = new File(NOTIF_WALLPAPER_IMAGE_PATH);
+        File portrait = new File(NOTIF_WALLPAPER_IMAGE_PATH);
+        File landscape = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
 
-        if (file.exists()) {
-            mNotificationWallpaperImage = new ImageView(getContext());
-            mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
-            addView(mNotificationWallpaperImage, -1, -1);
-            bitmapWallpaper = BitmapFactory.decodeFile(NOTIF_WALLPAPER_IMAGE_PATH);
-            Drawable d = new BitmapDrawable(getResources(), bitmapWallpaper);
-            d.setAlpha((int) (wallpaperAlpha * 255));
-            mNotificationWallpaperImage.setImageDrawable(d);
+        boolean isPortrait = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+        if (isPortrait) {
+            if (portrait.exists()) {
+                mNotificationWallpaperImage = new ImageView(getContext());
+                mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
+                addView(mNotificationWallpaperImage, -1, -1);
+                bitmapWallpaper = BitmapFactory.decodeFile(NOTIF_WALLPAPER_IMAGE_PATH);
+                Drawable d = new BitmapDrawable(getResources(), bitmapWallpaper);
+                d.setAlpha((int) (wallpaperAlpha * 255));
+                mNotificationWallpaperImage.setImageDrawable(d);
+            } else {
+                removeAllViews();
+            }
         } else {
-            removeAllViews();
+            if (landsape.exists()) {
+                mNotificationWallpaperImage = new ImageView(getContext());
+                mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
+                addView(mNotificationWallpaperImage, -1, -1);
+                bitmapWallpaper = BitmapFactory.decodeFile(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
+                Drawable d = new BitmapDrawable(getResources(), bitmapWallpaper);
+                d.setAlpha((int) (wallpaperAlpha * 255));
+                mNotificationWallpaperImage.setImageDrawable(d);
+            } else {
+                removeAllViews();
+            }
         }
     }
 
