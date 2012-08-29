@@ -53,7 +53,7 @@ class NotificationWallpaper extends FrameLayout {
                 removeAllViews();
             }
         } else {
-            if (landsape.exists()) {
+            if (landscape.exists()) {
                 mNotificationWallpaperImage = new ImageView(getContext());
                 mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
                 addView(mNotificationWallpaperImage, -1, -1);
