@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -23,6 +24,7 @@ class NotificationWallpaper extends FrameLayout {
     private final String NOTIF_WALLPAPER_IMAGE_PATH_LAND = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper_land.jpg";
 
     private ImageView mNotificationWallpaperImage;
+    private int mScreenOrientation;
 
     Bitmap bitmapWallpaper;
 
@@ -38,9 +40,8 @@ class NotificationWallpaper extends FrameLayout {
     public void setNotificationWallpaper() {
         File portrait = new File(NOTIF_WALLPAPER_IMAGE_PATH);
         File landscape = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
-
-        boolean isPortrait = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-        if (isPortrait) {
+	mScreenOrientation = getContext().getResources().getConfiguration().orientation;
+        boolean isPortrait =  mScreenOrientation == Configuration.ORIENTATION_PORTRAIT;
             if (portrait.exists()) {
                 mNotificationWallpaperImage = new ImageView(getContext());
                 mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
@@ -75,4 +76,13 @@ class NotificationWallpaper extends FrameLayout {
         System.gc();
         super.onDetachedFromWindow();
     }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        //super.onConfigurationChanged(newConfig);
+	if (newConfig.orientation != mScreenOrientation) {
+		setNotificationWallpaper();
+	}
+    }
+
 }
