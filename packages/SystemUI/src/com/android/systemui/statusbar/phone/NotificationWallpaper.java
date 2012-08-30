@@ -41,6 +41,10 @@ class NotificationWallpaper extends FrameLayout {
         File landscape = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
 	mScreenOrientation = getContext().getResources().getConfiguration().orientation;
         boolean isPortrait =  mScreenOrientation == Configuration.ORIENTATION_PORTRAIT;
+
+	//Lets make sure we don't just keep stacking images on top of one another
+	removeAllViews();
+	
 	if (isPortrait) {
             if (portrait.exists()) {
                 mNotificationWallpaperImage = new ImageView(getContext());
@@ -50,8 +54,6 @@ class NotificationWallpaper extends FrameLayout {
                 Drawable d = new BitmapDrawable(getResources(), bitmapWallpaper);
                 d.setAlpha((int) (wallpaperAlpha * 255));
                 mNotificationWallpaperImage.setImageDrawable(d);
-            } else {
-                removeAllViews();
             }
         } else {
             if (landscape.exists()) {
@@ -62,8 +64,6 @@ class NotificationWallpaper extends FrameLayout {
                 Drawable d = new BitmapDrawable(getResources(), bitmapWallpaper);
                 d.setAlpha((int) (wallpaperAlpha * 255));
                 mNotificationWallpaperImage.setImageDrawable(d);
-            } else {
-                removeAllViews();
             }
         }
     }
