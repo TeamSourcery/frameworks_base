@@ -276,6 +276,7 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     // Location for custom wallpaper
     private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper.jpg";
+    private final String NOTIF_WALLPAPER_IMAGE_PATH_LAND = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper_land.jpg";
 
     private final Animator.AnimatorListener mMakeIconsInvisible = new AnimatorListenerAdapter() {
         @Override
@@ -422,8 +423,9 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         // Check if we are using custom wallpaper so that we can remove the main background image for true transparency
    File file = new File(NOTIF_WALLPAPER_IMAGE_PATH);
+   File fileLand - new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
  	
-        if (file.exists()) {
+        if (file.exists() || fileLand.exists()) {
    mStatusBarWindow.setBackground(null);
    mNotificationPanel.setBackground(null);
    DIM_BEHIND_EXPANDED_PANEL = Settings.System.getBoolean(mStatusBarView.getContext()
