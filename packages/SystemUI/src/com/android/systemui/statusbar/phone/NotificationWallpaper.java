@@ -39,7 +39,7 @@ class NotificationWallpaper extends FrameLayout {
         File portrait = new File(NOTIF_WALLPAPER_IMAGE_PATH);
         File landscape = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
 
-        boolean isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT;
+        boolean isPortrait = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
         if (isPortrait) {
             if (portrait.exists()) {
                 mNotificationWallpaperImage = new ImageView(getContext());
