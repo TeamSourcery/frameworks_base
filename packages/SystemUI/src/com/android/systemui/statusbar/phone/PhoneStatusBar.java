@@ -423,7 +423,7 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         // Check if we are using custom wallpaper so that we can remove the main background image for true transparency
    File file = new File(NOTIF_WALLPAPER_IMAGE_PATH);
-   File fileLand - new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
+   File fileLand = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
  	
         if (file.exists() || fileLand.exists()) {
    mStatusBarWindow.setBackground(null);
