@@ -434,7 +434,7 @@ class KeyguardStatusViewManager implements OnClickListener {
      private void updateWeatherInfo() {
         final ContentResolver res = getContext().getContentResolver();
         final boolean weatherInfoEnabled = (Settings.System.getBoolean(res,
-                Settings.System.LOCKSCREEN_WEATHER, true)
+                Settings.System.LOCKSCREEN_WEATHER, false)
                 && (Settings.System.getBoolean(res, Settings.System.USE_WEATHER, false))
  	        && mShowingStatus);
 
