@@ -2105,7 +2105,13 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_DISABLED = "lockscreen.disabled";
-
+        
+        /**
+        * Whether the lockscreen vibrate should be enabled.
+        * @hide
+        */
+        public static final String LOCKSCREEN_VIBRATE_ENABLED = "lockscreen.vibrate_enabled";
+ 
         /**
          * Stores values for custom lockscreen targets
  	 * @hide
@@ -2285,7 +2291,8 @@ public final class Settings {
             SIP_CALL_OPTIONS,
             SIP_RECEIVE_CALLS,
             POINTER_SPEED,
-            VIBRATE_WHEN_RINGING
+            VIBRATE_WHEN_RINGING,
+            LOCKSCREEN_VIBRATE_ENABLED,
         };
 
         // Settings moved to Settings.Secure
@@ -2552,6 +2559,12 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_ENABLE_MENU_KEY = "lockscreen_enable_menu_key";
+
+         /**
+ 	  * Sets the lockscreen layout style
+          * @hide
+          */
+         public static final String LOCKSCREEN_LAYOUT = "lockscreen_layout";
 
          /**
          * whether volume keys wake the screen. boolean value

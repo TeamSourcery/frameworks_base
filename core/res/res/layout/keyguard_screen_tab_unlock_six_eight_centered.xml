@@ -2,6 +2,7 @@
 <!--
 **
 ** Copyright 2009, The Android Open Source Project
+** Copyright 2012, The CyanogenMod Project (Weather, Calendar)
 **
 ** Licensed under the Apache License, Version 2.0 (the "License")
 ** you may not use this file except in compliance with the License.
@@ -25,9 +26,9 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:gravity="center_horizontal">
+	android:layout_gravity="center_horizontal">
 
-    <com.android.internal.policy.impl.LockscreenWallpaper
+   <com.android.internal.policy.impl.LockscreenWallpaper
 	android:id="@+id/lockscreen_wallpaper"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" />
@@ -36,16 +37,17 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:gravity="center_horizontal">
+	android:layout_gravity="center_horizontal">
 
     <include
         android:id="@+id/screen_info"
         layout="@layout/keyguard_screen_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/keyguard_lockscreen_status_line_font_right_margin" />
+        />
 
     <Space android:layout_gravity="fill" />
+
 
     <!-- emergency call button shown when sim is PUKd and tab_selector is hidden -->
     <Button
@@ -53,8 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dip"
-        android:layout_marginRight="16dip"
-        android:layout_gravity="right"
+        android:layout_gravity="center_horizontal"
         android:drawableLeft="@*android:drawable/lockscreen_emergency_button"
         style="?android:attr/buttonBarButtonStyle"
         android:drawablePadding="4dip"
@@ -62,18 +63,21 @@
         android:visibility="gone"
         />
 
-    <FrameLayout
+   <FrameLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
         android:layout_height="335dip">
 
+
+    
+
         <com.android.internal.widget.multiwaveview.GlowPadView
             android:id="@+id/unlock_widget"
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
             android:gravity="top"
             android:focusable="true"
 
@@ -105,13 +109,13 @@
             android:textColor="?android:attr/textColorSecondary"
             />
 
-    </FrameLayout>
+   </FrameLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         style="?android:attr/buttonBarStyle"
-        android:gravity="center"
+        android:layout_gravity="center_horizontal"
         android:weightSum="2">
 
         <Button android:id="@+id/emergencyCallButton"

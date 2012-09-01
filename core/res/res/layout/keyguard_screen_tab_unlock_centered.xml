@@ -20,52 +20,55 @@
 <!-- This is the general lock screen which shows information about the
   state of the device, as well as instructions on how to get past it
   depending on the state of the device.  It is the same for landscape
-  and portrait.--> 
+  and portrait.-->
 <RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:layout_gravity="center_horizontal">
+	android:gravity="center_horizontal">
 
     <com.android.internal.policy.impl.LockscreenWallpaper
 	android:id="@+id/lockscreen_wallpaper"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" />
 
-    <GridLayout
+   <GridLayout
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:layout_gravity="center_horizontal">
+	android:gravity="center_horizontal">
 
     <include
         android:id="@+id/screen_info"
         layout="@layout/keyguard_screen_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginRight="@dimen/keyguard_lockscreen_status_line_font_right_margin" />
 
-    <Space android:layout_gravity="fill" />
+        <Space android:layout_gravity="fill" />
 
+      
     <!-- emergency call button shown when sim is PUKd and tab_selector is hidden -->
     <Button
         android:id="@+id/emergencyCallButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dip"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginRight="16dip"
+        android:layout_gravity="right"
         android:drawableLeft="@*android:drawable/lockscreen_emergency_button"
         style="?android:attr/buttonBarButtonStyle"
-        android:drawablePadding="6dip"
+        android:drawablePadding="4dip"
         android:text="@*android:string/lockscreen_emergency_call"
         android:visibility="gone"
         />
 
-    <FrameLayout
+   <FrameLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
-        android:layout_height="302dip">
+        android:layout_height="335dip">
+
 
         <com.android.internal.widget.multiwaveview.GlowPadView
             android:id="@+id/unlock_widget"
@@ -94,7 +97,7 @@
             android:id="@+id/carrier"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="12dip"
             android:gravity="center_horizontal"
             android:singleLine="true"
