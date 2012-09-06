@@ -58,6 +58,7 @@
             android:id="@+id/alarm_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="15dip"
             android:layout_gravity="right"
             android:singleLine="true"
             android:ellipsize="marquee"
