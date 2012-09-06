@@ -65,7 +65,7 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
-        android:layout_height="302dip">
+        android:layout_height="380dip">
 
         <com.android.internal.widget.multiwaveview.GlowPadView
             android:id="@+id/unlock_widget"
@@ -96,6 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginBottom="12dip"
+	    android:layout_alignParentBottom="true"
             android:gravity="center_horizontal"
             android:singleLine="true"
             android:ellipsize="marquee"
@@ -105,6 +106,8 @@
             />
 
     </FrameLayout>
+
+	
 
     <LinearLayout
         android:orientation="horizontal"
