@@ -2586,12 +2586,28 @@ public final class Settings {
         public static final String TABLET_UI = "tablet_ui";
 
          /**
+ 	  * Show the NavBar dialog in Power menu
+          * @hide
+          */
+         public static final String POWER_DIALOG_SHOW_NAVBAR_HIDE = "power_dialog_show_navbar_hide";
+
+         /**
          * Whether to allow the device to use landscape lockscreen layouts
          * 
          * @hide
          */
         public static final String LOCKSCREEN_LANDSCAPE = "lockscreen_landscape";
 
+        /**
+         * @hide
+         */
+         public static final String POWER_DIALOG_SHOW_SCREENSHOT = "power_dialog_show_screenshot";
+ 
+         /**
+         * @hide
+         */
+         public static final String POWER_DIALOG_SHOW_AIRPLANE_TOGGLE = "power_dialog_show_airplane_toggle";
+ 
  	 /**
          * @hide
          *  0 = Phone UI

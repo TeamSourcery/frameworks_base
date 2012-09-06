@@ -4131,10 +4131,13 @@ public final class ActivityThread {
         final File cacheDir = appContext.getCacheDir();
 
         // Provide a usable directory for temporary files
-        System.setProperty("java.io.tmpdir", cacheDir.getAbsolutePath());
+         if (cacheDir != null) {
+ 	    // Provide a usable directory for temporary files
+ 	    System.setProperty("java.io.tmpdir", cacheDir.getAbsolutePath());
 
         setupGraphicsSupport(data.info, cacheDir);
-
+        }     
+       
         /**
          * For system applications on userdebug/eng builds, log stack
          * traces of disk and network access to dropbox for analysis.
