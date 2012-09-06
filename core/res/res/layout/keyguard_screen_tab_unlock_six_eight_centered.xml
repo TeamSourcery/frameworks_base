@@ -26,36 +26,37 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:layout_gravity="center_horizontal">
+	android:gravity="center_horizontal">
 
-   <com.android.internal.policy.impl.LockscreenWallpaper
+    <com.android.internal.policy.impl.LockscreenWallpaper
 	android:id="@+id/lockscreen_wallpaper"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" />
 
-    <GridLayout
+   <GridLayout
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:layout_gravity="center_horizontal">
+	android:gravity="center_horizontal">
 
     <include
         android:id="@+id/screen_info"
-        layout="@layout/keyguard_screen_info"
+        layout="@layout/keyguard_screen_info_center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+	android:gravity="center_horizontal" />
 
-    <Space android:layout_gravity="fill" />
+        <Space android:layout_gravity="fill" />
 
-
+      
     <!-- emergency call button shown when sim is PUKd and tab_selector is hidden -->
     <Button
         android:id="@+id/emergencyCallButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dip"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginRight="16dip"
+        android:layout_gravity="right"
         android:drawableLeft="@*android:drawable/lockscreen_emergency_button"
         style="?android:attr/buttonBarButtonStyle"
         android:drawablePadding="4dip"
@@ -67,17 +68,15 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
-        android:layout_height="335dip">
+        android:layout_height="380dip">
 
-
-    
 
         <com.android.internal.widget.multiwaveview.GlowPadView
             android:id="@+id/unlock_widget"
             android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:gravity="top"
             android:focusable="true"
 
@@ -99,8 +98,9 @@
             android:id="@+id/carrier"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="50dip"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="12dip"
+	    android:layout_gravity="bottom"
             android:gravity="center_horizontal"
             android:singleLine="true"
             android:ellipsize="marquee"
@@ -109,13 +109,13 @@
             android:textColor="?android:attr/textColorSecondary"
             />
 
-   </FrameLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         style="?android:attr/buttonBarStyle"
-        android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:weightSum="2">
 
         <Button android:id="@+id/emergencyCallButton"

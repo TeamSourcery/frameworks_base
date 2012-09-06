@@ -25,7 +25,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:gravity="center_horizontal">
+	android:gravity="right">
 
     <com.android.internal.policy.impl.LockscreenWallpaper
 	android:id="@+id/lockscreen_wallpaper"
@@ -36,7 +36,7 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:gravity="center_horizontal">
+	android:gravity="right">
 
     <include
         android:id="@+id/screen_info"
@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
-        android:layout_height="335dip">
+        android:layout_height="380dip">
 
    
         <com.android.internal.widget.multiwaveview.GlowPadView
@@ -98,7 +98,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="50dip"
+            android:layout_marginBottom="12dip"
             android:gravity="center_horizontal"
             android:singleLine="true"
             android:ellipsize="marquee"
@@ -117,7 +117,7 @@
         android:weightSum="2">
 
         <Button android:id="@+id/emergencyCallButton"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="right"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"

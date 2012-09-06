@@ -2,6 +2,7 @@
 <!--
 **
 ** Copyright 2009, The Android Open Source Project
+** Copyright 2012, The CyanogenMod Project (Weather, Calendar)
 **
 ** Licensed under the Apache License, Version 2.0 (the "License")
 ** you may not use this file except in compliance with the License.
@@ -40,10 +41,10 @@
 
     <include
         android:id="@+id/screen_info"
-        layout="@layout/keyguard_screen_info"
+        layout="@layout/keyguard_screen_info_center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/keyguard_lockscreen_status_line_font_right_margin" />
+	android:gravity="center_horizontal" />
 
         <Space android:layout_gravity="fill" />
 
@@ -67,7 +68,7 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
-        android:layout_height="335dip">
+        android:layout_height="302dip">
 
 
         <com.android.internal.widget.multiwaveview.GlowPadView
@@ -99,6 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="12dip"
+	    android:layout_gravity="bottom"
             android:gravity="center_horizontal"
             android:singleLine="true"
             android:ellipsize="marquee"
