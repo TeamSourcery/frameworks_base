@@ -3069,41 +3069,7 @@ public final class Settings {
          * @hide
          */
          public static final String RECENT_KILL_ALL_BUTTON = "recent_kill_all_button";
-
-         /**
-         * Whether to show statusbar signal text
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_SIGNAL_TEXT = "statusbar_signal_text";
-
-        /**
-         * statusbar signal text color
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_SIGNAL_TEXT_COLOR = "statusbar_signal_text_color";
-
-        /**
-         * whether to hide the signal barss
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_HIDE_SIGNAL_BARS = "statusbar_hide_signal_bars";
-
-         /**
-          * Whether to show statusbar WiFi signal text
-          *
-          * @hide
-          */
-        public static final String STATUSBAR_WIFI_SIGNAL_TEXT = "statusbar_wifi_signal_text";
- 	
-         /**
-          * statusbar WIFI signal text color
-          *
-          * @hide
-          */
-        public static final String STATUSBAR_WIFI_SIGNAL_TEXT_COLOR = "statusbar_wifi_signal_text_color";
+         
     }
 
 
