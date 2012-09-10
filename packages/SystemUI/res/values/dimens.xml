@@ -153,4 +153,10 @@
 
      <!-- Height of carrier label + close handle -->
     <dimen name="weather_text_margin">56dp</dimen>
+
+    <!-- Height of the notification panel widget bar -->
+    <dimen name="notification_panel_widget_height">48dp</dimen>
+ 	
+    <!-- Height of the notification panel header and widget -->
+    <dimen name="notification_panel_header_and_widget">96dp</dimen>
 </resources>

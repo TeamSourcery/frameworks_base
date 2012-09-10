@@ -45,7 +45,19 @@
         android:visibility="invisible"
         />
 
-     <com.android.systemui.statusbar.policy.WeatherText
+    
+   <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/close_handle_underlap"
+        >
+
+     <include
+           layout="@layout/status_bar_expanded_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/notification_panel_header_height"
+            />
+      <com.android.systemui.statusbar.policy.WeatherText
         android:id="@+id/weather"
         android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Network"
         android:layout_height="@dimen/carrier_label_height"
@@ -55,31 +67,25 @@
         android:gravity="center"
         android:visibility="invisible"
         />
+        
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginBottom="@dimen/close_handle_underlap"
-        >
 
-        <include
-           layout="@layout/status_bar_expanded_header"
+       <com.android.systemui.statusbar.powerwidget.PowerWidget
+            android:id="@+id/exp_power_stat"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/notification_panel_header_height"
-            />
-
-         <include
-           layout="@layout/weatherpanel"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content" />
-     
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/notification_panel_widget_height"
+            android:layout_marginTop="44dip"
+         />
+        
+   
          <ScrollView
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fadingEdge="none"
             android:overScrollMode="ifContentScrolls"
+            android:layout_marginTop="@dimen/notification_panel_header_and_widget"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -89,6 +95,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     layout="@layout/quick_toggles" />
+                 <include
+           layout="@layout/weatherpanel"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content" />
                 <com.android.systemui.statusbar.policy.NotificationRowLayout
                     android:id="@+id/latestItems"
                     android:layout_width="match_parent"
@@ -97,7 +107,7 @@
 
             </LinearLayout>
         </ScrollView>
-    </LinearLayout>
+    </FrameLayout>
 
     <com.android.systemui.statusbar.phone.CloseDragHandle android:id="@+id/close"
         android:layout_width="match_parent"

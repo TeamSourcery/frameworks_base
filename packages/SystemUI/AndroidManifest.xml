@@ -188,6 +188,10 @@
             </intent-filter>
         </activity>
 
+       <activity
+            android:name="com.android.systemui.statusbar.powerwidget.Torch">
+        </activity>
+
         <activity
             android:name="com.android.systemui.Torch"
             android:label="@string/toggle_torch"
@@ -206,5 +210,6 @@
                 <category android:name="com.android.systemui.SHORTCUT" />
             </intent-filter>
         </activity>
+
     </application>
 </manifest>

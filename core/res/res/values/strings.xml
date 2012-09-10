@@ -3621,4 +3621,7 @@
 
     <!-- label for item that toggles NavBar Hide -->
     <string name="global_actions_toggle_navbar_hide">Navigation Bar Controls</string>
+
+   <!-- Long-press back kill application -->
+   <string name="app_killed_message">Application killed</string>
 </resources>

@@ -192,7 +192,12 @@ public class PhoneStatusBarPolicy {
 
     private final void updateAlarm(Intent intent) {
         boolean alarmSet = intent.getBooleanExtra("alarmSet", false);
-        mService.setIconVisibility("alarm_clock", alarmSet);
+
+         if(alarmSet && Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.STATUSBAR_SHOW_ALARM, 1) == 0)
+            alarmSet = false;
+ 	
+         mService.setIconVisibility("alarm_clock", alarmSet);
     }
 
     private final void updateSyncState(Intent intent) {
