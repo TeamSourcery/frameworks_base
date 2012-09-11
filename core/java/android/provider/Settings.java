@@ -3018,6 +3018,18 @@ public final class Settings {
 	 */
         public static final String NAVIGATION_BAR_BUTTON_ALPHA = "navigation_bar_button_alpha";
 
+        /**
+         *
+         * @hide
+         */
+        public static final String SYSTEMUI_NAVBAR_COLOR = "systemui_navbar_color";
+ 
+        /**
+         *
+         * @hide
+         */
+        public static final int SYSTEMUI_NAVBAR_COLOR_DEF = 0xFF000000;
+
          /**
          * @hide
          */
