@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.security.KeyStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +72,13 @@ class PatternUnlockScreen extends LinearLayoutWithDefaultTouchRecepient
 
     private KeyguardStatusViewManager mKeyguardStatusViewManager;
     private LockPatternView mLockPatternView;
+
+    public static final int LAYOUT_STOCK = 0;
+    public static final int LAYOUT_CENTERED = 1;
+    public static final int LAYOUT_SIX_EIGHT = 2;
+    public static final int LAYOUT_SIX_EIGHT_CENTERED = 3;
+
+    private int mLockscreenStyle = LAYOUT_STOCK;
 
     /**
      * Keeps track of the last time we poked the wake lock during dispatching
@@ -160,15 +168,23 @@ class PatternUnlockScreen extends LinearLayoutWithDefaultTouchRecepient
 
         mCreationOrientation = configuration.orientation;
 
-        LayoutInflater inflater = LayoutInflater.from(context);
+        mLockscreenStyle = Settings.System.getInt(mContext.getContentResolver(), Settings.System.LOCKSCREEN_LAYOUT, LAYOUT_STOCK);
 
-        if (mCreationOrientation != Configuration.ORIENTATION_LANDSCAPE) {
-            Log.d(TAG, "portrait mode");
-            inflater.inflate(R.layout.keyguard_screen_unlock_portrait, this, true);
-        } else {
-            Log.d(TAG, "landscape mode");
-            inflater.inflate(R.layout.keyguard_screen_unlock_landscape, this, true);
-        }
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+
+	if (mLockscreenStyle == LAYOUT_STOCK || mLockscreenStyle == LAYOUT_SIX_EIGHT) {
+		if (mCreationOrientation != Configuration.ORIENTATION_LANDSCAPE) {
+            		layoutInflater.inflate(R.layout.keyguard_screen_unlock_portrait, this, true);
+        	} else {
+            		layoutInflater.inflate(R.layout.keyguard_screen_unlock_landscape, this, true);
+        	}
+	} else {
+		if (mCreationOrientation != Configuration.ORIENTATION_LANDSCAPE) {
+            		layoutInflater.inflate(R.layout.keyguard_screen_unlock_portrait_center, this, true);
+        	} else {
+            		layoutInflater.inflate(R.layout.keyguard_screen_unlock_landscape, this, true);
+        	}
+	}
 
         mKeyguardStatusViewManager = new KeyguardStatusViewManager(this, mUpdateMonitor,
                 mLockPatternUtils, mCallback, true);

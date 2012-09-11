@@ -83,6 +83,13 @@ public class PasswordUnlockScreen extends LinearLayout implements KeyguardScreen
     // any passwords with length less than or equal to this length.
     private static final int MINIMUM_PASSWORD_LENGTH_BEFORE_REPORT = 3;
 
+    public static final int LAYOUT_STOCK = 0;
+    public static final int LAYOUT_CENTERED = 1;
+    public static final int LAYOUT_SIX_EIGHT = 2;
+    public static final int LAYOUT_SIX_EIGHT_CENTERED = 3;
+
+    private int mLockscreenStyle = LAYOUT_STOCK;
+
     public PasswordUnlockScreen(Context context, Configuration configuration,
             LockPatternUtils lockPatternUtils, KeyguardUpdateMonitor updateMonitor,
             KeyguardScreenCallback callback) {
@@ -93,14 +100,24 @@ public class PasswordUnlockScreen extends LinearLayout implements KeyguardScreen
         mUpdateMonitor = updateMonitor;
         mCallback = callback;
         mLockPatternUtils = lockPatternUtils;
+	mLockscreenStyle = Settings.System.getInt(mContext.getContentResolver(), Settings.System.LOCKSCREEN_LAYOUT, LAYOUT_STOCK);
 
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        if (mCreationOrientation != Configuration.ORIENTATION_LANDSCAPE) {
-            layoutInflater.inflate(R.layout.keyguard_screen_password_portrait, this, true);
-        } else {
-            layoutInflater.inflate(R.layout.keyguard_screen_password_landscape, this, true);
-        }
 
+	if (mLockscreenStyle == LAYOUT_STOCK || mLockscreenStyle == LAYOUT_SIX_EIGHT) {
+		if (mCreationOrientation != Configuration.ORIENTATION_LANDSCAPE) {
+            		layoutInflater.inflate(R.layout.keyguard_screen_password_portrait, this, true);
+        	} else {
+            		layoutInflater.inflate(R.layout.keyguard_screen_password_landscape, this, true);
+        	}
+	} else {
+		if (mCreationOrientation != Configuration.ORIENTATION_LANDSCAPE) {
+            		layoutInflater.inflate(R.layout.keyguard_screen_password_portrait_center, this, true);
+        	} else {
+            		layoutInflater.inflate(R.layout.keyguard_screen_password_landscape, this, true);
+        	}
+	}
+	
         mStatusViewManager = new KeyguardStatusViewManager(this, mUpdateMonitor, mLockPatternUtils,
                 mCallback, true);
 
