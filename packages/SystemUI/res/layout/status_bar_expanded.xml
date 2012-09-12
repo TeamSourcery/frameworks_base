@@ -57,7 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/notification_panel_header_height"
             />
-      <com.android.systemui.statusbar.policy.WeatherText
+
+    <com.android.systemui.statusbar.policy.WeatherText
         android:id="@+id/weather"
         android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Network"
         android:layout_height="@dimen/carrier_label_height"
@@ -66,44 +67,42 @@
         android:layout_marginBottom="@dimen/weather_text_margin"
         android:gravity="center"
         android:visibility="invisible"
-        />
-        
-
-
-       <com.android.systemui.statusbar.powerwidget.PowerWidget
-            android:id="@+id/exp_power_stat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="@dimen/notification_panel_widget_height"
-            android:layout_marginTop="44dip"
-         />
-        
-   
-         <ScrollView
+    />
+     
+    <ScrollView
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fadingEdge="none"
             android:overScrollMode="ifContentScrolls"
-            android:layout_marginTop="@dimen/notification_panel_header_and_widget"
+            android:layout_marginTop="@dimen/notification_panel_header_height"
             >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-                <include
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    layout="@layout/quick_toggles" />
-                 <include
-           layout="@layout/weatherpanel"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content" />
-                <com.android.systemui.statusbar.policy.NotificationRowLayout
-                    android:id="@+id/latestItems"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    systemui:rowHeight="@dimen/notification_row_min_height" />
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical" >
+
+	<include
+		layout="@layout/weatherpanel"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+
+	<com.android.systemui.statusbar.powerwidget.PowerWidget
+		android:id="@+id/exp_power_stat"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+	/>
+
+	<include
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		layout="@layout/quick_toggles" />
+
+	<com.android.systemui.statusbar.policy.NotificationRowLayout
+	    android:id="@+id/latestItems"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    systemui:rowHeight="@dimen/notification_row_min_height" />
 
             </LinearLayout>
         </ScrollView>
