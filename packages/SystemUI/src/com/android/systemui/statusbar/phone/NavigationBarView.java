@@ -33,6 +33,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -956,10 +957,10 @@ public class NavigationBarView extends LinearLayout {
        int color = Settings.System.getInt(mContext.getContentResolver(),
                  Settings.System.SYSTEMUI_NAVBAR_COLOR,
                  Settings.System.SYSTEMUI_NAVBAR_COLOR_DEF);
-        if (color == -1)
-             color = Settings.System.SYSTEMUI_NAVBAR_COLOR_DEF;
         // we don't want alpha here
-         color = Color.rgb(Color.red(color), Color.green(color), Color.blue(color));
-         this.setBackgroundColor(color);
+         //color = Color.rgb(Color.red(color), Color.green(color), Color.blue(color));
+	float alpha = Color.alpha(color);
+	this.setBackground(new ColorDrawable(color));
+	this.setAlpha(alpha);
      }
  }
