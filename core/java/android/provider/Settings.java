@@ -1611,6 +1611,12 @@ public final class Settings {
         public static final String ALWAYS_FINISH_ACTIVITIES =
                 "always_finish_activities";
 
+         /** Volume Adjust Sounds Enable, This is the noise made when using volume hard buttons
+ 	  * Defaults to 1 - sounds enabled
+          * @hide
+          */
+        public static final String VOLUME_ADJUST_SOUNDS_ENABLED = "volume_adjust_sounds_enabled";
+
         /**
          * Volume Overlay Mode. This is the style of the volume overlay panel.
          *      0 - Single
