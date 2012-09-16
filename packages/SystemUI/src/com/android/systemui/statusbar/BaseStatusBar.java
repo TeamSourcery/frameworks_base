@@ -85,6 +85,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected static final int MSG_CLOSE_SEARCH_PANEL = 1025;
     protected static final int MSG_SHOW_INTRUDER = 1026;
     protected static final int MSG_HIDE_INTRUDER = 1027;
+    private int mNavRingAmount;
 
     protected static final boolean ENABLE_INTRUDERS = false;
 
@@ -190,6 +191,9 @@ public abstract class BaseStatusBar extends SystemUI implements
     public void start() {
         mDisplay = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay();
+
+        mNavRingAmount = Settings.System.getInt(mContext.getContentResolver(),
+ 	                 Settings.System.SYSTEMUI_NAVRING_AMOUNT, 1);
 
         mProvisioningObserver.onChange(false); // set up
         mContext.getContentResolver().registerContentObserver(
@@ -441,8 +445,15 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         // Provide SearchPanel with a temporary parent to allow layout params to work.
         LinearLayout tmpRoot = new LinearLayout(mContext);
+       
+         if (mNavRingAmount == 5 || mNavRingAmount == 4) {
+         mSearchPanelView = (SearchPanelView) LayoutInflater.from(mContext).inflate(
+                  R.layout.status_bar_search_panel_five, tmpRoot, false);
+         } else {
         mSearchPanelView = (SearchPanelView) LayoutInflater.from(mContext).inflate(
                  R.layout.status_bar_search_panel, tmpRoot, false);
+        }
+
         mSearchPanelView.setOnTouchListener(
                  new TouchOutsideListener(MSG_CLOSE_SEARCH_PANEL, mSearchPanelView));
         mSearchPanelView.setVisibility(View.GONE);

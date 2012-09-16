@@ -412,5 +412,7 @@
 
     <string name="recents_kill_all_button_text">Kill all</string>
 
+    <string name="app_killed_message">App killed</string>
+
     <string name="powerwidget_screen_timeout_toast">Screen timeout set to: %1$d %2$s</string>
 </resources>
