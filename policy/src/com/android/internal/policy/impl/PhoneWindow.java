@@ -60,6 +60,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.provider.Settings;
 import android.util.AndroidRuntimeException;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
@@ -198,6 +199,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     public static final String CUSTOM_APP_WALLPAPER = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper.jpg";
     public static final String CUSTOM_APP_WALLPAPER_LIGHT = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper_light.jpg";
+    public static final String CUSTOM_APP_WALLPAPER_LAND = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper_land.jpg";
+    public static final String CUSTOM_APP_WALLPAPER_LIGHT_LAND = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper_light_land.jpg";
     public static final String DEFAULT_APP_WALLPAPER = "screen_background_selector_dark";
     public static final String DEFAULT_APP_WALLPAPER_LIGHT = "screen_background_selector_light";
 
@@ -590,6 +593,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 // Otherwise, set the normal panel background
                 backgroundResId = st.background;
             }
+
             st.decorView.setWindowBackground(getContext().getResources().getDrawable(
                     backgroundResId));
 
@@ -2415,8 +2419,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             if (false)
                 Log.v(TAG, "Selected default opacity: " + opacity);
 
-            mDefaultOpacity = opacity;
-            if (mFeatureId < 0) {
+     	    mDefaultOpacity = opacity;
+	    
+	    if (mFeatureId < 0) {
                 setDefaultWindowFormat(opacity);
             }
         }
@@ -2588,6 +2593,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     protected ViewGroup generateLayout(DecorView decor) {
         // Apply data from current theme.
 
+	final float wallpaperAlpha = Settings.System.getFloat(getContext()
+            .getContentResolver(), Settings.System.NOTIF_APP_WALLPAPER_ALPHA, 1.0f);
+	boolean useAlpha = false;
+	
         TypedArray a = getWindowStyle();
 
         if (false) {
@@ -2812,20 +2821,32 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         // Remaining setup -- of background and title -- that only applies
         // to top-level windows.
         if (getContainer() == null) {
+	    
             Drawable drawable = mBackgroundDrawable;
             if (mBackgroundResource != 0) {
-		 File customBG = new File(CUSTOM_APP_WALLPAPER);
-		 File customBGLight = new File(CUSTOM_APP_WALLPAPER_LIGHT);
+		final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+            	final boolean isPortrait = metrics.widthPixels < metrics.heightPixels;
+		File customBG = null;
+		File customBGLight = null;
+		if (isPortrait) {		 
+			customBG = new File(CUSTOM_APP_WALLPAPER);
+		 	customBGLight = new File(CUSTOM_APP_WALLPAPER_LIGHT);
+		} else {
+			 customBG = new File(CUSTOM_APP_WALLPAPER_LAND);
+			 customBGLight = new File(CUSTOM_APP_WALLPAPER_LIGHT_LAND);
+		}
 		 String resName = getContext().getResources().getResourceEntryName(mBackgroundResource);
 		 if (resName.equalsIgnoreCase(DEFAULT_APP_WALLPAPER)) {
 			if (customBG.exists()) {
-		 		drawable = new BitmapDrawable(null, CUSTOM_APP_WALLPAPER);
+		 		drawable = new BitmapDrawable(null, customBG.getAbsolutePath());
+				useAlpha = true;
 			} else {
 				drawable = getContext().getResources().getDrawable(mBackgroundResource);
 			}
 		 } else if (resName.equalsIgnoreCase(DEFAULT_APP_WALLPAPER_LIGHT)) {
 			if (customBGLight.exists()) {
-		 		drawable = new BitmapDrawable(null, CUSTOM_APP_WALLPAPER_LIGHT);
+		 		drawable = new BitmapDrawable(null, customBGLight.getAbsolutePath());
+				useAlpha = true;
 			} else {
 				drawable = getContext().getResources().getDrawable(mBackgroundResource);
 			}
@@ -2833,6 +2854,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 		 	drawable = getContext().getResources().getDrawable(mBackgroundResource);
 		 }
             }
+	    if (useAlpha) {
+	    	drawable.setAlpha((int) (wallpaperAlpha * 255));
+	    }
 	    mDecor.setWindowBackground(drawable);
             drawable = null;
             if (mFrameResource != 0) {
