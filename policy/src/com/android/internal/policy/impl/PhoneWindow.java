@@ -213,7 +213,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     public PhoneWindow(Context context) {
         super(context);
-	//sourceryContext = context;
         mLayoutInflater = LayoutInflater.from(context);
     }
 
@@ -2592,10 +2591,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     protected ViewGroup generateLayout(DecorView decor) {
         // Apply data from current theme.
-
-	final float wallpaperAlpha = Settings.System.getFloat(getContext()
-            .getContentResolver(), Settings.System.NOTIF_APP_WALLPAPER_ALPHA, 1.0f);
+	final float wallpaperAlpha = Settings.System.getFloat(getContext().getContentResolver(), Settings.System.NOTIF_APP_WALLPAPER_ALPHA, 1.0f);
 	boolean useAlpha = false;
+	int showWallpaper = Settings.System.getInt(getContext().getContentResolver(), Settings.System.NOTIF_APP_SHOW_WALLPAPER, 0);
 	
         TypedArray a = getWindowStyle();
 
@@ -2856,7 +2854,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             }
 	    if (useAlpha) {
 	    	drawable.setAlpha((int) (wallpaperAlpha * 255));
+		if (showWallpaper == 1) {
+			setFlags(FLAG_SHOW_WALLPAPER, FLAG_SHOW_WALLPAPER&(~getForcedWindowFlags()));
+	    	}
 	    }
+	    
 	    mDecor.setWindowBackground(drawable);
             drawable = null;
             if (mFrameResource != 0) {

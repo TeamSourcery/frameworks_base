@@ -3258,6 +3258,12 @@ public final class Settings {
         */
         public static final String NOTIF_APP_WALLPAPER_ALPHA = "notif_app_wallpaper_alpha";
 
+       /**
+        * Sets the super transparency of the application background 0=no  1=yes
+        * @hide
+        */
+        public static final String NOTIF_APP_SHOW_WALLPAPER = "notif_app_show_wallpaper";
+
       /**
          * Holds the text for the Carrier Label. An empty string will bring
          * the default text back.
