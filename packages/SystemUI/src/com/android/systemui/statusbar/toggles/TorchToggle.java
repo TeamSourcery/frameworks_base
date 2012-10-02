@@ -25,6 +25,7 @@ import android.util.Log;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.app.PendingIntent;
+import com.android.systemui.*;
 import com.android.systemui.R;
 
 /**
@@ -78,12 +79,12 @@ public class TorchToggle extends Toggle implements
         mToggle.setEnabled(false); // we've changed torch - let's disable until
                                    // torch catches up;
         if (isChecked) {
-            Intent i = new Intent(INTENT_TORCH_ON);
+            Intent i = new Intent(mContext, Torch.class);
             i.setAction(INTENT_TORCH_ON);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(i);
         } else {
-            Intent i = new Intent(INTENT_TORCH_OFF);
+            Intent i = new Intent(mContext, Torch.class);
             i.setAction(INTENT_TORCH_OFF);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(i);
