@@ -23,7 +23,9 @@ import android.app.ActivityManagerNative;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.StatusBarManager;
+import android.database.ContentObserver;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -36,10 +38,12 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.inputmethodservice.InputMethodService;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.util.Slog;
@@ -51,15 +55,19 @@ import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.view.WindowManager;
 import android.view.WindowManagerImpl;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -88,7 +96,6 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-
 
 public class TabletStatusBar extends BaseStatusBar implements
         InputMethodsPanel.OnHardKeyboardEnabledChangeListener,
@@ -237,20 +244,36 @@ public class TabletStatusBar extends BaseStatusBar implements
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                     | WindowManager.LayoutParams.FLAG_TOUCHABLE_WHEN_WAKING
                     | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
-                // We use a pixel format of RGB565 for the status bar to save memory bandwidth and
-                // to ensure that the layer can be handled by HWComposer.  On some devices the
-                // HWComposer is unable to handle SW-rendered RGBX_8888 layers.
-                PixelFormat.RGB_565);
+                 PixelFormat.TRANSLUCENT);
+               
 
-        // We explicitly leave FLAG_HARDWARE_ACCELERATED out of the flags.  The status bar occupies
-        // very little screen real-estate and is updated fairly frequently.  By using CPU rendering
-        // for the status bar, we prevent the GPU from having to wake up just to do these small
-        // updates, which should help keep power consumption down.
+        // this will allow the navbar to run in an overlay on devices that support this
+ 	   if (ActivityManager.isHighEndGfx(mDisplay)) {
+           lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+        }
 
         lp.gravity = getStatusBarGravity();
         lp.setTitle("SystemBar");
         lp.packageName = mContext.getPackageName();
         WindowManagerImpl.getDefault().addView(sb, lp);
+    }
+
+     private final class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRANSPARENCY), false, this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            setStatusBarParams(mStatusBarView);
+            
+        }
     }
 
    // last theme that was applied in order to detect theme change (as opposed
@@ -418,6 +441,7 @@ public class TabletStatusBar extends BaseStatusBar implements
             } catch (IOException e) {
                 // we're screwed here fellas
             }
+          setStatusBarParams(mStatusBarView);
         }
         loadDimens();
         mNotificationPanelParams.height = getNotificationPanelHeight();
@@ -495,6 +519,8 @@ public class TabletStatusBar extends BaseStatusBar implements
         final TabletStatusBarView sb = (TabletStatusBarView)View.inflate(
                 context, R.layout.system_bar, null);
         mStatusBarView = sb;
+
+        setStatusBarParams(mStatusBarView);
 
         sb.setHandler(mHandler);
 
