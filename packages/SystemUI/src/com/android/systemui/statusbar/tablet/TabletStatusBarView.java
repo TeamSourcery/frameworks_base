@@ -49,14 +49,7 @@ public class TabletStatusBarView extends FrameLayout {
         super(context, attrs);
         mDelegateHelper = new DelegateViewHelper(this);
 
-    mContext.getContentResolver().registerContentObserver(
-                 Settings.System.getUriFor(Settings.System.SYSTEMUI_NAVBAR_COLOR), false,
-                 new ContentObserver(new Handler()) {
-                     @Override
-                     public void onChange(boolean selfChange) {
-                         updateColor();
-                     }
-                 });
+   
     }
 
     public void setDelegateView(View view) {
@@ -87,7 +80,6 @@ public class TabletStatusBarView extends FrameLayout {
         }
         mDelegateHelper.setSourceView(view);
         mDelegateHelper.setInitialTouchRegion(view);
-        updateColor();
     }
 
     @Override
@@ -157,13 +149,4 @@ public class TabletStatusBarView extends FrameLayout {
         mIgnoreChildren[index] = ignore;
         mPanels[index] = panel;
     }
-
-     private void updateColor() {
-         int color = Settings.System.getInt(mContext.getContentResolver(),
-                 Settings.System.SYSTEMUI_NAVBAR_COLOR,
-                 Settings.System.SYSTEMUI_NAVBAR_COLOR_DEF);
-         float alpha = Color.alpha(color);
-	this.setBackground(new ColorDrawable(color));
-	this.setAlpha(alpha);
-     }
- }
+}

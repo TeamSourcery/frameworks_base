@@ -748,12 +748,6 @@ public class PhoneStatusBar extends BaseStatusBar {
         updateSearchPanel();
     }
 
-    protected void setNavigationBarParams(){
-         int opacity = Settings.System.getInt(mContext.getContentResolver(),
-                 Settings.System.NAV_BAR_TRANSPARENCY, 100);
-         mNavigationBarView.getBackground().setAlpha(Math.round((opacity * 255) / 100));
-    }
-
     // For small-screen devices (read: phones) that lack hardware navigation buttons
     private void addNavigationBar() {
         if (DEBUG) Slog.v(TAG, "addNavigationBar: about to add " + mNavigationBarView);
@@ -2418,8 +2412,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             } catch (IOException e) {
                 // we're screwed here fellas
             }
-            setStatusBarParams(mStatusBarView);
-            setNavigationBarParams();
+        
         } else {
 
             if (mClearButton instanceof TextView) {
@@ -2583,9 +2576,7 @@ public class PhoneStatusBar extends BaseStatusBar {
  	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.USE_WEATHER), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_TRANSPARENCY), false, this);
-             resolver.registerContentObserver(Settings.System.getUriFor(
- 	            Settings.System.NAV_BAR_TRANSPARENCY), false, this);
+ 	            Settings.System.NAVIGATION_BAR_BACKGROUND_COLOR), false, this);
         }
 
         @Override
@@ -2665,6 +2656,28 @@ public class PhoneStatusBar extends BaseStatusBar {
         
         mIsStatusBarBrightNess = Settings.System.getBoolean(cr,
                 Settings.System.STATUS_BAR_BRIGHTNESS_SLIDER, true);
+
+        // NavigationBar background color
+        try {
+             boolean showNav = mWindowManager.hasNavigationBar();
+             if (showNav) {
+                 // NavigationBar background color
+                 final int DEFAULT_BACKGROUND_COLOR = 0xFF000000;
+                 int navbarBackgroundColor = Settings.System.getInt(mContext.getContentResolver(),
+                     Settings.System.NAVIGATION_BAR_BACKGROUND_COLOR, DEFAULT_BACKGROUND_COLOR);
+                 if (DEBUG) {
+                     if (DEFAULT_BACKGROUND_COLOR != navbarBackgroundColor) Log.d(TAG, String.format
+                         ("background navbar color found to be: %d", navbarBackgroundColor));
+                    else Log.d(TAG, "default navbar color found");
+                 }
+                 if (navbarBackgroundColor != DEFAULT_BACKGROUND_COLOR)
+                     mNavigationBarView.setBackgroundColor(navbarBackgroundColor);
+                 else
+                     mNavigationBarView.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            }
+        } catch (RemoteException ex) {
+            // no window manager? good luck with that
+        }
         
         mWeatherPanelEnabled = (Settings.System.getInt(cr,
                 Settings.System.STATUSBAR_WEATHER_STYLE, 2) == 1)
@@ -2672,7 +2685,5 @@ public class PhoneStatusBar extends BaseStatusBar {
         
         mWeatherPanel.setVisibility(mWeatherPanelEnabled ? View.VISIBLE : View.GONE);
         
-        setStatusBarParams(mStatusBarView);
-        setNavigationBarParams();
     }
 }

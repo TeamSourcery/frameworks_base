@@ -247,33 +247,15 @@ public class TabletStatusBar extends BaseStatusBar implements
                  PixelFormat.TRANSLUCENT);
                
 
-        // this will allow the navbar to run in an overlay on devices that support this
- 	   if (ActivityManager.isHighEndGfx(mDisplay)) {
-           lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
-        }
+        // We explicitly leave FLAG_HARDWARE_ACCELERATED out of the flags.  The status bar occupies
+        // very little screen real-estate and is updated fairly frequently.  By using CPU rendering
+        // for the status bar, we prevent the GPU from having to wake up just to do these small
+        // updates, which should help keep power consumption down.
 
         lp.gravity = getStatusBarGravity();
         lp.setTitle("SystemBar");
         lp.packageName = mContext.getPackageName();
         WindowManagerImpl.getDefault().addView(sb, lp);
-    }
-
-     private final class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_TRANSPARENCY), false, this);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            setStatusBarParams(mStatusBarView);
-            
-        }
     }
 
    // last theme that was applied in order to detect theme change (as opposed
@@ -336,6 +318,7 @@ public class TabletStatusBar extends BaseStatusBar implements
                     | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
                     | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
                 PixelFormat.TRANSLUCENT);
+
         lp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         lp.setTitle("NotificationPanel");
         lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
@@ -441,7 +424,7 @@ public class TabletStatusBar extends BaseStatusBar implements
             } catch (IOException e) {
                 // we're screwed here fellas
             }
-          setStatusBarParams(mStatusBarView);
+          
         }
         loadDimens();
         mNotificationPanelParams.height = getNotificationPanelHeight();
@@ -519,8 +502,6 @@ public class TabletStatusBar extends BaseStatusBar implements
         final TabletStatusBarView sb = (TabletStatusBarView)View.inflate(
                 context, R.layout.system_bar, null);
         mStatusBarView = sb;
-
-        setStatusBarParams(mStatusBarView);
 
         sb.setHandler(mHandler);
 

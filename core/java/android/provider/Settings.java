@@ -2303,20 +2303,7 @@ public final class Settings {
          */
         public static final String WIDGET_BUTTONS_TABLET = "expanded_widget_buttons_tablet";
 
-        /**
-         * Navigation bar transparency value
-         * from 0% to 100%
-         * @hide
-         */
-        public static final String NAV_BAR_TRANSPARENCY = "nav_bar_transparency";
-
-        /**
-         * Statusbar transparency value
-         * from 0% to 100%
-         * @hide
-         */
-         public static final String STATUS_BAR_TRANSPARENCY = "status_bar_transparency";
-
+       
         /**
          * Navigation controls to Use
          *
@@ -3177,18 +3164,19 @@ public final class Settings {
 	 */
         public static final String NAVIGATION_BAR_BUTTON_ALPHA = "navigation_bar_button_alpha";
 
+        
         /**
-         *
+         * Sets navbar background color/alpha
          * @hide
          */
-        public static final String SYSTEMUI_NAVBAR_COLOR = "systemui_navbar_color";
- 
-        /**
-         *
-         * @hide
-         */
-        public static final int SYSTEMUI_NAVBAR_COLOR_DEF = 0xFF000000;
+         public static final String NAVIGATION_BAR_BACKGROUND_COLOR = "navigation_bar_background_color";
 
+         /**
+          * Statusbar background color/alpha chooser
+          * @hide
+          */
+         public static final String STATUSBAR_BACKGROUND_COLOR = "statusbar_background_color";
+ 
          /**
          * @hide
          */
