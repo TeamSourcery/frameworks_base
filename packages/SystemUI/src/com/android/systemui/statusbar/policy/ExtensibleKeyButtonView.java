@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 import com.android.internal.statusbar.IStatusBarService;
+import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.R;
 
@@ -190,11 +191,10 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         		return;
         		
         	} else if (mClickAction.equals(ACTION_WIDGETS)) {
-        		// Widgets not yet imported to JB  - Zaphod 07/21/12
-        		return;
-        		/*Intent toggleWidgets = new Intent(
-                        NavigationBarView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
-                mContext.sendBroadcast(toggleWidgets); */
+        	Intent toggleWidgets = new Intent(
+                       NavigationBarView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
+                mContext.sendBroadcast(toggleWidgets);
+ 	          return;
         	 } else if (mClickAction.equals(ACTION_SCREENSHOT)) {
  		       mHandler.post(mTakeScreenshot);
  	         } else {  // we must have a custom uri
@@ -242,13 +242,11 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         		mHandler.post(mKillTask);  
         		return true;
             } else if (mLongpress.equals(ACTION_WIDGETS)) {
-            	// Widgets not yet imported to JB  - Zaphod 07/21/12
-            	return true;
-            	/*
+            	
                 Intent toggleWidgets = new Intent(
                         NavigationBarView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
                 mContext.sendBroadcast(toggleWidgets);
-                return true; */
+                return true;
         	} else if (mLongpress.equals(ACTION_RECENTS)) {
         		try {
                     mBarService.toggleRecentApps();

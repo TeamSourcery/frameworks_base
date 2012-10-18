@@ -1,7 +1,5 @@
 /*
- * Copyright 2011 Colin McDonough
- *
- * Modified for AOKP by Mike Wilson - Zaphod-Beeblebrox
+ * Copyright 2011 AOKP by Mike Wilson - Zaphod-Beeblebrox
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +16,18 @@
 
 package com.android.systemui;
 
+import com.android.systemui.statusbar.phone.NavigationBarView;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 
 /*
  * Toggle the NavBar
  */
-public class NavbarToggle extends Activity  {
-  public NavbarToggle() {
+
+public class WidgetToggle extends Activity  {
+  public WidgetToggle() {
     super();
   }
 
@@ -39,10 +40,9 @@ public class NavbarToggle extends Activity  {
   @Override
   public void onResume() {
     super.onResume();
-    final boolean NavOn = Settings.System.getInt(getContentResolver(),
-      Settings.System.NAVIGATION_BAR_SHOW_NOW, 1) == 1;
-    Settings.System.putInt(getContentResolver(),
-      Settings.System.NAVIGATION_BAR_SHOW_NOW,(!NavOn) ? 1 : 0);
+    Intent toggleWidgets = new Intent(
+            NavigationBarView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
+    sendBroadcast(toggleWidgets);
     this.finish();
   }
 }

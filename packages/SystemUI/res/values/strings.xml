@@ -387,6 +387,7 @@
     <string name="accessibility_rotation_lock_on_portrait">Screen is locked in portrait orientation.</string>
 
     <!-- Strings for toggle's -->
+    <string name="shortcut_label">Sourcery Magic</string>
     <string name="toggle_bt">BT</string>
     <string name="toggle_data">Data</string>
     <string name="toggle_lte">LTE</string>
@@ -417,4 +418,8 @@
     <string name="powerwidget_screen_timeout_toast">Screen timeout set to: %1$d %2$s</string>
 
     <string name="toggle_navbar">Toggle NavBar</string>
+
+    <string name="toggle_widgets">Toggle Widgets</string>
+
+    <string name="widgets">Widgets</string>
 </resources>
