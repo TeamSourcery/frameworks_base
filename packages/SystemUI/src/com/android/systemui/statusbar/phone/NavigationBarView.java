@@ -35,6 +35,7 @@ import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
