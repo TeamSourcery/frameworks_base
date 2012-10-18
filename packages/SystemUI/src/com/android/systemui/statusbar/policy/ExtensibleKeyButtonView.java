@@ -77,17 +77,18 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         setCode(0);
         if (ClickAction != null){
         	if (ClickAction.equals(ACTION_HOME)) {
-        		setCode(KeyEvent.KEYCODE_HOME);
-        		setId(R.id.home);
-        	} else if (ClickAction.equals(ACTION_BACK)) {
-        		setCode (KeyEvent.KEYCODE_BACK);
-        		setId(R.id.back);
-        	} else if (ClickAction.equals(ACTION_SEARCH)) {
-        		setCode (KeyEvent.KEYCODE_SEARCH);
-        	} else if (ClickAction.equals(ACTION_MENU)) {
-        		setCode (KeyEvent.KEYCODE_MENU);
-        	} else if (ClickAction.equals(ACTION_POWER)) {
-        		setCode (KeyEvent.KEYCODE_POWER);
+            setCode(KeyEvent.KEYCODE_HOME);
+            setId(R.id.home);
+          } else if (ClickAction.equals(ACTION_BACK)) {
+            setCode (KeyEvent.KEYCODE_BACK);
+            setId(R.id.back);
+          } else if (ClickAction.equals(ACTION_SEARCH)) {
+            setCode (KeyEvent.KEYCODE_SEARCH);
+          } else if (ClickAction.equals(ACTION_MENU)) {
+            setCode (KeyEvent.KEYCODE_MENU);
+            setId(R.id.menu);
+          } else if (ClickAction.equals(ACTION_POWER)) {
+            setCode (KeyEvent.KEYCODE_POWER);
                 } else { // the remaining options need to be handled by OnClick;
         		setOnClickListener(mClickListener);
         		if (ClickAction.equals(ACTION_RECENTS))
