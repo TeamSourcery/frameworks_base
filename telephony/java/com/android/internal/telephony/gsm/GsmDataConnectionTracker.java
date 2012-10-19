@@ -164,7 +164,7 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
         if (dcac != null) {
             for (ApnContext apnContext : dcac.getApnListSync()) {
                 apnContext.setDataConnectionAc(null);
- 	        apnContext.setDataConnection(null);
+                apnContext.setDataConnection(null);
                 apnContext.setReason(reason);
                 apnContext.setRetryCount(retryCount);
                 if (apnContext.getState() == State.FAILED) {
@@ -996,9 +996,23 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
     }
 
     private boolean dataConnectionNotInUse(DataConnectionAc dcac) {
+        if (DBG) log("dataConnectionNotInUse: check if dcac is inuse dc=" + dcac.dataConnection);
         for (ApnContext apnContext : mApnContexts.values()) {
-            if (apnContext.getDataConnectionAc() == dcac) return false;
+            if (apnContext.getDataConnectionAc() == dcac) {
+                if (DBG) log("dataConnectionNotInUse: in use by apnContext=" + apnContext);
+                return false;
+            }
         }
+        // TODO: Fix retry handling so free DataConnections have empty apnlists.
+        // Probably move retry handling into DataConnections and reduce complexity
+        // of DCT.
+        for (ApnContext apnContext : dcac.getApnListSync()) {
+            if (DBG) {
+                log("dataConnectionNotInUse: removing apnContext=" + apnContext);
+            }
+            dcac.removeApnContextSync(apnContext);
+        }
+        if (DBG) log("dataConnectionNotInUse: not in use return true");
         return true;
     }
 
@@ -2133,14 +2147,14 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
     protected void onDisconnectDone(int connId, AsyncResult ar) {
         ApnContext apnContext = null;
 
-        if(DBG) log("onDisconnectDone: EVENT_DISCONNECT_DONE connId=" + connId);
         if (ar.userObj instanceof ApnContext) {
             apnContext = (ApnContext) ar.userObj;
         } else {
-            loge("Invalid ar in onDisconnectDone");
+            loge("onDisconnectDone: Invalid ar in onDisconnectDone, ignore");
             return;
         }
 
+        if(DBG) log("onDisconnectDone: EVENT_DISCONNECT_DONE apnContext=" + apnContext);
         apnContext.setState(State.IDLE);
 
         mPhone.notifyDataConnection(apnContext.getReason(), apnContext.getApnType());
@@ -2431,7 +2445,7 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
                 {
                     if (DBG) log("apn info : " +apn.toString());
                     apnList.add(apn);
-                }
+                 }
             }
         } else {
             loge("mAllApns is empty!");

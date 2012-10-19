@@ -1387,6 +1387,7 @@ public class CdmaServiceStateTracker extends ServiceStateTracker {
                         " mNeedFixZone=" + mNeedFixZone);
             }
 
+
             if (zone != null) {
                 if (getAutoTimeZone()) {
                     setAndBroadcastNetworkSetTimeZone(zone.getID());

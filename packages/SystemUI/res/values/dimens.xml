@@ -159,4 +159,11 @@
  	
     <!-- Height of the notification panel header and widget -->
     <dimen name="notification_panel_header_and_widget">96dp</dimen>
+
+    <!-- The distance you can pull a notificaiton before it pops open -->
+    <dimen name="blinds_pop_threshold">32dp</dimen>
+
+    <!-- The size of the gesture span needed to activate the "pull" notification expansion -->
+    <dimen name="pull_span_min">25dp</dimen>
+
 </resources>
