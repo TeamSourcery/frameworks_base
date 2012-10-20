@@ -29,10 +29,10 @@
     android:layout_marginLeft="@dimen/notification_panel_margin_left"
     >
 
-<com.android.systemui.statusbar.phone.NotificationWallpaper
-    android:id="@+id/notification_wallpaper"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    <com.android.systemui.statusbar.phone.NotificationWallpaper
+        android:id="@+id/notification_wallpaper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/carrier_label"
@@ -45,6 +45,17 @@
         android:visibility="invisible"
         />
 
+     <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/close_handle_underlap"
+        >
+
+     <include
+           layout="@layout/status_bar_expanded_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/notification_panel_header_height"
+            />
 
     <com.android.systemui.statusbar.policy.WeatherText
         android:id="@+id/weather"
@@ -55,64 +66,46 @@
         android:layout_marginBottom="@dimen/weather_text_margin"
         android:gravity="center"
         android:visibility="invisible"
-    />
-     
-   <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginBottom="@dimen/close_handle_underlap"
-        >
+        />
 
-   
-        <TextView
-            android:id="@+id/emergency_calls_only"
-            android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Network.EmergencyOnly"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:paddingBottom="4dp"
-            android:gravity="center"
-            android:visibility="gone"
-            />
-
-        <ScrollView
-
+      <ScrollView
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fadingEdge="none"
             android:overScrollMode="ifContentScrolls"
+            android:layout_marginTop="@dimen/notification_panel_header_height"
             >
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
-	<include
-		layout="@layout/weatherpanel"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content" />
+       	<include
+	        layout="@layout/weatherpanel"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" />
 
-	<com.android.systemui.statusbar.powerwidget.PowerWidget
+        <com.android.systemui.statusbar.powerwidget.PowerWidget
 		android:id="@+id/exp_power_stat"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 	/>
 
-	<include
+        <include
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		layout="@layout/quick_toggles" />
 
-	<com.android.systemui.statusbar.policy.NotificationRowLayout
-	    android:id="@+id/latestItems"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    systemui:rowHeight="@dimen/notification_row_min_height" />
+         <com.android.systemui.statusbar.policy.NotificationRowLayout
+                    android:id="@+id/latestItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    systemui:rowHeight="@dimen/notification_row_min_height" />
 
             </LinearLayout>
         </ScrollView>
-    </LinearLayout>
+    </FrameLayout>
 
     <com.android.systemui.statusbar.phone.CloseDragHandle android:id="@+id/close"
         android:layout_width="match_parent"
@@ -127,7 +120,16 @@
             android:scaleType="fitXY"
             android:src="@drawable/status_bar_close"
             />
+     
+        <TextView
+            android:id="@+id/emergency_calls_only"
+            android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Network.EmergencyOnly"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:paddingBottom="4dp"
+            android:gravity="center"
+            android:visibility="gone"
+            />
 
     </com.android.systemui.statusbar.phone.CloseDragHandle>
 </FrameLayout><!-- end of sliding panel -->
-
