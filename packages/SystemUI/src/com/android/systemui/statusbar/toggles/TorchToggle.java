@@ -76,7 +76,7 @@ public class TorchToggle extends Toggle implements
 
     @Override
     protected void onCheckChanged(boolean isChecked) {
-        mToggle.setEnabled(false); // we've changed torch - let's disable until
+       // mToggle.setEnabled(false); // we've changed torch - let's disable until
                                    // torch catches up;
         if (isChecked) {
             Intent i = new Intent(mContext, Torch.class);
@@ -100,9 +100,11 @@ public class TorchToggle extends Toggle implements
             String key) {
         mIsTorchOn = sharedPreferences.getBoolean(KEY_TORCH_ON, false);
         updateState();
+          /*
         if (mToggle.isChecked() == mIsTorchOn) {
             mToggle.setEnabled(true); // torch status has caught up with toggle
                                       // - re-enable toggle.
         }
+          */
     }
 }
