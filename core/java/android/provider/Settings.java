@@ -2999,6 +2999,14 @@ public final class Settings {
          */
         public static final String STATUSBAR_CLOCK_WEEKDAY = "statusbar_clock_weekday";
 
+        /**
+         * @hide
+         * Vibrate when expanding notifications
+         * 0 - no vibrate
+         * 1 - vibrate
+         */
+        public static final String VIBRATE_NOTIF_EXPAND = "vibrate_notif_expand";
+
 
         /**
          * @hide
@@ -3416,6 +3424,14 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_SIGNAL_CLUSTER_ALT = "statusbar_signal_cluster_alt";
+
+        /**
+         * use Alt Activity Resolver Grid (GB style)
+         * boolean
+         *
+         * @hide
+         */
+        public static final String ACTIVITY_RESOLVER_USE_ALT = "activity_resolver_use_alt";
 
         /**
          * Whether to show the alarm icon in the status bar

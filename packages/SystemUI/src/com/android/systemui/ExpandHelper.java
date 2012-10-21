@@ -23,6 +23,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Slog;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -73,6 +74,7 @@ public class ExpandHelper implements Gefingerpoken, OnClickListener {
     private boolean mPullingWithOneFinger;
     private boolean mWatchingForPull;
     private boolean mHasPopped;
+    private boolean mVibrate;
     private View mEventSource;
     private View mCurrView;
     private View mCurrViewTopGlow;
@@ -163,6 +165,7 @@ public class ExpandHelper implements Gefingerpoken, OnClickListener {
         mScaleAnimation.setDuration(EXPAND_DURATION);
         mPopLimit = mContext.getResources().getDimension(R.dimen.one_finger_pop_limit);
         mPopDuration = mContext.getResources().getInteger(R.integer.one_finger_pop_duration_ms);
+        mVibrate = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.VIBRATE_NOTIF_EXPAND, 1) == 1);
 
         AnimatorListenerAdapter glowVisibilityController = new AnimatorListenerAdapter() {
             @Override
@@ -418,7 +421,9 @@ public class ExpandHelper implements Gefingerpoken, OnClickListener {
                     final float pull = Math.abs(ev.getY() - mInitialTouchY);
                     if (mHasPopped || pull > mPopLimit) {
                         if (!mHasPopped) {
-                            vibrate(mPopDuration);
+                            if (mVibrate) {
+                                vibrate(mPopDuration);
+                            }
                             mHasPopped = true;
                         }
                     }
