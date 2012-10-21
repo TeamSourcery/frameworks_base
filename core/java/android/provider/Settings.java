@@ -3360,6 +3360,13 @@ public final class Settings {
          */
          public static final String RECENT_KILL_ALL_BUTTON = "recent_kill_all_button";
 
+         /**
+          * whether to hide the Ram Usage Bar on recent switcher
+          *
+          * @hide
+          */
+         public static final String RAM_USAGE_BAR = "ram_usage_bar";
+
         /**
          * whether to enable end app on back longpress functionality
          *
