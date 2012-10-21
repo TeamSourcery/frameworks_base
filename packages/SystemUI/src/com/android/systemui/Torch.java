@@ -46,7 +46,6 @@ public class Torch extends Activity implements SurfaceHolder.Callback {
     private Camera mCamera;
     private boolean lightOn;
     private boolean startingTorch;
-    private boolean previewOn;
     private View button;
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
@@ -199,7 +198,6 @@ public class Torch extends Activity implements SurfaceHolder.Callback {
         if (!startingTorch) {
             startingTorch = true;
             getCamera();
-            startPreview();
             turnLightOn();
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(KEY_TORCH_ON, true);
