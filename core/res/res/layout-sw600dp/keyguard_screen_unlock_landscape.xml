@@ -21,11 +21,18 @@
      the user how to unlock their device, or make an emergency call.  This
      is the portrait layout.  -->
 
-<com.android.internal.widget.LinearLayoutWithDefaultTouchRecepient
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
+
+    <com.android.internal.policy.impl.LockscreenWallpaper
+        android:id="@+id/lockscreen_wallpaper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+	<com.android.internal.widget.LinearLayoutWithDefaultTouchRecepient
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
     <!-- left side: status and music -->
     <RelativeLayout
@@ -154,4 +161,6 @@
 
     </RelativeLayout>
 
-</com.android.internal.widget.LinearLayoutWithDefaultTouchRecepient>
+  </com.android.internal.widget.LinearLayoutWithDefaultTouchRecepient>
+
+</RelativeLayout>

@@ -17,11 +17,19 @@
 */
 -->
 
-<com.android.internal.widget.LinearLayoutWithDefaultTouchRecepient
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
+
+    <com.android.internal.policy.impl.LockscreenWallpaper
+        android:id="@+id/lockscreen_wallpaper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+	<com.android.internal.widget.LinearLayoutWithDefaultTouchRecepient
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
     <!-- top: status -->
     <RelativeLayout
@@ -143,8 +151,10 @@
                 android:src="@drawable/ic_facial_backup"
             />
 
-        </RelativeLayout>
+       </RelativeLayout>
 
     </RelativeLayout>
 
-</com.android.internal.widget.LinearLayoutWithDefaultTouchRecepient>
+  </com.android.internal.widget.LinearLayoutWithDefaultTouchRecepient>
+
+</RelativeLayout>
