@@ -39,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import android.R.integer;
 import com.android.systemui.R;
 
 public class BatteryController extends LinearLayout {
@@ -53,20 +54,24 @@ public class BatteryController extends LinearLayout {
     private TextView mBatteryCenterText;
     private ViewGroup mBatteryGroup;
     private TextView mBatteryTextOnly;
-    private TextView mBatteryTextOnly_Low;
-    private TextView mBatteryTextOnly_Plugged;
 
     private static int mBatteryStyle;
+
+    // battery text only color
+    private int mBatteryChargeTextColor = 0xFF99CC00;
+    private int mBatteryTextColor;
 
     private int mLevel = -1;
     private boolean mPlugged = false;
 
     public static final int STYLE_ICON_ONLY = 0;
-    public static final int STYLE_TEXT_ONLY = 1;
-    public static final int STYLE_ICON_TEXT = 2;
-    public static final int STYLE_ICON_CENTERED_TEXT = 3;
+    public static final int STYLE_ICON_TEXT = 1;
+    public static final int STYLE_ICON_CENTERED_TEXT = 2;
+    public static final int STYLE_TEXT_ONLY = 3;
     public static final int STYLE_ICON_CIRCLE = 4;
-    public static final int STYLE_HIDE = 5;
+    public static final int BATTERY_STYLE_CIRCLE = 5;
+    public static final int BATTERY_STYLE_CIRCLE_PERCENT = 6;
+    public static final int STYLE_HIDE = 7;
 
     public BatteryController(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -83,8 +88,6 @@ public class BatteryController extends LinearLayout {
         mBatteryText = (TextView) findViewById(R.id.battery_text);
         mBatteryCenterText = (TextView) findViewById(R.id.battery_text_center);
         mBatteryTextOnly = (TextView) findViewById(R.id.battery_text_only);
-        mBatteryTextOnly_Low = (TextView) findViewById(R.id.battery_text_only_low);
-        mBatteryTextOnly_Plugged = (TextView) findViewById(R.id.battery_text_only_plugged);
         addIconView(mBatteryIcon);
 
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
@@ -128,7 +131,7 @@ public class BatteryController extends LinearLayout {
         ContentResolver cr = mContext.getContentResolver();
         mBatteryStyle = Settings.System.getInt(cr,
                 Settings.System.STATUSBAR_BATTERY_ICON, 0);
-        int icon;
+         int icon;
         if (mBatteryStyle == STYLE_ICON_CIRCLE) {
             icon = plugged ? R.drawable.stat_sys_battery_charge_mod
                     : R.drawable.stat_sys_battery_mod;
@@ -153,8 +156,17 @@ public class BatteryController extends LinearLayout {
 
         // do my stuff here
         if (mBatteryGroup != null) {
+            int defaultColor = getResources().getColor(
+                    com.android.internal.R.color.holo_blue_light);
             mBatteryText.setText(Integer.toString(level));
             mBatteryCenterText.setText(Integer.toString(level));
+            mBatteryTextOnly.setText(Integer.toString(level));
+            mBatteryTextColor = Settings.System
+                    .getInt(cr, Settings.System.STATUSBAR_BATTERY_TEXT_COLOR,
+                    defaultColor);
+            mBatteryChargeTextColor = Settings.System
+                    .getInt(cr, Settings.System.STATUSBAR_BATTERY_CHARGE_TEXT_COLOR,
+                    0XFF99CC00);
             SpannableStringBuilder formatted = new SpannableStringBuilder(
                     Integer.toString(level) + "%");
             CharacterStyle style = new RelativeSizeSpan(0.7f); // beautiful
@@ -170,28 +182,29 @@ public class BatteryController extends LinearLayout {
                         Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
             }
             mBatteryTextOnly.setText(formatted);
-            mBatteryTextOnly_Low.setText(formatted);
-            mBatteryTextOnly_Plugged.setText(formatted);
-            if (mBatteryStyle == STYLE_TEXT_ONLY) {
-                if (plugged) { 
-                    mBatteryTextOnly.setVisibility(View.GONE);
-                    mBatteryTextOnly_Plugged.setVisibility(View.VISIBLE);
-                    mBatteryTextOnly_Low.setVisibility(View.GONE);
-                } else if (level < 16) {
-                    mBatteryTextOnly.setVisibility(View.GONE);
-                    mBatteryTextOnly_Plugged.setVisibility(View.GONE);
-                    mBatteryTextOnly_Low.setVisibility(View.VISIBLE);
-                } else {
-                    mBatteryTextOnly.setVisibility(View.VISIBLE);
-                    mBatteryTextOnly_Plugged.setVisibility(View.GONE);
-                    mBatteryTextOnly_Low.setVisibility(View.GONE);
+            if (plugged) {
+                mBatteryTextOnly.setTextColor(mBatteryChargeTextColor);
+                mBatteryText.setTextColor(mBatteryChargeTextColor);
+                mBatteryCenterText.setTextColor(mBatteryChargeTextColor);
+                if (mBatteryChargeTextColor == Integer.MIN_VALUE) {
+                    // flag to reset the color
+                    mBatteryChargeTextColor = 0xFF99CC00;
                 }
+            } else if (level < 16) {
+                mBatteryTextOnly.setTextColor(Color.RED);
+                mBatteryText.setTextColor(Color.RED);
+                mBatteryCenterText.setTextColor(Color.RED);
             } else {
-                mBatteryTextOnly.setVisibility(View.GONE);
-                mBatteryTextOnly_Plugged.setVisibility(View.GONE);
-                mBatteryTextOnly_Low.setVisibility(View.GONE);
+                mBatteryTextOnly.setTextColor(mBatteryTextColor);
+                mBatteryText.setTextColor(mBatteryTextColor);
+                mBatteryCenterText.setTextColor(mBatteryTextColor);
+                if (mBatteryTextColor == Integer.MIN_VALUE) {
+                    // flag to reset the color
+                    mBatteryTextColor = defaultColor;
+                }
             }
-        }       
+
+        }
     }
 
     class SettingsObserver extends ContentObserver {
@@ -203,6 +216,12 @@ public class BatteryController extends LinearLayout {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUSBAR_BATTERY_ICON), false,
+                    this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_BATTERY_CHARGE_TEXT_COLOR), false,
+                    this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUSBAR_BATTERY_TEXT_COLOR), false,
                     this);
         }
 
@@ -223,42 +242,63 @@ public class BatteryController extends LinearLayout {
                 mBatteryCenterText.setVisibility(View.GONE);
                 mBatteryText.setVisibility(View.GONE);
                 mBatteryIcon.setVisibility(View.VISIBLE);
+                mBatteryTextOnly.setVisibility(View.GONE);
                 setVisibility(View.VISIBLE);
                 break;
             case STYLE_TEXT_ONLY:
                 mBatteryText.setVisibility(View.GONE);
                 mBatteryCenterText.setVisibility(View.GONE);
                 mBatteryIcon.setVisibility(View.GONE);
+                mBatteryTextOnly.setVisibility(View.VISIBLE);
                 setVisibility(View.VISIBLE);
                 break;
             case STYLE_ICON_TEXT:
                 mBatteryText.setVisibility(View.VISIBLE);
                 mBatteryCenterText.setVisibility(View.GONE);
                 mBatteryIcon.setVisibility(View.VISIBLE);
+                mBatteryTextOnly.setVisibility(View.GONE);
                 setVisibility(View.VISIBLE);
                 break;
             case STYLE_ICON_CENTERED_TEXT:
                 mBatteryText.setVisibility(View.GONE);
                 mBatteryCenterText.setVisibility(View.VISIBLE);
                 mBatteryIcon.setVisibility(View.VISIBLE);
+                mBatteryTextOnly.setVisibility(View.GONE);
                 setVisibility(View.VISIBLE);
                 break;
             case STYLE_HIDE:
                 mBatteryText.setVisibility(View.GONE);
                 mBatteryCenterText.setVisibility(View.GONE);
                 mBatteryIcon.setVisibility(View.GONE);
+                mBatteryTextOnly.setVisibility(View.GONE);
                 setVisibility(View.GONE);
                 break;
             case STYLE_ICON_CIRCLE:
                 mBatteryText.setVisibility(View.GONE);
                 mBatteryCenterText.setVisibility(View.GONE);
                 mBatteryIcon.setVisibility(View.VISIBLE);
+                mBatteryTextOnly.setVisibility(View.GONE);
                 setVisibility(View.VISIBLE);
+                break;
+            case BATTERY_STYLE_CIRCLE:
+                mBatteryText.setVisibility(View.GONE);
+                mBatteryCenterText.setVisibility(View.GONE);
+                mBatteryIcon.setVisibility(View.GONE);
+                mBatteryTextOnly.setVisibility(View.GONE);
+                setVisibility(View.GONE);
+                break;
+            case BATTERY_STYLE_CIRCLE_PERCENT:
+                mBatteryText.setVisibility(View.GONE);
+                mBatteryCenterText.setVisibility(View.GONE);
+                mBatteryIcon.setVisibility(View.VISIBLE);
+                mBatteryTextOnly.setVisibility(View.GONE);
+                setVisibility(View.GONE);
                 break;
             default:
                 mBatteryText.setVisibility(View.GONE);
                 mBatteryCenterText.setVisibility(View.GONE);
                 mBatteryIcon.setVisibility(View.VISIBLE);
+                mBatteryTextOnly.setVisibility(View.GONE);
                 setVisibility(View.VISIBLE);
                 break;
         }

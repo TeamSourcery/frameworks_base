@@ -3027,7 +3027,9 @@ public final class Settings {
          * 2 - Icon Text
          * 3 - Icon Centered Text
          * 4 - Icon Circle
-         * 5 - Hide
+         * 5- CM circle w/o %
+ 	 * 6 - CM circle w %
+         * 7 - Hide
          */
         public static final String STATUSBAR_BATTERY_ICON = "statusbar_battery_icon";
 
@@ -3036,6 +3038,31 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_BATTERY = "lockscreen_battery";
+
+        /**
+         * Statusbar battery text charging colorpicker
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_CHARGE_TEXT_COLOR = "statusbar_battery_charge_text_color";
+
+        /**
+         * Statusbar battery text colorpicker
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_TEXT_COLOR = "statusbar_battery_text_color";
+
+
+         /**
+          * Statusbar battery cm circle ring colorpicker
+          * @hide
+          */
+        public static final String STATUSBAR_CMCIRLE_RING_COLOR = "statusbar_cmcircle_ring_color";
+ 	
+        /**
+         * Statusbar battery cm circle charging animation ring colorpicker
+         * @hide
+         */
+        public static final String STATUSBAR_CMCIRLE_RING_COLOR_CHARGE = "statusbar_cmcircle_ring_color_charge";
 
         /**
          * @hide
