@@ -2275,12 +2275,7 @@ public final class Settings {
          */
         public static final String SIP_ASK_ME_EACH_TIME = "SIP_ASK_ME_EACH_TIME";
 
-        /**
-         * Torch state (flashlight)
-         * @hide
-         */
-        public static final String TORCH_STATE = "torch_state";
-
+        
         /**
          * Pointer speed setting.
          * This is an integer value in a range between -7 and +7, so there are 15 possible values.
@@ -3252,6 +3247,13 @@ public final class Settings {
          * @hide
          */
         public static final String QUIET_HOURS_DIM = "quiet_hours_dim";
+
+        /**
+ 	 * Key to store Torch state.
+         * @hide
+         */
+        public static final String TORCH_STATE = "torch_state";
+
 
          /**
 	 *
