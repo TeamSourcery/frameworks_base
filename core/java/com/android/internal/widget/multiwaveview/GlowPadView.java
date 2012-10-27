@@ -44,7 +44,6 @@ import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 
-import com.android.internal.widget.LockPatternUtils;
 import com.android.internal.R;
 
 import java.util.ArrayList;
@@ -159,7 +158,6 @@ public class GlowPadView extends View {
     private float mWaveCenterY;
     private int mMaxTargetHeight;
     private int mMaxTargetWidth;
-    private LockPatternUtils mLockPatternUtils;
 
     private float mOuterRadius = 0.0f;
     private float mSnapMargin = 0.0f;
@@ -314,8 +312,13 @@ public class GlowPadView extends View {
         mGravity = a.getInt(android.R.styleable.LinearLayout_gravity, Gravity.TOP);
         a.recycle();
 
-        mLockPatternUtils = new LockPatternUtils(context);
-        setVibrateEnabled(mVibrationDuration > 0 && mLockPatternUtils.isTactileFeedbackEnabled());
+        final ContentResolver resolver = context.getContentResolver();
+        boolean vibrateEnabled = Settings.System.getInt(resolver,Settings.System.LOCKSCREEN_VIBRATE_ENABLED, 1) == 1;
+        if (vibrateEnabled) {
+            setVibrateEnabled(mVibrationDuration > 0);
+        } else {
+            setVibrateEnabled(false);
+        }
 
         assignDefaultsIfNeeded();
 
@@ -954,7 +957,6 @@ public class GlowPadView extends View {
                 TargetDrawable target = targets.get(activeTarget);
                 if (target.hasState(TargetDrawable.STATE_FOCUSED)) {
                     target.setState(TargetDrawable.STATE_FOCUSED);
-                    vibrate();
                 }
                 if (AccessibilityManager.getInstance(mContext).isEnabled()) {
                     String targetContentDescription = getTargetDescription(activeTarget);

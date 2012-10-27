@@ -1,5 +1,4 @@
 
-
 package com.android.internal.policy.impl;
 
 import android.content.BroadcastReceiver;
@@ -63,10 +62,10 @@ public class WeatherPanel extends FrameLayout {
         if (mCity == null)
             return;
 
-        if (mShowLocation) {
+         if (mShowLocation) {
             mCity.setVisibility(View.VISIBLE);
-        } else {
-            mCity.setVisibility(View.GONE);
+         } else {
+ 	    mCity.setVisibility(View.GONE);
         }
     }
 
@@ -123,13 +122,13 @@ public class WeatherPanel extends FrameLayout {
         public void onClick(View v) {
             Intent weatherintent = new Intent("com.sourcery.magiccontrol.INTENT_WEATHER_REQUEST");
 
-            //if (v.getId() == com.android.internal.R.id.condition_image) {
-            //    weatherintent.putExtra("com.sourcery.magiccontrol.INTENT_EXTRA_TYPE", "startapp");
-            //    weatherintent.putExtra("com.sourcery.magiccontrol.INTENT_EXTRA_ISMANUAL", true);
-            //} else {
+            if (v.getId() == com.android.internal.R.id.condition_image) {
+                weatherintent.putExtra("com.sourcery.magiccontrol.INTENT_EXTRA_TYPE", "startapp");
+                weatherintent.putExtra("com.sourcery.magiccontrol.INTENT_EXTRA_ISMANUAL", true);
+            } else {
                 weatherintent.putExtra("com.sourcery.magiccontrol.INTENT_EXTRA_TYPE", "updateweather");
                 weatherintent.putExtra("com.sourcery.magiccontrol.INTENT_EXTRA_ISMANUAL", true);
-            //}
+            }
 
             v.getContext().sendBroadcast(weatherintent);
 
@@ -139,7 +138,7 @@ public class WeatherPanel extends FrameLayout {
     public WeatherPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        setOnClickListener(mPanelOnClickListener);
+        // setOnClickListener(mPanelOnClickListener);
     }
 
     @Override
@@ -155,9 +154,9 @@ public class WeatherPanel extends FrameLayout {
         mConditionImage = (ImageView) this.findViewById(com.android.internal.R.id.condition_image);
         mSlash = (TextView) this.findViewById(com.android.internal.R.id.weatherpanel_slash);
 
-        if (mConditionImage != null) {
-            mConditionImage.setOnClickListener(mPanelOnClickListener);
-        }
+        // if (mConditionImage != null) {
+        // mConditionImage.setOnClickListener(mPanelOnClickListener);
+        // }
 
         if (!mAttached) {
             mAttached = true;
