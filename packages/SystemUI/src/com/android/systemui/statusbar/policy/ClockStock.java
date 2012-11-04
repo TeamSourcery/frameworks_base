@@ -20,38 +20,42 @@ import android.app.ActivityManagerNative;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.database.ContentObserver;
-import android.os.Handler;
+import android.net.Uri;
 import android.provider.AlarmClock;
+import android.provider.CalendarContract;
+import android.provider.CalendarContract.Events;
+import android.content.ActivityNotFoundException;
 import android.provider.Settings;
+import android.os.Handler;
+import android.os.RemoteException;
+import android.speech.RecognizerIntent;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
+import android.view.View.OnLongClickListener;
 import android.widget.TextView;
-
-import android.R.integer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.net.URISyntaxException;
 
 import com.android.internal.R;
 
@@ -59,21 +63,27 @@ import com.android.internal.R;
  * This widget display an analogic clock with two hands for hours and
  * minutes.
  */
-public class ClockStock extends TextView implements OnClickListener, OnTouchListener {
+public class ClockStock extends TextView implements OnClickListener, OnLongClickListener {	
     private boolean mAttached;
     private Calendar mCalendar;
     private String mClockFormatString;
     private SimpleDateFormat mClockFormat;
+    private Intent intent;
+
+    final static String ACTION_EVENT = "**event**";
+    final static String ACTION_ALARM = "**alarm**";
+    final static String ACTION_TODAY = "**today**";
+    final static String ACTION_VOICEASSIST = "**assist**";
+    final static String ACTION_NOTHING = "**nothing**";
+
+    private String mShortClick;
+    private String mLongClick;
 
     private static final int AM_PM_STYLE_NORMAL  = 0;
     private static final int AM_PM_STYLE_SMALL   = 1;
     private static final int AM_PM_STYLE_GONE    = 2;
 
     private static final int AM_PM_STYLE = AM_PM_STYLE_GONE;
-
-    protected int mExpandedClockColor;
-
-    private boolean mClockDateOpens;
 
     public ClockStock(Context context) {
         this(context, null);
@@ -85,17 +95,19 @@ public class ClockStock extends TextView implements OnClickListener, OnTouchList
 
     public ClockStock(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+         if(isClickable()){
+            setOnClickListener(this);
+            setOnLongClickListener(this);
 
-        mClockDateOpens = Settings.System.getBoolean(context.getContentResolver(),
-                Settings.System.CLOCK_DATE_OPENS, true);
-
-        if (mClockDateOpens) {
-            if (isClickable()) {
-                setOnClickListener(this);
-                setOnTouchListener(this);
+            SettingsObserver settingsObserver = new SettingsObserver(new Handler());
+            settingsObserver.observe();
+            updateSettings();
+            if (mShortClick == null || mShortClick == "") {
+                mShortClick = "**nothing**";
             }
-        } else {
-            setClickable(false);
+            if (mLongClick == null || mLongClick == "") {
+                mLongClick = "**nothing**";
+            }
         }
     }
 
@@ -120,10 +132,6 @@ public class ClockStock extends TextView implements OnClickListener, OnTouchList
 
         // The time zone may have changed while the receiver wasn't registered, so update the Time
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
-
-        // for clock color
-        SettingsObserver settingsObserver = new SettingsObserver(new Handler());
-        settingsObserver.observe();
 
         // Make sure we update to the current time
         updateClock();
@@ -152,20 +160,6 @@ public class ClockStock extends TextView implements OnClickListener, OnTouchList
             updateClock();
         }
     };
-
-
-    protected void updateSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
-        int defaultColor = getResources().getColor(R.color.white);
-
-        mExpandedClockColor = Settings.System.getInt(resolver,
-                Settings.System.STATUSBAR_EXPANDED_CLOCK_COLOR, defaultColor);
-        if (mExpandedClockColor == Integer.MIN_VALUE) {
-                        // flag to reset the color
-            mExpandedClockColor = defaultColor;
-        }
-        setTextColor(mExpandedClockColor);
-    }
 
     final void updateClock() {
         mCalendar.setTimeInMillis(System.currentTimeMillis());
@@ -246,12 +240,99 @@ public class ClockStock extends TextView implements OnClickListener, OnTouchList
                 return formatted;
             }
         }
-
         return result;
-
     }
 
-    protected class SettingsObserver extends ContentObserver {
+    @Override
+    public void onClick(View v) {
+
+        StatusBarManager statusBarManager = (StatusBarManager) getContext().getSystemService(Context.STATUS_BAR_SERVICE);
+        if (mShortClick.equals(ACTION_NOTHING)) {
+            return;
+        } else {
+            try {
+                ActivityManagerNative.getDefault().dismissKeyguardOnNextActivity();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            if (mShortClick.equals(ACTION_TODAY)) {
+                 // A date-time specified in milliseconds since the epoch.
+                 long startMillis = System.currentTimeMillis();
+                 Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
+                 builder.appendPath("time");
+                 ContentUris.appendId(builder, startMillis);
+                 intent = new Intent(Intent.ACTION_VIEW)
+                      .setData(builder.build());
+            } else if (mShortClick.equals(ACTION_EVENT)) {
+                 intent = new Intent(Intent.ACTION_INSERT)
+                      .setData(Events.CONTENT_URI);
+            } else if (mShortClick.equals(ACTION_VOICEASSIST)) {
+                 intent = new Intent(RecognizerIntent.ACTION_WEB_SEARCH);
+            } else if (mShortClick.equals(ACTION_ALARM)) {
+                 intent = new Intent(AlarmClock.ACTION_SET_ALARM);
+            } else {
+                try {
+                    intent = Intent.parseUri(mShortClick, 0);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+            } catch (ActivityNotFoundException e){
+                e.printStackTrace();
+            }
+            statusBarManager.collapse();
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+
+        StatusBarManager statusBarManager = (StatusBarManager) getContext().getSystemService(Context.STATUS_BAR_SERVICE);
+        if (mLongClick.equals(ACTION_NOTHING)) {
+            return true;
+        } else {
+            try {
+                ActivityManagerNative.getDefault().dismissKeyguardOnNextActivity();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            if (mLongClick.equals(ACTION_TODAY)) {
+                 // A date-time specified in milliseconds since the epoch.
+                 long startMillis = System.currentTimeMillis();
+                 Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
+                 builder.appendPath("time");
+                 ContentUris.appendId(builder, startMillis);
+                 intent = new Intent(Intent.ACTION_VIEW)
+                      .setData(builder.build());
+            } else if (mLongClick.equals(ACTION_EVENT)) {
+                 intent = new Intent(Intent.ACTION_INSERT)
+                      .setData(Events.CONTENT_URI);
+            } else if (mLongClick.equals(ACTION_VOICEASSIST)) {
+                 intent = new Intent(RecognizerIntent.ACTION_WEB_SEARCH);
+            } else if (mLongClick.equals(ACTION_ALARM)) {
+                 intent = new Intent(AlarmClock.ACTION_SET_ALARM);
+            } else {
+                try {
+                    intent = Intent.parseUri(mLongClick, 0);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+            } catch (ActivityNotFoundException e){
+                e.printStackTrace();
+            }
+            statusBarManager.collapse();
+        }
+        return true;
+    }
+
+    class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
         }
@@ -259,47 +340,24 @@ public class ClockStock extends TextView implements OnClickListener, OnTouchList
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUSBAR_EXPANDED_CLOCK_COLOR), false, this);
-            updateSettings();
+                    Settings.System.NOTIFICATION_CLOCK_SHORTCLICK), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_CLOCK_LONGCLICK), false, this);
         }
 
-        @Override
+         @Override
         public void onChange(boolean selfChange) {
             updateSettings();
         }
     }
+    protected void updateSettings() {
+        ContentResolver cr = mContext.getContentResolver();
 
-    @Override
-    public void onClick(View v) {
-        setTextColor(mExpandedClockColor);
+        mShortClick = Settings.System.getString(cr,
+                Settings.System.NOTIFICATION_CLOCK_SHORTCLICK);
 
-        // collapse status bar
-        StatusBarManager statusBarManager = (StatusBarManager) getContext().getSystemService(
-                Context.STATUS_BAR_SERVICE);
-        statusBarManager.collapse();
-
-        // dismiss keyguard in case it was active and no passcode set
-        try {
-            ActivityManagerNative.getDefault().dismissKeyguardOnNextActivity();
-        } catch (Exception ex) {
-            // no action needed here
-        }
-
-        // start alarm clock intent
-        Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(intent);
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int a = event.getAction();
-        if (a == MotionEvent.ACTION_DOWN) {
-            setTextColor(getResources().getColor(R.color.holo_blue_light));
-        } else if (a == MotionEvent.ACTION_CANCEL || a == MotionEvent.ACTION_UP) {
-            setTextColor(mExpandedClockColor);
-        }
-        // never consume touch event, so onClick is propperly processed
-        return false;
+        mLongClick = Settings.System.getString(cr,
+                Settings.System.NOTIFICATION_CLOCK_LONGCLICK);
     }
 }
+

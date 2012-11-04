@@ -3326,6 +3326,20 @@ public final class Settings {
         public static final String LOCKSCREEN_WEATHER_TYPE = "lockscreen_weather_type";
 
         /**
+         *
+         *
+         * @hide
+         */
+        public static final String WEATHER_PANEL_LONGCLICK = "weather_panel_longclick";
+ 
+        /**
+         *
+         *
+         * @hide
+         */
+        public static final String WEATHER_PANEL_SHORTCLICK = "weather_panel_shortclick";
+
+        /**
          * Whether to show upcoming events on lockscreen
          * @hide
          */
@@ -3373,6 +3387,15 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_WEATHER_STYLE = "statusbar_weather_style";
+
+         /**
+          * How to hide weather panel
+          * 1 = Default always on
+          * 2 = Same as toggles
+          * 3 = Opposite toggles
+          * @hide
+          */
+        public static final String STATUSBAR_WEATHER_HIDE = "statusbar_weather_hide";
 
         /**
          * @hide
@@ -3458,6 +3481,34 @@ public final class Settings {
          */
          public static final String KILL_APP_LONGPRESS_BACK = "kill_app_longpress_back";
 
+        /**
+         *
+         *
+         * @hide
+         */
+         public static final String NOTIFICATION_DATE_LONGCLICK = "notification_date_longclick";
+ 
+        /**
+         *
+         *
+         * @hide
+         */
+         public static final String NOTIFICATION_DATE_SHORTCLICK = "notification_date_shortclick";
+ 
+        /**
+         *
+         *
+         * @hide
+         */
+        public static final String NOTIFICATION_CLOCK_LONGCLICK = "notification_clock_longclick";
+ 
+        /**
+         *
+         *
+         * @hide
+         */
+        public static final String NOTIFICATION_CLOCK_SHORTCLICK = "notification_clock_shortclick";
+ 
          /**
          * Whether to show statusbar signal text
          *
