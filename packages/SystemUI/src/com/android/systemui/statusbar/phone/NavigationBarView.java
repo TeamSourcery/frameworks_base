@@ -322,25 +322,26 @@ public class NavigationBarView extends LinearLayout {
                 }
 
             }
-            // check to see if we already have a menu button
+             // check to see if we already have a menu button
             if (!mHasBigMenuButton) {  // don't add menu buttons if we already have one
-                 // add left menu
-                 if (currentSetting != SHOW_DONT) {
-                     View leftmenuKey = generateKey(landscape, KEY_MENU_LEFT);
-                     navButtonLayout.addView(leftmenuKey,0);
-                     // it may not really be 'landscape, but I need to cheat to get the lightsout button inserted at front
-                     addLightsOutButton(lightsOut, leftmenuKey, true, true);
-                 }
-                 if (currentSetting != SHOW_DONT) {
-                     View rightMenuKey = generateKey(landscape, KEY_MENU_RIGHT);
-                     addButton(navButtonLayout, rightMenuKey, landscape);
-                     addLightsOutButton(lightsOut, rightMenuKey, landscape, true);
+                // add left menu
+                if (currentSetting != SHOW_DONT) {
+                    View leftMenuKey = generateKey(landscape, KEY_MENU_LEFT);
+                    // since we didn't add these at the beginning, we need to insert it now
+                    // the behavior is backwards from landscape (ie, insert at beginning
+                    // if portrait, add to end if landscape
+                    addButton(navButtonLayout, leftMenuKey, !landscape);
+                    addLightsOutButton(lightsOut, leftMenuKey, !landscape, true);
+                }
+                if (currentSetting != SHOW_DONT) {
+                    View rightMenuKey = generateKey(landscape, KEY_MENU_RIGHT);
+                    addButton(navButtonLayout, rightMenuKey, landscape);
+                    addLightsOutButton(lightsOut, rightMenuKey, landscape, true);
                 }
             }
         }
         createWidgetView();
     }
-    
     private void addLightsOutButton(LinearLayout root, View v, boolean landscape, boolean empty) {
 
         ImageView addMe = new ImageView(mContext);
@@ -817,7 +818,7 @@ public class NavigationBarView extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        mDelegateHelper.setInitialTouchRegion(getHomeButton(), getBackButton(), getRecentsButton());
+        mDelegateHelper.setInitialTouchRegion(this);
     }
 
     @Override
