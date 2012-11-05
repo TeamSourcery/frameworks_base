@@ -1099,11 +1099,14 @@ public class NetworkController extends BroadcastReceiver {
             }
         }
 
-        if (customLabel != null && customLabel.length() > 0) {
+        if (customLabel != null && customLabel.trim().length() > 0) {
             combinedLabel = customLabel;
             mobileLabel = customLabel;
-            wifiLabel = customLabel;
-         }
+            if (!Settings.System.getBoolean(mContext.getContentResolver(),
+                    Settings.System.NOTIFICATION_SHOW_WIFI_SSID, false)) {
+                wifiLabel = customLabel;
+            }
+        }
 
         if (DEBUG) {
             Slog.d(TAG, "refreshViews connected={"

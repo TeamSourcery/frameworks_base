@@ -3053,6 +3053,14 @@ public final class Settings {
 
         /**
          * @hide
+         * Show Wifi network name in notification shade	2900
+         * 0 - don't show
+         * 1 - show
+         */
+        public static final String NOTIFICATION_SHOW_WIFI_SSID = "notification_show_wifi_ssid";
+
+        /**
+         * @hide
          * Style of Battery
          * 0 - Icon Only
          * 1 - Text Only
