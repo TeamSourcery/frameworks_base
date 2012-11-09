@@ -3615,6 +3615,7 @@
 
    <!-- Lockscreen weather slash string -->
     <string name="weatherpanel_slash">/</string>
+    <string name="update_weather">Weather Updating!</string>
 
     <!-- Lockscreen calendar string -->
     <string name="lockscreen_calendar_tomorrow">Tomorrow</string>

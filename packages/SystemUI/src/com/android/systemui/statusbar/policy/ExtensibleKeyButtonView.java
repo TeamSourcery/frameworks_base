@@ -31,7 +31,7 @@ import android.view.ViewConfiguration;
 import android.widget.Toast;
 
 import com.android.internal.statusbar.IStatusBarService;
-import com.android.systemui.statusbar.phone.NavigationBarView;
+import com.android.systemui.statusbar.WidgetView;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.R;
 
@@ -204,8 +204,8 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         		return;
         		
         	} else if (mClickAction.equals(ACTION_WIDGETS)) {
-        	Intent toggleWidgets = new Intent(
-                       NavigationBarView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
+                        Intent toggleWidgets = new Intent(
+ 	                WidgetView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
                 mContext.sendBroadcast(toggleWidgets);
  	          return;
         	 } else if (mClickAction.equals(ACTION_SCREENSHOT)) {
@@ -230,11 +230,11 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         @Override
         public boolean onLongClick(View v) {
         	if (mLongpress == null) {
-        		return true;
-        	}
-        	if (mLongpress.equals(ACTION_NULL)) {
-        		// attempt to keep long press functionality of 'keys' if
-        		// they haven't been overridden.
+                    return true;
+                }
+                if (mLongpress.equals(ACTION_NULL)) {
+                         // attempt to keep long press functionality of 'keys' if
+                         // they haven't been overridden.
                 return true;
         	} else if (mLongpress.equals(ACTION_HOME)) {
         		injectKeyDelayed(KeyEvent.KEYCODE_HOME);
@@ -254,10 +254,9 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         	} else if (mLongpress.equals(ACTION_KILL)) {        		
         		mHandler.post(mKillTask);  
         		return true;
-            } else if (mLongpress.equals(ACTION_WIDGETS)) {
-            	
-                Intent toggleWidgets = new Intent(
-                        NavigationBarView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
+                } else if (mLongpress.equals(ACTION_WIDGETS)) {
+                        Intent toggleWidgets = new Intent(
+                        WidgetView.WidgetReceiver.ACTION_TOGGLE_WIDGETS);
                 mContext.sendBroadcast(toggleWidgets);
                 return true;
         	} else if (mLongpress.equals(ACTION_RECENTS)) {

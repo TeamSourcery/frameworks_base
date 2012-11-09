@@ -411,9 +411,11 @@
 
     <string name="battery_test">99</string>
 
-    <string name="recents_kill_all_button_text">Kill all</string>
+    <string name="recents_kill_all_button_text">Kill All</string>
 
-    <string name="app_killed_message">App killed</string>
+    <string name="app_killed_message">App Killed</string>
+
+    <string name="update_weather">Weather Updating!</string>
 
     <string name="powerwidget_screen_timeout_toast">Screen timeout set to: %1$d %2$s</string>
 

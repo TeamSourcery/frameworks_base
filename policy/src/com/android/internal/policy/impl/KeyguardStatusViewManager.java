@@ -51,6 +51,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 /***
@@ -222,9 +223,12 @@ class KeyguardStatusViewManager implements OnClickListener {
         mEmergencyCallButtonEnabledInScreen = emergencyButtonEnabledInScreen;
         mDigitalClock = (DigitalClock) findViewById(R.id.time);
         mWeatherPanelView = (WeatherPanel) findViewById(R.id.weatherpanel);
-        mWeatherPanelView.setOnClickListener(mWeatherListener);
         mWeatherTextView = (WeatherText) findViewById(R.id.weather);
         mCalendarView = (ViewFlipper) findViewById(R.id.calendar);
+
+        if (mWeatherPanelView != null) {
+            mWeatherPanelView.setOnClickListener(mWeatherListener);
+        }
 
         // Hide transport control view until we know we need to show it.
         if (mTransportView != null) {
@@ -472,6 +476,16 @@ class KeyguardStatusViewManager implements OnClickListener {
             }
         }
     }
+
+     private View.OnClickListener mWeatherListener = new View.OnClickListener() {
+        public void onClick(View v) {
+             Intent weatherintent = new Intent("com.sourcery.magiccontrol.INTENT_WEATHER_REQUEST");
+             weatherintent.putExtra("com.sourcery.magiccontrol.INTENT_EXTRA_TYPE", "updateweather");
+             weatherintent.putExtra("com.sourcery.magiccontrol.INTENT_EXTRA_ISMANUAL", true);
+             v.getContext().sendBroadcast(weatherintent);
+             Toast.makeText(getContext(), R.string.update_weather, Toast.LENGTH_SHORT).show();
+        }
+    };
 
     private void updateCalendar() {
         ContentResolver resolver = getContext().getContentResolver();
@@ -892,15 +906,7 @@ class KeyguardStatusViewManager implements OnClickListener {
         }
     }
 
-    private View.OnClickListener mWeatherListener = new View.OnClickListener() {
-        public void onClick(View v) {
-             Intent weatherintent = new Intent("com.aokp.romcontrol.INTENT_WEATHER_REQUEST");
-             weatherintent.putExtra("com.aokp.romcontrol.INTENT_EXTRA_TYPE", "updateweather");
-             weatherintent.putExtra("com.aokp.romcontrol.INTENT_EXTRA_ISMANUAL", true);
-             v.getContext().sendBroadcast(weatherintent);
-         }
-    };
-
+    
     /**
      * Performs concentenation of PLMN/SPN
      * @param plmn
