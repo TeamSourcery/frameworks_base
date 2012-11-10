@@ -214,7 +214,7 @@ public class KeyguardViewManager implements KeyguardWindowController {
 
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 stretch, stretch, WindowManager.LayoutParams.TYPE_KEYGUARD,
-                flags, PixelFormat.TRANSLUCENT);
+                flags, PixelFormat.TRANSPARENT);
         lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
         lp.windowAnimations = com.android.internal.R.style.Animation_LockScreen;
         if (ActivityManager.isHighEndGfx(((WindowManager)mContext.getSystemService(

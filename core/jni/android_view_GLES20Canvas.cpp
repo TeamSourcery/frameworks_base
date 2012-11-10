@@ -138,6 +138,7 @@ static int android_view_GLES20Canvas_prepare(JNIEnv* env, jobject clazz,
     return renderer->prepare(opaque);
 }
 
+
 static int android_view_GLES20Canvas_prepareDirty(JNIEnv* env, jobject clazz,
         OpenGLRenderer* renderer, jint left, jint top, jint right, jint bottom,
         jboolean opaque) {

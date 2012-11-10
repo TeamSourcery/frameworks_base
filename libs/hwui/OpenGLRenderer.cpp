@@ -181,15 +181,10 @@ int OpenGLRenderer::prepareDirty(float left, float top, float right, float botto
 
     syncState();
 
-    if (!opaque) {
         mCaches.setScissor(left, mSnapshot->height - bottom, right - left, bottom - top);
         glClear(GL_COLOR_BUFFER_BIT);
         return DrawGlInfo::kStatusDrew;
-    } else {
-        mCaches.resetScissor();
-    }
 
-    return DrawGlInfo::kStatusDone;
 }
 
 void OpenGLRenderer::syncState() {
@@ -256,6 +251,7 @@ void OpenGLRenderer::resume() {
     dirtyClip();
 
     mCaches.activeTexture(0);
+
     glBindFramebuffer(GL_FRAMEBUFFER, snapshot->fbo);
 
     mCaches.blend = true;
@@ -624,6 +620,7 @@ bool OpenGLRenderer::createFboLayer(Layer* layer, Rect& bounds, sp<Snapshot> sna
     snapshot->orthoMatrix.load(mOrthoMatrix);
 
     // Bind texture to FBO
+
     glBindFramebuffer(GL_FRAMEBUFFER, layer->getFbo());
     layer->bindTexture();
 
@@ -640,16 +637,16 @@ bool OpenGLRenderer::createFboLayer(Layer* layer, Rect& bounds, sp<Snapshot> sna
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
         ALOGE("Framebuffer incomplete (GL error code 0x%x)", status);
-
         glBindFramebuffer(GL_FRAMEBUFFER, previousFbo);
+
         layer->deleteTexture();
         mCaches.fboCache.put(layer->getFbo());
-
         delete layer;
 
         return false;
     }
 #endif
+
 
     // Clear the FBO, expand the clear region by 1 to get nice bilinear filtering
     mCaches.setScissor(clip.left - 1.0f, bounds.getHeight() - clip.bottom - 1.0f,
@@ -677,11 +674,13 @@ void OpenGLRenderer::composeLayer(sp<Snapshot> current, sp<Snapshot> previous) {
     const bool fboLayer = current->flags & Snapshot::kFlagIsFboLayer;
 
     if (fboLayer) {
+
         // Detach the texture from the FBO
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
 
         // Unbind current FBO and restore previous one
         glBindFramebuffer(GL_FRAMEBUFFER, previous->fbo);
+
     }
 
     Layer* layer = current->layer;
@@ -722,6 +721,7 @@ void OpenGLRenderer::composeLayer(sp<Snapshot> current, sp<Snapshot> previous) {
 
         // Put the FBO name back in the cache, if it doesn't fit, it will be destroyed
         mCaches.fboCache.put(current->fbo);
+
         layer->setFbo(0);
     }
 

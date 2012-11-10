@@ -227,7 +227,7 @@ class GLES20Canvas extends HardwareCanvas {
     private static native int nPrepare(int renderer, boolean opaque);
     private static native int nPrepareDirty(int renderer, int left, int top, int right, int bottom,
             boolean opaque);
-
+    
     @Override
     public void onPostDraw() {
         nFinish(mRenderer);

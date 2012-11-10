@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -56,7 +57,6 @@ public class PhoneStatusBarView extends FrameLayout {
     Rect mButtonBounds = new Rect();
     boolean mCapturingEvents = true;
 
-    private int mBackgroundColor;
     Handler mHandler;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
@@ -217,10 +217,17 @@ public class PhoneStatusBarView extends FrameLayout {
     }
 
     private void updateSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
-        mBackgroundColor = Settings.System.getInt(resolver,
-                Settings.System.STATUSBAR_BACKGROUND_COLOR, 0xFF000000);
-
-        setBackgroundColor(mBackgroundColor);
+       String mStatusBarBgColor = Settings.System.getString(mContext.getContentResolver(),
+               Settings.System.STATUSBAR_BACKGROUND_COLOR);
+ 
+        if (mStatusBarBgColor != null) {
+            try {
+                setBackgroundColor(Integer.parseInt(mStatusBarBgColor));
+            } catch (NumberFormatException e) {
+                 e.printStackTrace();
+            }
+       } else {
+            setBackground(mContext.getResources().getDrawable(R.drawable.status_bar_background));
+        }
     }
 }
