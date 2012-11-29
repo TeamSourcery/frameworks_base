@@ -3992,4 +3992,15 @@
     <!-- Default name of the owner user [CHAR LIMIT=20] -->
     <string name="owner_name" msgid="3879126011135546571">Owner</string>
 
+    <!-- Reboot -->
+    <string name="reboot">Reboot JBSourcery</string>
+    <!-- Reboot recovery option -->
+    <string name="reboot_recovery">Recovery</string>
+    <!-- Reboot recovery option -->
+    <string name="reboot_download">Download</string>
+    <!-- Reboot recovery option -->
+    <string name="reboot_bootloader">Bootloader</string>
+    <!-- Rebooting message -->
+    <string name="reboot_progress">JBSourcery is rebooting</string>
+
 </resources>

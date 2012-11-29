@@ -61,7 +61,7 @@ public class WifiNative {
 
     /* Sends a kill signal to supplicant. To be used when we have lost connection
        or when the supplicant is hung */
-    public native static boolean killSupplicant(boolean p2pSupported);
+    public native static boolean killSupplicant();
 
     private native boolean connectToSupplicant(String iface);
 
