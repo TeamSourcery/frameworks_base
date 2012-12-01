@@ -41,7 +41,9 @@ import com.android.internal.widget.ActionBarView;
 
 import android.app.KeyguardManager;
 import android.content.Context;
+//import android.content.Intent;
 import android.content.pm.ActivityInfo;
+//import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -49,6 +51,7 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -57,6 +60,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.provider.Settings;
 import android.util.AndroidRuntimeException;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
@@ -93,6 +97,7 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -205,6 +210,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mInvalidatePanelMenuFeatures = 0;
         }
     };
+
+    public static final String CUSTOM_APP_WALLPAPER = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper.jpg";
+    public static final String CUSTOM_APP_WALLPAPER_LIGHT = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper_light.jpg";
+    public static final String CUSTOM_APP_WALLPAPER_LAND = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper_land.jpg";
+    public static final String CUSTOM_APP_WALLPAPER_LIGHT_LAND = "/data/data/com.teamsourcery.sourcerytools/files/application_wallpaper_light_land.jpg";
+    public static final String DEFAULT_APP_WALLPAPER = "screen_background_selector_dark";
+    public static final String DEFAULT_APP_WALLPAPER_LIGHT = "screen_background_selector_light";
 
     static class WindowManagerHolder {
         static final IWindowManager sWindowManager = IWindowManager.Stub.asInterface(
@@ -1812,8 +1824,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private PopupWindow mActionModePopup;
         private Runnable mShowActionModePopup;
 
+       // public Context sourceryContext;
+
         public DecorView(Context context, int featureId) {
             super(context);
+      //  sourceryContext = context;
             mFeatureId = featureId;
         }
 
@@ -2431,7 +2446,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 Log.v(TAG, "Selected default opacity: " + opacity);
 
             mDefaultOpacity = opacity;
-            if (mFeatureId < 0) {
+     
+      if (mFeatureId < 0) {
                 setDefaultWindowFormat(opacity);
             }
         }
@@ -2603,6 +2619,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     protected ViewGroup generateLayout(DecorView decor) {
         // Apply data from current theme.
 
+   final float wallpaperAlpha = Settings.System.getFloat(getContext().getContentResolver(), Settings.System.NOTIF_APP_WALLPAPER_ALPHA, 1.0f);
+   boolean useAlpha = false;
+   int showWallpaper = Settings.System.getInt(getContext().getContentResolver(), Settings.System.NOTIF_APP_SHOW_WALLPAPER, 0);
+
         TypedArray a = getWindowStyle();
 
         if (false) {
@@ -2730,8 +2750,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         if (getContainer() == null) {
             if (mBackgroundDrawable == null) {
                 if (mBackgroundResource == 0) {
-                    mBackgroundResource = a.getResourceId(
-                            com.android.internal.R.styleable.Window_windowBackground, 0);
+                         mBackgroundResource = a.getResourceId(
+                              com.android.internal.R.styleable.Window_windowBackground, 0);
                 }
                 if (mFrameResource == 0) {
                     mFrameResource = a.getResourceId(com.android.internal.R.styleable.Window_windowFrame, 0);
@@ -2829,9 +2849,44 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         if (getContainer() == null) {
             Drawable drawable = mBackgroundDrawable;
             if (mBackgroundResource != 0) {
-                drawable = getContext().getResources().getDrawable(mBackgroundResource);
-            }
-            mDecor.setWindowBackground(drawable);
+    final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+                   final boolean isPortrait = metrics.widthPixels < metrics.heightPixels;
+    File customBG = null;
+    File customBGLight = null;
+    if (isPortrait) {     
+       customBG = new File(CUSTOM_APP_WALLPAPER);
+       customBGLight = new File(CUSTOM_APP_WALLPAPER_LIGHT);
+    } else {
+       customBG = new File(CUSTOM_APP_WALLPAPER_LAND);
+       customBGLight = new File(CUSTOM_APP_WALLPAPER_LIGHT_LAND);
+    }
+     String resName = getContext().getResources().getResourceEntryName(mBackgroundResource);
+     if (resName.equalsIgnoreCase(DEFAULT_APP_WALLPAPER)) {
+      if (customBG.exists()) {
+         drawable = new BitmapDrawable(null, customBG.getAbsolutePath());
+         useAlpha = true;
+      } else {
+         drawable = getContext().getResources().getDrawable(mBackgroundResource);
+      }
+      } else if (resName.equalsIgnoreCase(DEFAULT_APP_WALLPAPER_LIGHT)) {
+      if (customBGLight.exists()) {
+         drawable = new BitmapDrawable(null, customBGLight.getAbsolutePath());
+         useAlpha = true;
+      } else {
+         drawable = getContext().getResources().getDrawable(mBackgroundResource);
+      }
+      } else {
+        drawable = getContext().getResources().getDrawable(mBackgroundResource);
+      }
+             }
+      if (useAlpha) {
+         drawable.setAlpha((int) (wallpaperAlpha * 255));
+      if (showWallpaper == 1) {
+       setFlags(FLAG_SHOW_WALLPAPER, FLAG_SHOW_WALLPAPER&(~getForcedWindowFlags()));
+         }
+      }
+
+      mDecor.setWindowBackground(drawable);
             drawable = null;
             if (mFrameResource != 0) {
                 drawable = getContext().getResources().getDrawable(mFrameResource);

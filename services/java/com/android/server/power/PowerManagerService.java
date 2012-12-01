@@ -148,7 +148,7 @@ public final class PowerManagerService extends IPowerManager.Stub
     // This is subtracted from the end of the screen off timeout so the
     // minimum screen off timeout should be longer than this.
     private static final int SCREEN_DIM_DURATION = 7 * 1000;
-
+    
     // The maximum screen dim time expressed as a ratio relative to the screen
     // off timeout.  If the screen off timeout is very short then we want the
     // dim timeout to also be quite short so that most of the time is spent on.
@@ -185,7 +185,7 @@ public final class PowerManagerService extends IPowerManager.Stub
     private SettingsObserver mSettingsObserver;
     private DreamManagerService mDreamManager;
     private LightsService.Light mAttentionLight;
-
+    
     private final Object mLock = new Object();
 
     // A bitfield that indicates what parts of the power state have
@@ -440,7 +440,7 @@ public final class PowerManagerService extends IPowerManager.Stub
 
             mSettingsObserver = new SettingsObserver(mHandler);
             mAttentionLight = mLightsService.getLight(LightsService.LIGHT_ID_ATTENTION);
-
+            
             // Register for broadcasts from other components of the system.
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);

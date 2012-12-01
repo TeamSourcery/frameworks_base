@@ -19,7 +19,7 @@
 #include <binder/Parcel.h>
 
 #include <math.h>
-#include <core/SkMatrix.h>
+#include <SkMatrix.h>
 
 namespace android {
 

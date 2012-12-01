@@ -584,7 +584,7 @@ public class MockPackageManager extends PackageManager {
     public List<PackageInfo> getInstalledThemePackages() {
         throw new UnsupportedOperationException();
     }
- 
+
     /**
      * @hide
      */

@@ -756,7 +756,6 @@ public class PackageManagerService extends IPackageManager.Stub {
                                     }
                                 }
                             }
-                            
                             sendPackageBroadcast(Intent.ACTION_PACKAGE_ADDED,
                                     res.pkg.applicationInfo.packageName, null,
                                     extras, null, null, firstUsers);
@@ -765,9 +764,9 @@ public class PackageManagerService extends IPackageManager.Stub {
                                 extras.putBoolean(Intent.EXTRA_REPLACING, true);
                             }
                             String category = null;
- 	                          if(res.pkg.mIsThemeApk) {
- 	                             category = Intent.CATEGORY_THEME_PACKAGE_INSTALLED_STATE_CHANGE;
- 	                    }
+                            if(res.pkg.mIsThemeApk) {
+                                category = Intent.CATEGORY_THEME_PACKAGE_INSTALLED_STATE_CHANGE;
+                            }
                             sendPackageBroadcast(Intent.ACTION_PACKAGE_ADDED,
                                     res.pkg.applicationInfo.packageName, category,
                                     extras, null, null, updateUsers);
@@ -5747,10 +5746,10 @@ public class PackageManagerService extends IPackageManager.Stub {
                     sendAdded = true;
                 }
             }
-           
+
             if (sendAdded) {
                 sendPackageBroadcast(Intent.ACTION_PACKAGE_ADDED, null,
- 	                       packageName, extras, null, null, new int[] {userId});
+                        packageName, extras, null, null, new int[] {userId});
             }
         } finally {
             Binder.restoreCallingIdentity(callingId);

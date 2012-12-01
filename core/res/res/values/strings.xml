@@ -2108,6 +2108,9 @@
     <!-- When the lock screen is showing and the battery is low, warn user to plug
          in the phone soon. -->
     <string name="lockscreen_low_battery">Connect your charger.</string>
+    <!-- Showing the Battery % while not plugged in. -->
+    <string name="lockscreen_always_battery">Discharging, <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%</xliff:g></string>
+    <string name="lockscreen_always_low_battery">Connect your charger, <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%</xliff:g></string>
 
     <!-- Shown in the lock screen when there is no SIM card. -->
     <string name="lockscreen_missing_sim_message_short">No SIM card</string>
@@ -2272,8 +2275,6 @@
     <!-- Accessibility description sent when user completes drawing a pattern. [CHAR LIMIT=NONE] -->
     <string name="lockscreen_access_pattern_detected">Pattern completed</string>
 
-    <!-- Accessibility description sent when user changes the current lock screen widget. [CHAR_LIMIT=none] -->
-    <string name="keyguard_accessibility_widget_changed">%1$s. Widget %2$d of %3$d.</string>
     <!-- Accessibility description of the add widget button. [CHAR_LIMIT=none] -->
     <string name="keyguard_accessibility_add_widget">Add widget.</string>
     <!-- Accessibility description of the empty sidget slot (place holder for a new widget). [CHAR_LIMIT=none] -->
@@ -3826,6 +3827,21 @@
     <!-- "Done" button for MediaRouter chooser dialog when grouping routes. [CHAR LIMIT=NONE] -->
     <string name="media_route_chooser_grouping_done">Done</string>
 
+    <!-- Reboot -->
+    <string name="reboot">Reboot JBSourcery</string>
+
+    <!-- Reboot recovery option -->
+    <string name="reboot_recovery">Recovery</string>
+
+    <!-- Reboot recovery option -->
+    <string name="reboot_download">Download</string>
+
+    <!-- Reboot recovery option -->
+    <string name="reboot_bootloader">Bootloader</string>
+
+    <!-- Rebooting message -->
+    <string name="reboot_progress">Rebooting JBSourcery</string>
+
     <!-- Content description of a MediaRouteButton for accessibility support -->
     <string name="media_route_button_content_description">Media output</string>
 
@@ -3991,16 +4007,8 @@
     <string name="user_switched">Current user <xliff:g id="name" example="Bob">%1$s</xliff:g>.</string>
     <!-- Default name of the owner user [CHAR LIMIT=20] -->
     <string name="owner_name" msgid="3879126011135546571">Owner</string>
-
-    <!-- Reboot -->
-    <string name="reboot">Reboot JBSourcery</string>
-    <!-- Reboot recovery option -->
-    <string name="reboot_recovery">Recovery</string>
-    <!-- Reboot recovery option -->
-    <string name="reboot_download">Download</string>
-    <!-- Reboot recovery option -->
-    <string name="reboot_bootloader">Bootloader</string>
-    <!-- Rebooting message -->
-    <string name="reboot_progress">JBSourcery is rebooting</string>
+    
+    <!-- In WiFi notification -->
+    <string name="notify_turn_wifi_off_title">Turn Wi-Fi off</string>
 
 </resources>

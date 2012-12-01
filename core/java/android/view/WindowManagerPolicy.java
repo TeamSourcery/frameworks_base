@@ -1038,7 +1038,7 @@ public interface WindowManagerPolicy {
     /**
      * name of package being worked on during boot time message
      */
-   public void setPackageName(String pkgName);
+    public void setPackageName(String pkgName);
 
     /**
      * Show boot time message to the user.

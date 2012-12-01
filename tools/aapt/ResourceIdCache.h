@@ -1,30 +1,26 @@
 //
 // Copyright 2012 The Android Open Source Project
 //
-// Manage a resource ID cache.
+// Cache for resIds - we tend to lookup the same thing repeatedly
+//
 
 #ifndef RESOURCE_ID_CACHE_H
 #define RESOURCE_ID_CACHE_H
 
-namespace android {
-class android::String16;
+#include "StringPool.h"
 
 class ResourceIdCache {
 public:
-    static uint32_t lookup(const android::String16& package,
-            const android::String16& type,
-            const android::String16& name,
-            bool onlyPublic);
+    static uint32_t lookup(const String16& package,
+                           const String16& type,
+                           const String16& name,
+                           bool onlyPublic);
 
-    static uint32_t store(const android::String16& package,
-            const android::String16& type,
-            const android::String16& name,
-            bool onlyPublic,
-            uint32_t resId);
-
-    static void dump(void);
+    static bool store(const String16& package,
+                      const String16& type,
+                      const String16& name,
+                      bool onlyPublic,
+                      uint32_t resId);
 };
-
-}
 
 #endif

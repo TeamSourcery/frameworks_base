@@ -1,5 +1,6 @@
 //
 // Copyright 2006 The Android Open Source Project
+// This code has been modified.  Portions copyright (C) 2010, T-Mobile USA, Inc.
 //
 // Build resource files from raw assets.
 //
@@ -1999,9 +2000,6 @@ uint32_t ResourceTable::getResId(const String16& package,
                                  const String16& name,
                                  bool onlyPublic) const
 {
-    uint32_t id = ResourceIdCache::lookup(package, type, name, onlyPublic);
-    if (id != 0) return id;     // cache hit
-
     sp<Package> p = mPackages.valueFor(package);
     if (p == NULL) return 0;
 
@@ -2020,10 +2018,11 @@ uint32_t ResourceTable::getResId(const String16& package,
         }
         
         if (Res_INTERNALID(rid)) {
-            return ResourceIdCache::store(package, type, name, onlyPublic, rid);
+            return rid;
         }
-        return ResourceIdCache::store(package, type, name, onlyPublic,
-                Res_MAKEID(p->getAssignedId()-1, Res_GETTYPE(rid), Res_GETENTRY(rid)));
+        return Res_MAKEID(p->getAssignedId()-1,
+                          Res_GETTYPE(rid),
+                          Res_GETENTRY(rid));
     }
 
     sp<Type> t = p->getTypes().valueFor(type);
@@ -2032,9 +2031,7 @@ uint32_t ResourceTable::getResId(const String16& package,
     if (c == NULL) return 0;
     int32_t ei = c->getEntryIndex();
     if (ei < 0) return 0;
-
-    return ResourceIdCache::store(package, type, name, onlyPublic,
-            getResId(p, t, ei));
+    return getResId(p, t, ei);
 }
 
 uint32_t ResourceTable::getResId(const String16& ref,
@@ -2061,7 +2058,11 @@ uint32_t ResourceTable::getResId(const String16& ref,
                      String8(name).string()));
         return 0;
     }
-    uint32_t res = getResId(package, type, name, onlyPublic && refOnlyPublic);
+    uint32_t res = ResourceIdCache::lookup(package, type, name, onlyPublic && refOnlyPublic);
+    if (res == 0) {
+        res = getResId(package, type, name, onlyPublic && refOnlyPublic);
+        ResourceIdCache::store(package, type, name, onlyPublic && refOnlyPublic, res);
+    }
     NOISY(printf("Expanded resource: p=%s, t=%s, n=%s, res=%d\n",
                  String8(package).string(), String8(type).string(),
                  String8(name).string(), res));
@@ -2528,6 +2529,7 @@ ResourceTable::validateLocalizations(void)
          nameIter++) {
         const set<String8>& configSet = nameIter->second;   // naming convenience
 
+#ifdef SHOW_DEFAULT_TRANSLATION_WARNINGS
         // Look for strings with no default localization
         if (configSet.count(defaultLocale) == 0) {
             fprintf(stdout, "aapt: warning: string '%s' has no default translation in %s; found:",
@@ -2540,7 +2542,8 @@ ResourceTable::validateLocalizations(void)
             fprintf(stdout, "\n");
             // !!! TODO: throw an error here in some circumstances
         }
-
+#endif
+#ifdef SHOW_LOCALIZATION_WARNINGS
         // Check that all requested localizations are present for this string
         if (mBundle->getConfigurations() != NULL && mBundle->getRequireLocalization()) {
             const char* allConfigs = mBundle->getConfigurations();
@@ -2579,6 +2582,7 @@ ResourceTable::validateLocalizations(void)
                 }
            } while (comma != NULL);
         }
+#endif
     }
 
     return err;
@@ -3757,7 +3761,7 @@ sp<ResourceTable::Package> ResourceTable::getPackage(const String16& package)
         } else {
             int extendedPackageId = mBundle->getExtendedPackageId();
             if (extendedPackageId != 0) {
-               if ((uint32_t)extendedPackageId < mNextPackageId) {
+                if ((uint32_t)extendedPackageId < mNextPackageId) {
                     fprintf(stderr, "Package ID %d already in use!\n", mNextPackageId);
                     return NULL;
                 }

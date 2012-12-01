@@ -511,9 +511,82 @@
     <string name="quick_settings_brightness_dialog_title">Brightness</string>
     <!-- QuickSettings: Brightness dialog auto brightness button [CHAR LIMIT=NONE] -->
     <string name="quick_settings_brightness_dialog_auto_brightness_label">AUTO</string>
-
+    
     <!-- Title of help text shown when the notification panel is pulled down for the very first time. [CHAR LIMIT=NONE] -->
     <string name="status_bar_help_title">Notifications appear here</string>
     <!-- Body of help text shown when the notification panel is pulled down for the very first time. [CHAR LIMIT=NONE] -->
     <string name="status_bar_help_text">Access them anytime by swiping down.\nSwipe down again for system controls.</string>
+
+    
+    <!--  Target/Action Strings -->
+    <string name="action_home">Home</string>
+    <string name="action_back">Back</string>
+    <string name="action_recents">Recents</string>
+    <string name="action_screenshot">Screenshot</string>
+    <string name="action_menu">Menu</string>
+    <string name="action_ime">Open IME Switcher</string>
+    <string name="action_kill">Kill task</string>
+    <string name="action_power">Power</string>
+    <string name="action_notifications">Notifications</string>
+    <string name="action_none">Empty</string>
+
+    <string name="toggle_ring_vib">Ring/Vib - Toggle</string>
+    <string name="toggle_ring_silent">Ring/Silent - Togle</string>
+    <string name="toggle_ring_vib_silent">Ring/Vib/Silent - Toggle</string>
+    <string name="app_killed_message">App Killed</string>
+    <string name="recents_kill_all_button_text">Kill all</string>
+
+    <!--  Quick Settings -->
+    <string name="quick_settings_vibrate_on_label">Vibrate On</string>
+    <string name="quick_settings_vibrate_off_label">Vibrate Off</string>
+    <string name="quick_settings_silent_on_label">Silent On</string>
+    <string name="quick_settings_silent_off_label">Silent Off</string>
+    <string name="quick_settings_fcharge_on_label">F-Charge On</string>
+    <string name="quick_settings_fcharge_off_label">F-Charge Off</string>
+    <string name="quick_settings_torch_on_label">Torch On</string>
+    <string name="quick_settings_torch_off_label">Torch Off</string>
+    <string name="quick_settings_nfc_on_label">NFC On</string>
+    <string name="quick_settings_nfc_off_label">NFC Off</string>
+    <string name="quick_settings_wifi_tether_on_label">Wifi Tether On</string>
+    <string name="quick_settings_wifi_tether_off_label">Wifi Tether Off</string>
+    <string name="quick_settings_bt_tether_on_label">BT Tether On</string>
+    <string name="quick_settings_bt_tether_off_label">BT Tether Off</string>
+    <string name="quick_settings_usb_tether_on_label">USB Tether On</string>
+    <string name="quick_settings_usb_tether_off_label">USB Tether Off</string>
+    <string name="quick_settings_sync_on_label">Sync On</string>
+    <string name="quick_settings_sync_off_label">Sync Off</string>
+    <string name="quick_settings_twog_on_label">2g On</string>
+    <string name="quick_settings_twog_off_label">2g Off</string>
+    <string name="quick_settings_lte_on_label">LTE On</string>
+    <string name="quick_settings_lte_off_label">LTE Off</string>
+    <string name="quick_settings_gps_on_label">GPS On</string>
+    <string name="quick_settings_gps_off_label">GPS Off</string>
+    <string name="quick_settings_data_on_label">Data On</string>
+    <string name="quick_settings_data_off_label">Data Off</string>
+
+    <!--  RamBar -->
+    <string name="memory">RAM</string>
+    <!-- [CHAR LIMIT=10] Running services, summary of background processes -->
+    <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> free</string>
+    <!-- [CHAR LIMIT=10] Running services, summary of foreground processes -->
+    <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> used</string>
+    <!-- Text to label a process entry with the process name. -->
+    <string name="service_process_name"><xliff:g id="process">%1$s</xliff:g></string>
+    <!-- Running services, description for a service in the started state -->
+    <string name="service_client_name"><xliff:g id="client_name">%1$s</xliff:g></string>
+    <!-- Running services, description for a service in the started state -->
+    <string name="service_started_by_app">Started by app.</string>
+    <!-- Descriptive text of a running process: singular process, singular service. -->
+    <string name="running_processes_item_description_s_s"><xliff:g id="numprocess">%1$d</xliff:g>
+        process and <xliff:g id="numservices">%2$d</xliff:g> service</string>
+    <!-- Descriptive text of a running process: singular process, plural service. -->
+    <string name="running_processes_item_description_s_p"><xliff:g id="numprocess">%1$d</xliff:g>
+        process and <xliff:g id="numservices">%2$d</xliff:g> services</string>
+     <!-- Descriptive text of a running process: plural process, singular service. -->
+    <string name="running_processes_item_description_p_s"><xliff:g id="numprocess">%1$d</xliff:g>
+        processes and <xliff:g id="numservices">%2$d</xliff:g> service</string>
+    <!-- Descriptive text of a running process: plural process, plural service. -->
+    <string name="running_processes_item_description_p_p"><xliff:g id="numprocess">%1$d</xliff:g>
+        processes and <xliff:g id="numservices">%2$d</xliff:g> services</string>
+
 </resources>

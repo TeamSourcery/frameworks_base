@@ -210,7 +210,7 @@ public final class ShutdownThread extends Thread {
             sIsStarted = true;
         }
 
-         final int shutdownMessageId = mRebootReason == null
+        final int shutdownMessageId = mRebootReason == null
                 ? com.android.internal.R.string.shutdown_progress
                 : com.android.internal.R.string.reboot_progress;
 

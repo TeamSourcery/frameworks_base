@@ -24,7 +24,8 @@
     xmlns:systemui="http://schemas.android.com/apk/res/com.android.systemui"
     android:id="@+id/status_bar"
     android:background="@drawable/status_bar_background"
-    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:focusable="true"
     android:descendantFocusability="afterDescendants"
     android:fitsSystemWindows="true"
@@ -96,7 +97,7 @@
                     android:layout_height="wrap_content"
                     />
                 <include layout="@layout/battery_cluster_view"
- 	            android:id="@+id/battery_cluster"
+                    android:id="@+id/battery_cluster"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     />
@@ -109,7 +110,7 @@
                  android:gravity="bottom"
                  android:paddingLeft="4dip"
                  />
-            </LinearLayout>
+             </LinearLayout>
     
             <com.android.systemui.statusbar.policy.Clock
                 android:id="@+id/clock"
@@ -182,4 +183,8 @@
                 />
         </com.android.systemui.statusbar.phone.TickerView>
     </LinearLayout>
+    <com.android.systemui.statusbar.policy.BatteryBarController
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        systemui:viewLocation="1" />
 </com.android.systemui.statusbar.phone.PhoneStatusBarView>

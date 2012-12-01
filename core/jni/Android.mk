@@ -11,6 +11,10 @@ else
 	LOCAL_CFLAGS += -DPACKED=""
 endif
 
+ifeq ($(WITH_JIT),true)
+	LOCAL_CFLAGS += -DWITH_JIT
+endif
+
 ifneq ($(USE_CUSTOM_RUNTIME_HEAP_MAX),)
   LOCAL_CFLAGS += -DCUSTOM_RUNTIME_HEAP_MAX=$(USE_CUSTOM_RUNTIME_HEAP_MAX)
 endif
@@ -82,7 +86,7 @@ LOCAL_SRC_FILES:= \
 	android_util_Process.cpp \
 	android_util_StringBlock.cpp \
 	android_util_XmlBlock.cpp \
-        android_util_PackageRedirectionMap.cpp \
+	android_util_PackageRedirectionMap.cpp \
 	android/graphics/AutoDecodeCancel.cpp \
 	android/graphics/Bitmap.cpp \
 	android/graphics/BitmapFactory.cpp \
@@ -197,7 +201,6 @@ LOCAL_SHARED_LIBRARIES := \
 	libETC1 \
 	libhardware \
 	libhardware_legacy \
-	libselinux \
 	libsonivox \
 	libcrypto \
 	libssl \
@@ -210,6 +213,12 @@ LOCAL_SHARED_LIBRARIES := \
 	libusbhost \
 	libharfbuzz \
 	libz
+
+ifeq ($(HAVE_SELINUX),true)
+LOCAL_C_INCLUDES += external/libselinux/include
+LOCAL_SHARED_LIBRARIES += libselinux
+LOCAL_CFLAGS += -DHAVE_SELINUX
+endif # HAVE_SELINUX
 
 ifeq ($(USE_OPENGL_RENDERER),true)
 	LOCAL_SHARED_LIBRARIES += libhwui

@@ -243,6 +243,7 @@ public class TabletStatusBar extends BaseStatusBar implements
     CustomTheme mCurrentTheme;
     private boolean mRecreating = false;
 
+
     protected void addPanelWindows() {
         final Context context = mContext;
         final Resources res = mContext.getResources();
@@ -255,7 +256,6 @@ public class TabletStatusBar extends BaseStatusBar implements
         mNotificationPanel.setOnTouchListener(
                 new TouchOutsideListener(MSG_CLOSE_NOTIFICATION_PANEL, mNotificationPanel));
 
-        
         // Bt
         mBluetoothController.addIconView(
                 (ImageView)mNotificationPanel.findViewById(R.id.bluetooth));
@@ -384,17 +384,17 @@ public class TabletStatusBar extends BaseStatusBar implements
 
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
-         // detect theme change.
-         CustomTheme newTheme = mContext.getResources().getConfiguration().customTheme;
-         if (newTheme != null &&
-                 (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
-             mCurrentTheme = (CustomTheme)newTheme.clone();
-             // restart systemui
-             try {
-                 Runtime.getRuntime().exec("pkill -TERM -f com.android.systemui");
-             } catch (IOException e) {
-                 // we're screwed here fellas
-             }
+        // detect theme change.
+        CustomTheme newTheme = mContext.getResources().getConfiguration().customTheme;
+        if (newTheme != null &&
+                (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
+            mCurrentTheme = (CustomTheme)newTheme.clone();
+            // restart systemui
+            try {
+                Runtime.getRuntime().exec("pkill -TERM -f com.android.systemui");
+            } catch (IOException e) {
+                // we're screwed here fellas
+            }
         }
         loadDimens();
         mNotificationPanelParams.height = getNotificationPanelHeight();
@@ -663,6 +663,14 @@ public class TabletStatusBar extends BaseStatusBar implements
         lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
                 | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
         return lp;
+    }
+
+    @Override
+    public void toggleNotificationShade() {
+        int msg = (mNotificationPanel.isShowing())
+                ? MSG_CLOSE_NOTIFICATION_PANEL : MSG_OPEN_NOTIFICATION_PANEL;
+        mHandler.removeMessages(msg);
+        mHandler.sendEmptyMessage(msg);
     }
 
     @Override

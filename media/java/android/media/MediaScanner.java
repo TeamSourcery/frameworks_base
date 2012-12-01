@@ -283,7 +283,7 @@ public class MediaScanner
         "Terror",
         "Indie",
         "Britpop",
-        null,
+        "Negerpunk",
         "Polsk Punk",
         "Beat",
         "Christian Gangsta",
@@ -700,7 +700,7 @@ public class MediaScanner
                     try {
                         short genreIndex = Short.parseShort(number.toString());
                         if (genreIndex >= 0) {
-                            if (genreIndex < ID3_GENRES.length && ID3_GENRES[genreIndex] != null) {
+                            if (genreIndex < ID3_GENRES.length) {
                                 return ID3_GENRES[genreIndex];
                             } else if (genreIndex == 0xFF) {
                                 return null;
