@@ -91,6 +91,7 @@ public class SourceryTarget {
     public final static String ACTION_CLOCKOPTIONS = "**clockoptions**";
     public final static String ACTION_VOICEASSIST = "**voiceassist**";
     public final static String ACTION_TORCH = "**torch**";
+    public final static String ACTION_SEARCH = "**search**";
     public final static String ACTION_NULL = "**null**";
 
     private int mInjectKeyCode;
@@ -284,8 +285,9 @@ public class SourceryTarget {
     }
 
 
-//not using yet and dont want to take time to get drawables... yes lazy dev.
-  /*  public Drawable getIconImage(String uri) {
+   //not using yet and dont want to take time to get drawables... yes lazy dev.
+   // Yes Steve, You are a lazy Dev.  I need this :)  - Zaphod 12-01-12(funny stuff here)
+   public Drawable getIconImage(String uri) {
 
         if (uri == null)
             return mContext.getResources().getDrawable(R.drawable.ic_sysbar_null);
@@ -305,6 +307,8 @@ public class SourceryTarget {
             return mContext.getResources().getDrawable(R.drawable.ic_sysbar_killtask);
         if (uri.equals(ACTION_POWER))
             return mContext.getResources().getDrawable(R.drawable.ic_sysbar_power);
+        if (uri.equals(ACTION_SEARCH))
+            return mContext.getResources().getDrawable(R.drawable.ic_sysbar_search);
         if (uri.equals(ACTION_NOTIFICATIONS))
             return mContext.getResources().getDrawable(R.drawable.ic_sysbar_notifications);
         try {
@@ -315,7 +319,7 @@ public class SourceryTarget {
                 e.printStackTrace();
             }
         return mContext.getResources().getDrawable(R.drawable.ic_sysbar_null);
-    } */
+    } 
 
     public String getProperSummary(String uri) {
         if (uri.equals(ACTION_HOME))
@@ -334,6 +338,8 @@ public class SourceryTarget {
             return mContext.getResources().getString(R.string.action_kill);
         if (uri.equals(ACTION_POWER))
             return mContext.getResources().getString(R.string.action_power);
+        if (uri.equals(ACTION_SEARCH))
+            return mContext.getResources().getString(R.string.action_search);
         if (uri.equals(ACTION_NOTIFICATIONS))
             return mContext.getResources().getString(R.string.action_notifications);
         if (uri.equals(ACTION_NULL))

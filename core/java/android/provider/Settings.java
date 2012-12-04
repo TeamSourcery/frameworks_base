@@ -2624,15 +2624,54 @@ public final class Settings {
         };
 
        /**
-        * Whether the UI is in tablet UI
-        * @hide
+        * Current UI Mode
+        * 
+        *  0 = Phone UI
+        *  1 = Tablet UI
+        *  2 = Phablet UI
+        *  @hide
         */
-        public static final String TABLET_UI = "tablet_ui";
+       public static final String CURRENT_UI_MODE = "current_ui_mode";
 
         /**
+         * User selected UI Mode
+         * 
+         *  0 = Phone UI
+         *  1 = Tablet UI
+         *  2 = Phablet UI
+         *  @hide
+         */
+       public static final String USER_UI_MODE = "user_ui_mode";
+
+        /**
+         * User configurable flag for determining if NavBar is enabled
+         *
          * @hide
          */
         public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
+
+        /**
+         * Used as a flag to determine if we are showing the NavBar *NOW* or is it hidden
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_SHOW_NOW = "navigation_bar_show_now";
+ 	
+        /**
+         * Show the NavBar dialog in Power menu
+         * @hide
+         */
+        public static final String POWER_DIALOG_SHOW_NAVBAR_HIDE = "power_dialog_show_navbar_hide";
+
+         /**
+         * @hide
+         */
+         public static final String POWER_DIALOG_SHOW_SCREENSHOT = "power_dialog_show_screenshot";
+ 
+         /**
+         * @hide
+         */
+         public static final String POWER_DIALOG_SHOW_AIRPLANE_TOGGLE = "power_dialog_show_airplane_toggle";
+ 
 
         /**
          * @hide
@@ -2704,6 +2743,11 @@ public final class Settings {
         };
 
         /**
+         * Widgets to show, should be separated by |
+         */
+        public static final String NAVIGATION_BAR_WIDGETS = "navigation_bar_widgets";
+ 
+        /**
          * @hide
          */
         public static final String NAVIGATION_BAR_BUTTON_ALPHA = "navigation_bar_button_alpha";
@@ -2766,6 +2810,13 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_QUICK_UNLOCK_CONTROL = "lockscreen_quick_unlock_control";
+
+        /**
+         * Whether to use keyguard or homescreen widgets
+         * @hide
+         */
+        public static final String LOCKSCREEN_ALL_WIDGETS = "lockscreen_all_widgets";
+
 
         /**
          * Whether to enable lockscreen rotation

@@ -85,6 +85,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.GestureRecorder;
+import com.android.systemui.statusbar.NavigationBarView;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.SignalClusterView;
@@ -169,6 +170,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     int mIconHPadding = -1;
     Display mDisplay;
     Point mCurrentDisplaySize = new Point();
+    int mCurrentUIMode = 0; 
 
     IDreamManager mDreamManager;
 
@@ -444,8 +446,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                .getContentResolver(), Settings.System.NOTIFICATION_DIMMER, false);
   }
 
-        updateShowSearchHoldoff();
-
+       
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();
             if (DEBUG) Slog.v(TAG, "hasNavigationBar=" + showNav);
@@ -782,12 +783,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         return mNaturalBarHeight;
     }
 
-    private View.OnClickListener mRecentsClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            toggleRecentApps();
-        }
-    };
-
+  
     private int mShowSearchHoldoff = 0;
     private Runnable mShowSearchPanel = new Runnable() {
         public void run() {
@@ -828,14 +824,6 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     private void prepareNavigationBarView() {
         mNavigationBarView.reorient();
-
-        if (mNavigationBarView.getRecentsButton() != null) {
-            mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
-            mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPreloadOnTouchListener);
-        }
-        if (mNavigationBarView.getHomeButton() != null) {
-            mNavigationBarView.getHomeButton().setOnTouchListener(mHomeSearchActionListener);
-        }
         mNavigationBarView.getSearchLight().setOnTouchListener(mHomeSearchActionListener);
         updateSearchPanel();
     }
@@ -1030,11 +1018,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         setAreThereNotifications();
     }
 
-    private void updateShowSearchHoldoff() {
-        mShowSearchHoldoff = mContext.getResources().getInteger(
-            R.integer.config_show_search_delay);
-    }
-
+   
     private void loadNotificationShade() {
         if (mPile == null) return;
 
@@ -2334,7 +2318,12 @@ public class PhoneStatusBar extends BaseStatusBar {
                 updateResources();
                 repositionNavigationBar();
                 updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
-                updateShowSearchHoldoff();
+                if (mNavigationBarView != null && mNavigationBarView.mDelegateHelper != null) {
+                    // if We are in Landscape/Phone Mode then swap the XY coordinates for NaVRing Swipe
+                    mNavigationBarView.mDelegateHelper.setSwapXY((
+                            mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) 
+                            && (mCurrentUIMode == 0));
+                }
             }
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 // work around problem where mDisplay.getRotation() is not stable while screen is off (bug 7086018)
@@ -2566,7 +2555,9 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.NOTIFICATION_CLOCK[longClick]), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_CLOCK[doubleClick]), false, this);
-        }
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.CURRENT_UI_MODE), false, this);
+         }
 
          @Override
         public void onChange(boolean selfChange) {
@@ -2597,6 +2588,8 @@ public class PhoneStatusBar extends BaseStatusBar {
 		} else {
             mClockDoubleClicked = true;
         }
+            mCurrentUIMode = Settings.System.getInt(cr,
+                 Settings.System.CURRENT_UI_MODE, 0);
     }
 
     public boolean skipToSettingsPanel() {
