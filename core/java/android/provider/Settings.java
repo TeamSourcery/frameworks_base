@@ -2671,8 +2671,12 @@ public final class Settings {
          * @hide
          */
          public static final String POWER_DIALOG_SHOW_AIRPLANE_TOGGLE = "power_dialog_show_airplane_toggle";
- 
 
+        /**
+         * @hide
+         */
+        public static final String POWER_DIALOG_SHOW_TORCH_TOGGLE = "power_dialog_show_torch_toggle"
+ 
         /**
          * @hide
          */
