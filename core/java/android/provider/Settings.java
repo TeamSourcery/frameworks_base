@@ -2675,7 +2675,7 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String POWER_DIALOG_SHOW_TORCH_TOGGLE = "power_dialog_show_torch_toggle"
+        public static final String POWER_DIALOG_SHOW_TORCH_TOGGLE = "power_dialog_show_torch_toggle";
  
         /**
          * @hide
