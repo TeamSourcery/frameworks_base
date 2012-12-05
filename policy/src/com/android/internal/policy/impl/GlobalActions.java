@@ -22,15 +22,20 @@ import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.telephony.TelephonyProperties;
 import com.android.internal.R;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ActivityNotFoundException;
 import android.app.ActivityManagerNative;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.UserInfo;
+import android.content.ServiceConnection;
 import android.database.ContentObserver;
 import android.hardware.input.InputManager;
 import android.graphics.drawable.Drawable;
@@ -39,6 +44,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Messenger;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
@@ -47,13 +53,16 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 import android.service.dreams.DreamService;
 import android.service.dreams.IDreamManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Slog;
+import android.view.LayoutInflater;
 import android.util.TypedValue;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
@@ -64,6 +73,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.IWindowManager;
 import android.view.WindowManagerPolicy.WindowManagerFuncs;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -71,10 +81,11 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.collect.Lists;
 import com.android.internal.app.ThemeUtils;
 
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +132,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private boolean mHasVibrator;
     private boolean mEnableNavBarHideToggle = true;
     private boolean mEnableScreenshotToggle = false;
+    private boolean mEnableTorchToggle = false;
     private boolean mEnableAirplaneToggle = true;
     private static int rebootIndex = 0;
 
@@ -219,9 +231,19 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         }
 
       
+        mEnableScreenshotToggle = Settings.System.getBoolean(mContext.getContentResolver(),
+                Settings.System.POWER_DIALOG_SHOW_SCREENSHOT, false);
+
+        mEnableTorchToggle = Settings.System.getBoolean(mContext.getContentResolver(),
+                Settings.System.POWER_DIALOG_SHOW_TORCH_TOGGLE, false);
+
         mEnableNavBarHideToggle= Settings.System.getBoolean(mContext.getContentResolver(),
                 Settings.System.POWER_DIALOG_SHOW_NAVBAR_HIDE, false);
         mNavBarHideToggle = new NavBarAction(mHandler);
+
+        mEnableAirplaneToggle = Settings.System.getBoolean(mContext.getContentResolver(),
+                Settings.System.POWER_DIALOG_SHOW_AIRPLANE_TOGGLE, true);
+
 
        
         mAirplaneModeOn = new ToggleAction(
@@ -317,7 +339,57 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 });
 
         // next: airplane mode
-        mItems.add(mAirplaneModeOn);
+        if (mEnableAirplaneToggle) {
+            Slog.e(TAG, "Adding AirplaneToggle");
+            mItems.add(mAirplaneModeOn);
+        } else {
+            Slog.e(TAG, "not adding AirplaneToggle");
+        }
+        // next: screenshot
+        if (mEnableScreenshotToggle) {
+            Slog.e(TAG, "Adding screenshot");
+            mItems.add(new SinglePressAction(com.android.internal.R.drawable.ic_lock_screenshot,
+                    R.string.global_action_screenshot) {
+                public void onPress() {
+                    takeScreenshot();
+                }
+
+                public boolean showDuringKeyguard() {
+                    return true;
+                }
+
+                public boolean showBeforeProvisioning() {
+                    return true;
+                }
+            });
+        } else {
+            Slog.e(TAG, "Not adding screenshot");
+        }
+
+        // next: Torch
+        if (mEnableTorchToggle) {
+            Slog.e(TAG, "Adding torch");
+            mItems.add(new SinglePressAction(com.android.internal.R.drawable.ic_lock_torch,
+                    R.string.global_action_torch) {
+                public void onPress() {
+                    Intent intent = new Intent("android.intent.action.MAIN");
+                    intent.setComponent(ComponentName.unflattenFromString("com.sourcery.Torch/.TorchActivity"));
+                    intent.addCategory("android.intent.category.LAUNCHER");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(intent);
+                }
+
+                public boolean showDuringKeyguard() {
+                    return true;
+                }
+
+                public boolean showBeforeProvisioning() {
+                    return true;
+                }
+            });
+        } else {
+            Slog.e(TAG, "Not adding torch");
+        }
 
         // Next NavBar Hide
         if(mEnableNavBarHideToggle) {
