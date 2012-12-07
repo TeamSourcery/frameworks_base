@@ -203,6 +203,18 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     private RefreshCallback mUserCallback;
     private UserState mUserState = new UserState();
 
+    private QuickSettingsTileView mFavContactTile;
+    private RefreshCallback mFavContactCallback;
+    private UserState mFavContactState = new UserState();
+
+    private QuickSettingsTileView mFavContactTwoTile;
+    private RefreshCallback mFavContactTwoCallback;
+    private UserState mFavContactTwoState = new UserState();
+
+    private QuickSettingsTileView mFavContactThreeTile;
+    private RefreshCallback mFavContactThreeCallback;
+    private UserState mFavContactThreeState = new UserState();
+
     private QuickSettingsTileView mTimeTile;
     private RefreshCallback mTimeCallback;
     private State mTimeState = new State();
@@ -412,6 +424,51 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
             mUserState.label = name;
             mUserState.avatar = avatar;
             mUserCallback.refreshView(mUserTile, mUserState);
+        }
+    }
+
+     // Favorite Contact
+    void addFavContactTile(QuickSettingsTileView view, RefreshCallback cb) {
+        mFavContactTile = view;
+        mFavContactCallback = cb;
+        mFavContactCallback.refreshView(mFavContactTile, mFavContactState);
+    }
+
+    void setFavContactTileInfo(String name, Drawable avatar) {
+        if (mFavContactCallback != null) {
+            mFavContactState.label = name;
+            mFavContactState.avatar = avatar;
+            mFavContactCallback.refreshView(mFavContactTile, mFavContactState);
+        }
+    }
+
+      // Favorite Contact-2
+    void addFavContactTwoTile(QuickSettingsTileView view, RefreshCallback cb) {
+        mFavContactTwoTile = view;
+        mFavContactTwoCallback = cb;
+        mFavContactTwoCallback.refreshView(mFavContactTwoTile, mFavContactTwoState);
+    }
+
+    void setFavContactTwoTileInfo(String name, Drawable avatar) {
+        if (mFavContactTwoCallback != null) {
+            mFavContactTwoState.label = name;
+            mFavContactTwoState.avatar = avatar;
+            mFavContactTwoCallback.refreshView(mFavContactTwoTile, mFavContactTwoState);
+        }
+    }
+
+      // Favorite Contact-3
+    void addFavContactThreeTile(QuickSettingsTileView view, RefreshCallback cb) {
+        mFavContactThreeTile = view;
+        mFavContactThreeCallback = cb;
+        mFavContactThreeCallback.refreshView(mFavContactThreeTile, mFavContactThreeState);
+    }
+
+    void setFavContactThreeTileInfo(String name, Drawable avatar) {
+        if (mFavContactThreeCallback != null) {
+            mFavContactThreeState.label = name;
+            mFavContactThreeState.avatar = avatar;
+            mFavContactThreeCallback.refreshView(mFavContactThreeTile, mFavContactThreeState);
         }
     }
 

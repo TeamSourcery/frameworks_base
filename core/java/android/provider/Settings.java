@@ -2885,6 +2885,20 @@ public final class Settings {
          */
         public static final String QUICK_TOGGLE_FAV_CONTACT = "quick_toggle_fav_contact";
 
+         /**
+         * favorite contact for quick settings
+         *
+         * @hide
+         */
+        public static final String QUICK_TOGGLE_FAV_CONTACTTWO = "quick_toggle_fav_contacttwo";
+
+         /**
+         * favorite contact for quick settings
+         *
+         * @hide
+         */
+        public static final String QUICK_TOGGLE_FAV_CONTACTTHREE = "quick_toggle_fav_contactthree";
+
 
         /**
 	* Setting to enable/disable the dim feature of notification pulldown
