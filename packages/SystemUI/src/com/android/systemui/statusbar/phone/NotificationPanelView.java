@@ -40,11 +40,8 @@ public class NotificationPanelView extends PanelView {
 
     private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper.jpg";
     private final String NOTIF_WALLPAPER_IMAGE_PATH_LAND = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper_land.jpg";
-
-    //private ImageView mNotificationWallpaperImage;
+    
     private int mScreenOrientation;
-
-    //Bitmap bitmapWallpaper;
 
     float wallpaperAlpha = Settings.System.getFloat(getContext()
             .getContentResolver(), Settings.System.NOTIF_WALLPAPER_ALPHA, 1.0f);
@@ -58,43 +55,46 @@ public class NotificationPanelView extends PanelView {
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-    	File portrait = new File(NOTIF_WALLPAPER_IMAGE_PATH);
+    	setNotificationWallpaper();
+    }
+
+    public void setNotificationWallpaper() {
+	File portrait = new File(NOTIF_WALLPAPER_IMAGE_PATH);
         File landscape = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
 	mScreenOrientation = getContext().getResources().getConfiguration().orientation;
         boolean isPortrait =  mScreenOrientation == Configuration.ORIENTATION_PORTRAIT;
 
         if (isPortrait) {
             if (portrait.exists()) {
-                //mNotificationWallpaperImage = new ImageView(getContext());
-                //mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
-                //addView(mNotificationWallpaperImage, -1, -1);
-                //bitmapWallpaper = BitmapFactory.decodeFile(NOTIF_WALLPAPER_IMAGE_PATH);
                 Drawable d = Drawable.createFromPath(NOTIF_WALLPAPER_IMAGE_PATH);
                 d.setAlpha((int) (wallpaperAlpha * 255));
-                //mNotificationWallpaperImage.setImageDrawable(d);
                 this.setBackground(d);
-		//bitmapWallpaper.recycle();
-            }
+            } else {
+		this.setBackground(this.getResources().getDrawable(R.drawable.notification_panel_bg));
+	    }
         } else {
             if (landscape.exists()) {
-                //mNotificationWallpaperImage = new ImageView(getContext());
-                //mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
-                //addView(mNotificationWallpaperImage, -1, -1);
-                //bitmapWallpaper = BitmapFactory.decodeFile(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
                 Drawable d = Drawable.createFromPath(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
                 d.setAlpha((int) (wallpaperAlpha * 255));
-                //mNotificationWallpaperImage.setImageDrawable(d);
 	        this.setBackground(d);
-		//bitmapWallpaper.recycle();
-            }
+            } else {
+		this.setBackground(this.getResources().getDrawable(R.drawable.notification_panel_bg));
+	    }
         }
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+	//super.onConfigurationChanged(newConfig);
+	if (newConfig.orientation != mScreenOrientation) {
+		setNotificationWallpaper();
+	}
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
