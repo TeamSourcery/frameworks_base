@@ -16,10 +16,18 @@
 
 package com.android.systemui.statusbar.phone;
 
+import java.io.File;
+import java.io.IOException;
+
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+//import android.graphics.Bitmap;
+//import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Slog;
 import android.view.MotionEvent;
@@ -30,6 +38,17 @@ import com.android.systemui.statusbar.GestureRecorder;
 
 public class NotificationPanelView extends PanelView {
 
+    private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper.jpg";
+    private final String NOTIF_WALLPAPER_IMAGE_PATH_LAND = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper_land.jpg";
+
+    //private ImageView mNotificationWallpaperImage;
+    private int mScreenOrientation;
+
+    //Bitmap bitmapWallpaper;
+
+    float wallpaperAlpha = Settings.System.getFloat(getContext()
+            .getContentResolver(), Settings.System.NOTIF_WALLPAPER_ALPHA, 1.0f);
+
     Drawable mHandleBar;
     float mHandleBarHeight;
     View mHandleView;
@@ -39,6 +58,43 @@ public class NotificationPanelView extends PanelView {
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+    	File portrait = new File(NOTIF_WALLPAPER_IMAGE_PATH);
+        File landscape = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
+	mScreenOrientation = getContext().getResources().getConfiguration().orientation;
+        boolean isPortrait =  mScreenOrientation == Configuration.ORIENTATION_PORTRAIT;
+
+        if (isPortrait) {
+            if (portrait.exists()) {
+                //mNotificationWallpaperImage = new ImageView(getContext());
+                //mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
+                //addView(mNotificationWallpaperImage, -1, -1);
+                //bitmapWallpaper = BitmapFactory.decodeFile(NOTIF_WALLPAPER_IMAGE_PATH);
+                Drawable d = Drawable.createFromPath(NOTIF_WALLPAPER_IMAGE_PATH);
+                d.setAlpha((int) (wallpaperAlpha * 255));
+                //mNotificationWallpaperImage.setImageDrawable(d);
+                this.setBackground(d);
+		//bitmapWallpaper.recycle();
+            }
+        } else {
+            if (landscape.exists()) {
+                //mNotificationWallpaperImage = new ImageView(getContext());
+                //mNotificationWallpaperImage.setScaleType(ScaleType.CENTER);
+                //addView(mNotificationWallpaperImage, -1, -1);
+                //bitmapWallpaper = BitmapFactory.decodeFile(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
+                Drawable d = Drawable.createFromPath(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
+                d.setAlpha((int) (wallpaperAlpha * 255));
+                //mNotificationWallpaperImage.setImageDrawable(d);
+	        this.setBackground(d);
+		//bitmapWallpaper.recycle();
+            }
+        }
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
@@ -55,6 +111,7 @@ public class NotificationPanelView extends PanelView {
         mHandleView = findViewById(R.id.handle);
 
         setContentDescription(resources.getString(R.string.accessibility_desc_notification_shade));
+
     }
 
     @Override
@@ -76,6 +133,7 @@ public class NotificationPanelView extends PanelView {
             final int pl = getPaddingLeft();
             final int pr = getPaddingRight();
             mHandleBar.setBounds(pl, 0, getWidth() - pr, (int) mHandleBarHeight);
+
         }
     }
 
