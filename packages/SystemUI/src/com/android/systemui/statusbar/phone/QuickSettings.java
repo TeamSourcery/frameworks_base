@@ -327,6 +327,9 @@ class QuickSettings {
         setupQuickSettings();
         updateWifiDisplayStatus();
         updateResources();
+        reloadFavContactInfo();
+        reloadFavContactTwoInfo();
+        reloadFavContactThreeInfo();
 
         ArrayList<String> userTiles = getCustomUserTiles();
         if (userTiles.contains(SIGNAL_TOGGLE) || userTiles.contains(WIFI_TOGGLE))
@@ -1900,6 +1903,15 @@ class QuickSettings {
                     false, this);
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QUICK_TOGGLES_PER_ROW),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QUICK_TOGGLE_FAV_CONTACT),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QUICK_TOGGLE_FAV_CONTACTTWO),
+                    false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QUICK_TOGGLE_FAV_CONTACTTHREE),
                     false, this);
             updateSettings();
         }
