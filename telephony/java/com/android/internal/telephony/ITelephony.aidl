@@ -299,6 +299,5 @@ interface ITelephony {
      */
     List<CellInfo> getAllCellInfo();
 
-    int getLteOnGsmMode();
-}
+ }
 
