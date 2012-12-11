@@ -2,11 +2,15 @@ package com.android.systemui.statusbar.policy;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.UserHandle;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import com.android.systemui.sourcery.SourceryTarget;
-import com.android.systemui.statusbar.policy.KeyButtonView;
+import com.android.systemui.recent.RecentTasksLoader;
+import com.android.systemui.recent.RecentsActivity;
 import com.android.systemui.R;
 
 
@@ -25,31 +29,33 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
         mSourceryTarget = targ;
         }
 
-    public void setActions(String ClickAction, String Longpress){
+    public void setActions(String ClickAction, String Longpress) {
         mClickAction = ClickAction;
         mLongpress = Longpress;
-        if (ClickAction != null){
+        if (ClickAction != null) {
             if (ClickAction.equals(SourceryTarget.ACTION_HOME)) {
                 setCode(KeyEvent.KEYCODE_HOME);
                 setId(R.id.home);
             } else if (ClickAction.equals(SourceryTarget.ACTION_BACK)) {
-                setCode (KeyEvent.KEYCODE_BACK);
+                setCode(KeyEvent.KEYCODE_BACK);
                 setId(R.id.back);
             } else if (ClickAction.equals(SourceryTarget.ACTION_MENU)) {
-                setCode (KeyEvent.KEYCODE_MENU);
+                setCode(KeyEvent.KEYCODE_MENU);
                 setId(R.id.menu);
             } else if (ClickAction.equals(SourceryTarget.ACTION_POWER)) {
-                setCode (KeyEvent.KEYCODE_POWER);
+                setCode(KeyEvent.KEYCODE_POWER);
             } else if (ClickAction.equals(SourceryTarget.ACTION_SEARCH)) {
-                setCode (KeyEvent.KEYCODE_SEARCH);
-            }else {
+                setCode(KeyEvent.KEYCODE_SEARCH);
+            } else if (ClickAction.equals(SourceryTarget.ACTION_RECENTS)) {
+                 setId(R.id.recent_apps);
+                 setOnClickListener(mClickListener);
+ 	         setOnTouchListener(mRecentsPreloadOnTouchListener);
+ 	    } else {
                 setOnClickListener(mClickListener);
-                if (ClickAction.equals(SourceryTarget.ACTION_RECENTS))
-                    setId(R.id.recent_apps);                        setId(R.id.recent_apps);
             }
-            setSupportsLongPress (false);
+            setSupportsLongPress(false);
             if (Longpress != null)
-                if ((!Longpress.equals(SourceryTarget.ACTION_NULL)) || (getCode() !=0)) {
+                if ((!Longpress.equals(SourceryTarget.ACTION_NULL)) || (getCode() != 0)) {
                     // I want to allow long presses for defined actions, or if
                     // primary action is a 'key' and long press isn't defined otherwise
                     setSupportsLongPress(true);
@@ -57,6 +63,44 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
                     }
         }
     }
+
+    protected void preloadRecentTasksList() {
+        Intent intent = new Intent(RecentsActivity.PRELOAD_INTENT);
+        intent.setClassName("com.android.systemui",
+                "com.android.systemui.recent.RecentsPreloadReceiver");
+        mContext.sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
+
+        RecentTasksLoader.getInstance(mContext).preloadFirstTask();
+    }
+
+    protected void cancelPreloadingRecentTasksList() {
+        Intent intent = new Intent(RecentsActivity.CANCEL_PRELOAD_INTENT);
+        intent.setClassName("com.android.systemui",
+                "com.android.systemui.recent.RecentsPreloadReceiver");
+        mContext.sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
+
+        RecentTasksLoader.getInstance(mContext).cancelPreloadingFirstTask();
+    }
+
+    protected View.OnTouchListener mRecentsPreloadOnTouchListener = new View.OnTouchListener() {
+        // additional optimization when we have software system buttons - start loading the recent
+        // tasks on touch down
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int action = event.getAction() & MotionEvent.ACTION_MASK;
+            if (action == MotionEvent.ACTION_DOWN) {
+                preloadRecentTasksList();
+            } else if (action == MotionEvent.ACTION_CANCEL) {
+                cancelPreloadingRecentTasksList();
+            } else if (action == MotionEvent.ACTION_UP) {
+                if (!v.isPressed()) {
+                    cancelPreloadingRecentTasksList();
+                }
+
+            }
+            return false;
+        }
+    };
 
     private OnClickListener mClickListener = new OnClickListener() {
         @Override

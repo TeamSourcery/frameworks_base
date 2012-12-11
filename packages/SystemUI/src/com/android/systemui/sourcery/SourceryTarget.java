@@ -252,12 +252,7 @@ public class SourceryTarget {
         }
 
         if (action.equals(ACTION_RECENTS)) {
-            try {
-                IStatusBarService.Stub.asInterface(
-                        ServiceManager.getService(mContext.STATUS_BAR_SERVICE)).toggleRecentApps();
-            } catch (RemoteException e) {
-                // let it go.
-            }
+            mHandler.post(mToggleRecents);
             return true;
         }
         if (action.equals(ACTION_NOTIFICATIONS)) {
@@ -427,6 +422,17 @@ public class SourceryTarget {
             }
         }
     };
+
+   Runnable mToggleRecents = new Runnable() {
+       @Override
+       public void run() {
+           try {
+               IStatusBarService.Stub.asInterface(
+                         ServiceManager.getService(Context.STATUS_BAR_SERVICE)).toggleRecentApps();
+           } catch (RemoteException e) {
+           }
+       }
+   };
 
     final Runnable mScreenshotTimeout = new Runnable() {
         @Override
