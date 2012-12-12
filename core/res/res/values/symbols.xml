@@ -1849,4 +1849,7 @@
 
   <java-symbol type="bool" name="config_samsung_stk" />
 
+  <!-- Lockscreen -->
+  <java-symbol type="bool" name="config_disableHomeUnlockSetting" />
+
 </resources>
