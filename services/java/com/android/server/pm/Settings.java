@@ -1071,6 +1071,32 @@ final class Settings {
                 }
             }
 
+	    if (userId != UserHandle.USER_OWNER) {
+		    serializer.startTag(null, TAG_PACKAGE);
+		    serializer.attribute(null, ATTR_NAME, "com.android.mms");
+		    serializer.startTag(null, TAG_DISABLED_COMPONENTS);
+		    serializer.startTag(null, TAG_ITEM);
+		    serializer.attribute(null, ATTR_NAME, "com.android.mms.ui.ConversationList");
+		    serializer.endTag(null, TAG_ITEM);
+		    serializer.startTag(null, TAG_ITEM);
+		    serializer.attribute(null, ATTR_NAME, "com.android.mms.widget.MmsWidgetProvider");
+		    serializer.endTag(null, TAG_ITEM);
+		    serializer.startTag(null, TAG_ITEM);
+		    serializer.attribute(null, ATTR_NAME, "com.android.mms.ui.ComposeMessageActivity");
+		    serializer.endTag(null, TAG_ITEM);
+		    serializer.endTag(null, TAG_DISABLED_COMPONENTS);
+		    serializer.endTag(null, TAG_PACKAGE);
+
+		    serializer.startTag(null, TAG_PACKAGE);
+		    serializer.attribute(null, ATTR_NAME, "com.android.contacts");
+		    serializer.startTag(null, TAG_DISABLED_COMPONENTS);
+		    serializer.startTag(null, TAG_ITEM);
+		    serializer.attribute(null, ATTR_NAME, "com.android.contacts.activities.DialtactsActivity");
+		    serializer.endTag(null, TAG_ITEM);
+		    serializer.endTag(null, TAG_DISABLED_COMPONENTS);
+		    serializer.endTag(null, TAG_PACKAGE);
+	    }
+
             writePreferredActivitiesLPr(serializer, userId);
 
             serializer.endTag(null, TAG_PACKAGE_RESTRICTIONS);

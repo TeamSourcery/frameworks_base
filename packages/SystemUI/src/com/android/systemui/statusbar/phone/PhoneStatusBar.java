@@ -38,6 +38,7 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.ColorFilterMaker;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
@@ -462,7 +463,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
 
         // figure out which pixel-format to use for the status bar.
-        mPixelFormat = PixelFormat.OPAQUE;
+        mPixelFormat = PixelFormat.TRANSLUCENT;
 
         mSystemIconArea = (LinearLayout) mStatusBarView.findViewById(R.id.system_icon_area);
         mStatusIcons = (LinearLayout)mStatusBarView.findViewById(R.id.statusIcons);
@@ -671,6 +672,10 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         // listen for USER_SETUP_COMPLETE setting (per-user)
         resetUserSetupObserver();
+        
+        // update everything here
+ 	updateSettings();
+        updateNavigationBarBackground();
 
         return mStatusBarView;
     }
@@ -867,7 +872,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                     | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                     | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
-                PixelFormat.OPAQUE);
+                PixelFormat.TRANSLUCENT);
         // this will allow the navbar to run in an overlay on devices that support this
         if (ActivityManager.isHighEndGfx()) {
             lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
@@ -1406,11 +1411,11 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         // Expand the window to encompass the full screen in anticipation of the drag.
         // This is only possible to do atomically because the status bar is at the top of the screen!
-        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) mStatusBarContainer.getLayoutParams();
+        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) mStatusBarWindow.getLayoutParams();
         lp.flags &= ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         lp.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
         lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        mWindowManager.updateViewLayout(mStatusBarContainer, lp);
+        mWindowManager.updateViewLayout(mStatusBarWindow, lp);
 
         // Updating the window layout will force an expensive traversal/redraw.
         // Kick off the reveal animation after this is complete to avoid animation latency.
@@ -1679,11 +1684,11 @@ public class PhoneStatusBar extends BaseStatusBar {
         visibilityChanged(false);
 
         // Shrink the window to the size of the status bar only
-        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) mStatusBarContainer.getLayoutParams();
+        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) mStatusBarWindow.getLayoutParams();
         lp.height = getStatusBarHeight();
         lp.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         lp.flags &= ~WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-        mWindowManager.updateViewLayout(mStatusBarContainer, lp);
+        mWindowManager.updateViewLayout(mStatusBarWindow, lp);
 
         if ((mDisabled & StatusBarManager.DISABLE_NOTIFICATION_ICONS) == 0) {
             setNotificationIconVisibility(true, com.android.internal.R.anim.fade_in);
@@ -1983,7 +1988,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         // until status bar window is attached to the window manager,
         // because...  well, what's the point otherwise?  And trying to
         // run a ticker without being attached will crash!
-        if (n.notification.tickerText != null && mStatusBarContainer.getWindowToken() != null) {
+        if (n.notification.tickerText != null && mStatusBarWindow.getWindowToken() != null) {
             if (0 == (mDisabled & (StatusBarManager.DISABLE_NOTIFICATION_ICONS
                             | StatusBarManager.DISABLE_NOTIFICATION_TICKER))) {
                 mTicker.addEntry(n);
@@ -2080,8 +2085,7 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         makeStatusBarView();
 
-        mStatusBarContainer.addView(mStatusBarWindow);
-        mWindowManager.addView(mStatusBarContainer, lp);
+        mWindowManager.addView(mStatusBarWindow, lp);
     }
 
     void setNotificationIconVisibility(boolean visible, int anim) {
@@ -2557,11 +2561,17 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.NOTIFICATION_CLOCK[doubleClick]), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.CURRENT_UI_MODE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_BACKGROUND_STYLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+ 	            Settings.System.NAVIGATION_BAR_BACKGROUND_COLOR), false, this);
          }
 
          @Override
         public void onChange(boolean selfChange) {
             updateSettings();
+            updateNavigationBarBackground();
+            
         }
     }
     protected void updateSettings() {
@@ -2590,6 +2600,34 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
             mCurrentUIMode = Settings.System.getInt(cr,
                  Settings.System.CURRENT_UI_MODE, 0);
+
+    updateNavigationBarBackground();
+    }
+ 
+    protected void updateNavigationBarBackground() {
+    try {
+            boolean showNav = mWindowManagerService.hasNavigationBar();
+            if (showNav) {
+                // NavigationBar background color
+                int defaultBg = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.NAVIGATION_BAR_BACKGROUND_STYLE, 2);
+                int navbarBackgroundColor = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.NAVIGATION_BAR_BACKGROUND_COLOR, 0xFF000000);
+
+                if (defaultBg == 0) {
+                    mNavigationBarView.setBackgroundColor(navbarBackgroundColor);
+                } else if (defaultBg == 1) {
+                    mNavigationBarView.setBackgroundResource(R.drawable.nav_bar_bg);
+                    mNavigationBarView.getBackground().setColorFilter(ColorFilterMaker.
+                            changeColorAlpha(navbarBackgroundColor, .32f, 0f));
+                } else {
+                    mNavigationBarView.setBackground(mContext.getResources().getDrawable(
+                            R.drawable.nav_bar_bg));
+                }
+            }
+        } catch (RemoteException ex) {
+            // no window manager? good luck with that
+        }
     }
 
     public boolean skipToSettingsPanel() {
@@ -2614,5 +2652,6 @@ public class PhoneStatusBar extends BaseStatusBar {
             return true;
 
         return false;
-    }
-}
+
+     }
+}    

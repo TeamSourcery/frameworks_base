@@ -19,8 +19,13 @@ package com.android.systemui.statusbar.phone;
 import android.app.ActivityManager;
 import android.app.StatusBarManager;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import android.database.ContentObserver;
+import android.graphics.ColorFilterMaker;
+import android.os.Handler;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Slog;
 import android.view.MotionEvent;
@@ -42,6 +47,8 @@ public class PhoneStatusBarView extends PanelBar {
     PanelView mLastFullyOpenedPanel = null;
     PanelView mNotificationPanel, mSettingsPanel;
     private boolean mShouldFade;
+
+    Handler mHandler;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -69,6 +76,11 @@ public class PhoneStatusBarView extends PanelBar {
     public void onAttachedToWindow() {
         for (PanelView pv : mPanels) {
             pv.setRubberbandingEnabled(!mFullWidthNotifications);
+        mHandler = new Handler();
+        SettingsObserver settingsObserver = new SettingsObserver(mHandler);
+        settingsObserver.observe();
+ 
+        updateSettings();
         }
     }
 
@@ -227,5 +239,44 @@ public class PhoneStatusBarView extends PanelBar {
         }
 
         mBar.updateCarrierLabelVisibility(false);
+    }
+
+    //setup observer to do stuff!
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_BACKGROUND_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+ 	             Settings.System.STATUSBAR_BACKGROUND_STYLE), false, this);
+            updateSettings();
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+     private void updateSettings() {
+        int defaultBg = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.STATUSBAR_BACKGROUND_STYLE, 2);
+        int mStatusBarBgColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_BACKGROUND_COLOR, 0xFF000000);
+
+        if (defaultBg == 0) {
+            setBackgroundColor(mStatusBarBgColor);
+        } else if (defaultBg == 1) {
+            setBackgroundResource(R.drawable.status_bar_background);
+            getBackground().setColorFilter(ColorFilterMaker.
+                    changeColorAlpha(mStatusBarBgColor, .32f, 0f));
+        } else {
+            setBackground(mContext.getResources().getDrawable(R.drawable.status_bar_background));
+        }
     }
 }
