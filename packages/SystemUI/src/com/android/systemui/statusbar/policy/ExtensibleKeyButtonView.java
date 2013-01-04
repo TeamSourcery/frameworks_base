@@ -2,12 +2,15 @@ package com.android.systemui.statusbar.policy;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.UserHandle;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import com.android.systemui.sourcery.SourceryTarget;
 import com.android.systemui.recent.RecentTasksLoader;
+import com.android.systemui.recent.RecentsActivity;
 
 import com.android.systemui.R;
 
@@ -76,6 +79,8 @@ public class ExtensibleKeyButtonView extends KeyButtonView {
             switch(event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                     RecentTasksLoader.getInstance(mContext).preloadFirstTask();
+                    Intent i = new Intent(RecentsActivity.PRELOAD_INTENT);
+                    mContext.sendBroadcastAsUser(i, UserHandle.CURRENT);
                     break;
 
             }
