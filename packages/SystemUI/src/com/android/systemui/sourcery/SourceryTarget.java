@@ -133,31 +133,27 @@ public class SourceryTarget {
 
         if (action == null || action.equals(ACTION_NULL)) {
             return false;
-        }
         } else if (action.equals(ACTION_HOME)) {
             injectKeyDelayed(KeyEvent.KEYCODE_HOME);
             return true;
-        }
         } else if (action.equals(ACTION_BACK)) {
             injectKeyDelayed(KeyEvent.KEYCODE_BACK);
             return true;
-        }
         } else if (action.equals(ACTION_MENU)) {
             injectKeyDelayed(KeyEvent.KEYCODE_MENU);
             return true;
-        }
+        } else if (action.equals(ACTION_SEARCH)) {
+            injectKeyDelayed(KeyEvent.KEYCODE_SEARCH);
+            return true;
         } else if (action.equals(ACTION_POWER)) {
             injectKeyDelayed(KeyEvent.KEYCODE_POWER);
             return true;
-        }
         } else if (action.equals(ACTION_IME)) {
             mContext.sendBroadcast(new Intent("android.settings.SHOW_INPUT_METHOD_PICKER"));
             return true;
-        }
         } else if (action.equals(ACTION_SCREENSHOT)) {
             takeScreenshot();
             return true;
-        }
         } else if (action.equals(ACTION_TORCH)) {
             Intent intent = new Intent("android.intent.action.MAIN");
             intent.setComponent(ComponentName.unflattenFromString("com.sourcery.Torch/.TorchActivity"));
@@ -165,7 +161,6 @@ public class SourceryTarget {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             return true;
-        }
         } else if (action.equals(ACTION_TODAY)) {
             long startMillis = System.currentTimeMillis();
             Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
@@ -176,26 +171,22 @@ public class SourceryTarget {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             return true;
-        }
         } else if (action.equals(ACTION_CLOCKOPTIONS)) {
             Intent intent = new Intent(Intent.ACTION_QUICK_CLOCK);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             return true;
-        }
         } else if (action.equals(ACTION_EVENT)) {
             Intent intent = new Intent(Intent.ACTION_INSERT)
                       .setData(Events.CONTENT_URI);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             return true;
-        }
         } else if (action.equals(ACTION_VOICEASSIST)) {
             Intent intent = new Intent(RecognizerIntent.ACTION_WEB_SEARCH);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             return true;
-        }
         } else if (action.equals(ACTION_ALARM)) {
  	    Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
