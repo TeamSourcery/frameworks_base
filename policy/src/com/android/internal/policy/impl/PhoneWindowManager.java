@@ -2905,9 +2905,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     applyStableConstraints(sysUiFl, fl, cf);
                     if (adjust != SOFT_INPUT_ADJUST_NOTHING) {
                         vf.left = mCurLeft;
-                        vf.top = mCurTop;
-                        vf.right = mCurRight;
-                        vf.bottom = mCurBottom;
+ 	                vf.top = mCurTop;
+ 	                vf.right = mCurRight;
+ 	                vf.bottom = mCurBottom;
                     } else {
                         vf.set(cf);
                     }
