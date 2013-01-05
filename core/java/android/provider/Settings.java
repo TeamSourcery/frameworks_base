@@ -3000,6 +3000,12 @@ public final class Settings {
          * @hide
          */
          public static final String LOCKSCREEN_VIBRATE_ENABLED = "lockscreen.vibrate_enabled";
+
+        /**
+         * Whether to control torch by holding power button with screen off
+         * @hide
+         */
+         public static final String POWER_BUTTON_TORCH = "power_button_torch";
  
 
         /**
