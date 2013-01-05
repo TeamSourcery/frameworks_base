@@ -2646,6 +2646,12 @@ public final class Settings {
          */
         public static final String LED_BRIGHTNESS = "led_brightness";
 
+       /**
+         * Whether national data roaming should be used.
+         * @hide
+         */
+        public static final String MVNO_ROAMING = "mvno_roaming";
+
         /**
          * Whether to enable quiet hours.
          * @hide
@@ -6103,6 +6109,7 @@ public final class Settings {
          */
         public static final String DOCK_AUDIO_MEDIA_ENABLED = "dock_audio_media_enabled";
 
+       
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.

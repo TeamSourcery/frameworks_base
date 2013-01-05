@@ -675,8 +675,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         
         // update everything here
  	updateSettings();
-        updateNavigationBarBackground();
-
+        
         return mStatusBarView;
     }
 

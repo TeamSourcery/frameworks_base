@@ -252,8 +252,7 @@ public class SourceryTarget {
                 }
             }
             return true;
-        }
-
+       
         } else if (action.equals(ACTION_NOTIFICATIONS)) {
             try {
                 IStatusBarService.Stub.asInterface(

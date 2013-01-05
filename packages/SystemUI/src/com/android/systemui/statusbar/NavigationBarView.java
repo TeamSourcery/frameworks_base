@@ -294,7 +294,7 @@ public class NavigationBarView extends LinearLayout {
                     }
                     v.setTint(false);
                 } else {
-                         v.setImageDrawable(mAokpTarget.getIconImage(mClickActions[j]));
+                         v.setImageDrawable(mSourceryTarget.getIconImage(mClickActions[j]));
  	                 v.setTint(mClickActions[j].startsWith("**"));
                 }
                 addButton(navButtonLayout, v, landscape && !mLeftyMode);
