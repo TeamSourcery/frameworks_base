@@ -951,6 +951,11 @@ public class GlowPadView extends View {
                         if (angleMatches && (dist2(tx, ty) > snapDistance2)) {
                             activeTarget = i;
                             activeAngle = (float) -angleRad;
+                            break;
+ 	                } else if (dist2(tx, ty) > snapDistance2 &&
+ 	                    mMagneticTargets && activeTarget == -1) {
+ 	                    activeTarget = 0;
+ 	                    activeAngle = (float) -angleRad;
                         }
                     }
                 }
@@ -978,7 +983,7 @@ public class GlowPadView extends View {
                 if (target.hasState(TargetDrawable.STATE_FOCUSED)) {
                     target.setState(TargetDrawable.STATE_INACTIVE);
                 }
-                if (mMagneticTargets) {
+                if (mMagneticTargets && activeTarget <= 0) {
                     updateTargetPosition(mActiveTarget, mWaveCenterX, mWaveCenterY);
                 }
             }

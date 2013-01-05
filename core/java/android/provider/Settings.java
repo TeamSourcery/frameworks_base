@@ -2358,6 +2358,15 @@ public final class Settings {
         public static final String MENU_UNLOCK_SCREEN = "menu_unlock_screen";
 
         /**
+         * Control the display of the action overflow button within app UI.
+         * 0 = use system default
+         * 1 = force on	
+         * @hide
+         */
+        public static final String UI_FORCE_OVERFLOW_BUTTON = "ui_force_overflow_button";
+
+
+        /**
          * Style of Battery
          * 0 - Icon Only
          * 1 - Text Only
@@ -2369,6 +2378,7 @@ public final class Settings {
          * 7 - Hide
          */
         public static final String STATUSBAR_BATTERY_ICON = "statusbar_battery_icon";
+
         /**
          * AM/PM Style for clock options
          * 0 - Normal AM/PM
