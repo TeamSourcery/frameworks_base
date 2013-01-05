@@ -302,15 +302,20 @@ public class NinePatchDrawable extends Drawable {
         final Rect layoutInsets = new Rect();
         Bitmap bitmap = null;
 
+        InputStream is = null;
+
         try {
             final TypedValue value = new TypedValue();
-            final InputStream is = r.openRawResource(id, value);
-
+            is = r.openRawResource(id, value);
             bitmap = BitmapFactory.decodeResourceStream(r, value, is, padding, options);
 
-            is.close();
-        } catch (IOException e) {
-            // Ignore
+            } finally {
+            if (is != null) {
+ 	        try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
+            }
         }
 
         if (bitmap == null) {
