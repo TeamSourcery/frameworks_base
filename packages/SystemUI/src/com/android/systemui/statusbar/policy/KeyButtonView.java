@@ -137,7 +137,7 @@ public class KeyButtonView extends ImageView {
             mGlowWidth = mGlowBG.getIntrinsicWidth();
             mGlowHeight = mGlowBG.getIntrinsicHeight();
             int defaultColor = mContext.getResources().getColor(
-                    com.android.internal.R.color.white);
+                    com.android.internal.R.color.transparent);
             ContentResolver resolver = mContext.getContentResolver();
             mGlowBGColor = Settings.System.getInt(resolver,
                     Settings.System.NAVIGATION_BAR_GLOW_TINT, defaultColor);
@@ -381,7 +381,7 @@ public class KeyButtonView extends ImageView {
 
         if (mGlowBG != null) {
             int defaultColor = mContext.getResources().getColor(
-                    com.android.internal.R.color.white);
+                    com.android.internal.R.color.transparent);
             mGlowBGColor = Settings.System.getInt(resolver,
                     Settings.System.NAVIGATION_BAR_GLOW_TINT, defaultColor);
 
