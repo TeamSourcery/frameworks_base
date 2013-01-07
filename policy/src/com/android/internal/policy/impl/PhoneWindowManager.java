@@ -3059,10 +3059,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
  	                df.bottom = cf.bottom = mRestrictedScreenTop+mRestrictedScreenHeight;
                     }
                     if (adjust != SOFT_INPUT_ADJUST_NOTHING) {
-                        vf.left = mRestrictedScreenLeft;
- 	                vf.top = mRestrictedScreenTop;
- 	                vf.right = mRestrictedScreenLeft+mRestrictedScreenWidth;
- 	                vf.bottom = mRestrictedScreenTop+mRestrictedScreenHeight;;
+                        vf.left = mCurLeft;
+                        vf.top = mCurTop;
+                        vf.right = mCurRight;
+                        vf.bottom = mCurBottom;
                     } else {
                         vf.set(cf);
                     }
@@ -3598,11 +3598,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // to wake the device but don't pass the key to the application.
             result = 0;
              if (((down && !mPowerButtonTorch) || (up && !mTorchOn && mPowerButtonTorch))
-                    && isWakeKey && isWakeKeyWhenScreenOff(keyCode)) {
+                    && isWakeKey) {
                 if (keyguardActive) {
-                    // If the keyguard is showing, let it wake the device when ready.
-                    mKeyguardMediator.onWakeKeyWhenKeyguardShowingTq(keyCode);
-                } else if ((keyCode != KeyEvent.KEYCODE_VOLUME_UP) && (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN)) {
+                    // send power key code to wake the screen
+                    if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP) || (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && isWakeKey) {
+                        mKeyguardMediator.onWakeKeyWhenKeyguardShowingTq(KeyEvent.KEYCODE_POWER);
+                    } else {
+                        //. If the keyguard is showing, let it decide what to do with the wake key
+                        mKeyguardMediator.onWakeKeyWhenKeyguardShowingTq(keyCode);
+                    }
+                } else {
                     // Otherwise, wake the device ourselves.
                     result |= ACTION_WAKE_UP;
                 }

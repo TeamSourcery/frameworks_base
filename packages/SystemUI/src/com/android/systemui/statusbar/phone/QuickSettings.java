@@ -169,7 +169,6 @@ class QuickSettings {
     public static final String FAST_CHARGE_FILE = "force_fast_charge";
 
     private int mWifiApState = WifiManager.WIFI_AP_STATE_DISABLED;
-    private int mWifiState = WifiManager.WIFI_STATE_DISABLED;
 
     private int mDataState = -1;
 
@@ -441,8 +440,7 @@ class QuickSettings {
                             cursor.close();
                         }
                     }
-                    InputStream input = ContactsContract.Contacts.
- 	                  openContactPhotoInputStream(mContext.getContentResolver(), res, true);
+                    InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(mContext.getContentResolver(), res, true);
                     if (input != null) {
                         rawAvatar = BitmapFactory.decodeStream(input);
                     }
@@ -786,14 +784,7 @@ class QuickSettings {
                 quick.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mWifiState = wifiManager.getWifiState();
-                        if (mWifiState == WifiManager.WIFI_STATE_DISABLED
-                                 || mWifiState == WifiManager.WIFI_STATE_DISABLING) {
-                            changeWifiState(true);
-                        } else {
-                            changeWifiState(false);
-                        }
-                        mHandler.postDelayed(delayedRefresh, 1000);
+                        wifiManager.setWifiEnabled(!wifiManager.isWifiEnabled());
                     }
                 });
                 quick.setOnLongClickListener(new View.OnLongClickListener() {
@@ -1017,9 +1008,9 @@ class QuickSettings {
                         if (mWifiApState == WifiManager.WIFI_AP_STATE_DISABLED || mWifiApState == WifiManager.WIFI_AP_STATE_DISABLING) {
                             changeWifiState(true);
                         } else {
-                            changeWifiApState(false);
+                            changeWifiState(false);
                         }
-                        mHandler.postDelayed(delayedRefresh, 1000);
+                        mHandler.postDelayed(delayedRefresh, 1000);  
                     }
                 });
                 quick.setOnLongClickListener(new View.OnLongClickListener() {
@@ -1828,8 +1819,9 @@ class QuickSettings {
 
     }
 
-    private void changeWifiApState(final boolean desiredState) {
+    private void changeWifiState(final boolean desiredState) {
         if (wifiManager == null) {
+            Log.d("WifiButton", "No wifiManager.");
             return;
         }
 
@@ -1842,26 +1834,6 @@ class QuickSettings {
                 }
 
                 wifiManager.setWifiApEnabled(null, desiredState);
-                return;
-            }
-        });
-    }
-
-     private void changeWifiState(final boolean desiredState) {
-        if (wifiManager == null) {
-            return;
-        }
-
-        AsyncTask.execute(new Runnable() {
-            public void run() {
-                int wifiApState = wifiManager.getWifiApState();
-                if (desiredState
-                        && ((wifiApState == WifiManager.WIFI_AP_STATE_ENABLING)
-                                || (wifiApState == WifiManager.WIFI_AP_STATE_ENABLED))) {
-                    wifiManager.setWifiApEnabled(null, false);
-                }
-
-                wifiManager.setWifiEnabled(desiredState);
                 return;
             }
         });

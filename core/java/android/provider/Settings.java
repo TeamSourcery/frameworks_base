@@ -2378,6 +2378,13 @@ public final class Settings {
          * 7 - Hide
          */
         public static final String STATUSBAR_BATTERY_ICON = "statusbar_battery_icon";
+  
+        /**
+         * Weather to minimize lockscreen challenge on screen turned on
+         * @hide
+         */
+        public static final String LOCKSCREEN_MAXIMIZE_WIDGETS = "lockscreen_maximize_widgets";
+
 
         /**
          * AM/PM Style for clock options
