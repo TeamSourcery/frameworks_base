@@ -2532,6 +2532,18 @@ public final class Settings {
          */
         public static final String VOLUME_MUSIC_CONTROLS = "volume_music_controls";
 
+       /**
+        * Whether or not to launch default music player when headset is connected
+        * @hide
+        */
+        public static final String HEADSET_CONNECT_PLAYER = "headset_connect_player";
+
+       /**
+        * Whether to enable the built-in safe media volume for headsets
+        * @hide
+        */
+       public static final String MANUAL_SAFE_MEDIA_VOLUME = "manual_safe_media_volume";
+
         /**
          * whether to hide the Ram Usage Bar on recent switcher
          *
@@ -2963,12 +2975,25 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_CUSTOM_TEXT_COLOR = "lockscreen_custom_text_color";
 
+       /**
+        * Wether the hints for the left and right widgets are shown when the screen is turned on
+        * @hide
+        */
+       public static final String LOCKSCREEN_HIDE_INITIAL_PAGE_HINTS = "lockscreen_hide_initial_page_hints";
+
         /**
          * enabled and order of quick toggles
          * 
          * @hide
          */
         public static final String QUICK_TOGGLES = "quick_toggles";
+
+       /**
+        * Quick Settings Quick Pulldown
+        *
+        * @hide
+        */
+        public static final String QS_QUICK_PULLDOWN = "qs_quick_pulldown";
 
         /**
          * number of tiles per row in quick settings

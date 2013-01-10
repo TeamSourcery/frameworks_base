@@ -3564,8 +3564,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             isWakeKey = false;
         }
 
-        // don't wake the screen for headset play/pause
-        if ((keyCode == KeyEvent.KEYCODE_HEADSETHOOK) && isWakeKey) {
+         // don't wake the screen for media events
+         if ((keyCode == KeyEvent.KEYCODE_HEADSETHOOK
+                || ((keyCode >= KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+                && (keyCode <= KeyEvent.KEYCODE_MEDIA_FAST_FORWARD))
+                || (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY)
+                || (keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE))
+                && isWakeKey) {
             isWakeKey = false;
         }
 
