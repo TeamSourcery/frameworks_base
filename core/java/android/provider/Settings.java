@@ -2391,6 +2391,12 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_MAXIMIZE_WIDGETS = "lockscreen_maximize_widgets";
 
+        /**  
+         * Allows to show the background activity back the lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_SEE_THROUGH = "lockscreen_see_through";
+  
 
         /**
          * AM/PM Style for clock options
@@ -2562,12 +2568,6 @@ public final class Settings {
         * @hide 
         */
         public static final String TORCH_STATE = "torch_state";
-
-       /**
-        * Notification Power Widget - Custom Torch Mode
-        * @hide
-        */
-        public static final String EXPANDED_FLASH_MODE = "expanded_flash_mode";
 
         /**
          * whether to hide the kill-all-button on recent switcher
@@ -2807,6 +2807,13 @@ public final class Settings {
          * @hide
          */
         public static final String POWER_DIALOG_SHOW_TORCH_TOGGLE = "power_dialog_show_torch_toggle";
+
+       /**
+         * If checked hide extra system bar stuff
+         * ie compatmode button and extra ime switcher.
+         */
+        public static final String HIDE_EXTRAS_SYSTEM_BAR = "hide_extras_system_bar";
+
  
         /**
          * @hide
@@ -3069,6 +3076,12 @@ public final class Settings {
          */
          public static final String POWER_BUTTON_TORCH = "power_button_torch";
  
+        /**
+         * Allows to define the limit notifcations once per X seconds
+         * @hide
+         */
+         public static final String MUTE_ANNOYING_NOTIFICATIONS_THRESHOLD = "mute_annoying_notifications_threshold";
+
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
