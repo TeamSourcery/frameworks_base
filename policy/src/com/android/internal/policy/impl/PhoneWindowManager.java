@@ -793,11 +793,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     };
  	
     void toggleTorch(boolean on) {
-        Intent intent = new Intent("android.intent.action.MAIN");
-        intent.setComponent(ComponentName.unflattenFromString("com.sourcery.Torch/.TorchActivity"));
-        intent.addCategory("android.intent.category.LAUNCHER");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(intent);
+        boolean bright = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.EXPANDED_FLASH_MODE, 0) == 1;
+        Intent intent = new Intent("net.cactii.flash2.TOGGLE_FLASHLIGHT");
+        intent.putExtra("bright", bright);
+        mContext.sendBroadcast(intent);
         mTorchOn = on;
     }
 

@@ -2563,6 +2563,12 @@ public final class Settings {
         */
         public static final String TORCH_STATE = "torch_state";
 
+       /**
+        * Notification Power Widget - Custom Torch Mode
+        * @hide
+        */
+        public static final String EXPANDED_FLASH_MODE = "expanded_flash_mode";
+
         /**
          * whether to hide the kill-all-button on recent switcher
          *

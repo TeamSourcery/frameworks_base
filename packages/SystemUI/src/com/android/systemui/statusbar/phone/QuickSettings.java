@@ -949,8 +949,8 @@ class QuickSettings {
                 quick.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSourceryTarget.launchAction(mSourceryTarget.ACTION_TORCH);
-                        mHandler.postDelayed(delayedRefresh, 1000);
+                       mSourceryTarget.launchAction(mSourceryTarget.ACTION_TORCH);
+                       mHandler.postDelayed(delayedRefresh, 1000);  
                     }
                 });
                 quick.setOnLongClickListener(new View.OnLongClickListener() {
