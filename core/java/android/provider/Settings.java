@@ -3076,13 +3076,7 @@ public final class Settings {
          */
          public static final String POWER_BUTTON_TORCH = "power_button_torch";
  
-        /**
-         * Allows to define the limit notifcations once per X seconds
-         * @hide
-         */
-         public static final String MUTE_ANNOYING_NOTIFICATIONS_THRESHOLD = "mute_annoying_notifications_threshold";
-
-
+       
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
