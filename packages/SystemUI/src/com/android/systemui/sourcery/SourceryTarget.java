@@ -95,6 +95,7 @@ public class SourceryTarget {
     public final static String ACTION_SEARCH = "**search**";
     public final static String ACTION_NULL = "**null**";
 
+    private boolean mRecentButtonLock = false;
     private int mInjectKeyCode;
     private Context mContext;
     private Handler mHandler;
@@ -109,7 +110,27 @@ public class SourceryTarget {
 
     public boolean launchAction (String action){
 
-       
+        if (action.equals(ACTION_RECENTS)) {
+            if (!mRecentButtonLock) {
+                try {
+                    IStatusBarService.Stub.asInterface(
+                            ServiceManager.getService(Context.STATUS_BAR_SERVICE))
+                            .toggleRecentApps();
+                } catch (RemoteException e) {
+                    // nuu
+                }
+                mRecentButtonLock = true;
+                // 250ms animation duration + 150ms start delay of animation + 1 for good luck
+                mHandler.postDelayed(mUnlockRecents, 401);
+            }
+            return true;
+        }
+
+        try {
+            ActivityManagerNative.getDefault().dismissKeyguardOnNextActivity();
+        } catch (RemoteException e) {
+        }
+
         if (action == null || action.equals(ACTION_NULL)) {
             return false;
         } else if (action.equals(ACTION_HOME)) {
@@ -397,6 +418,13 @@ public class SourceryTarget {
                     am.forceStopPackage(packageName);
                     Toast.makeText(mContext, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
             }
+        }
+    };
+
+   final Runnable mUnlockRecents = new Runnable() {
+       @Override
+       public void run() {
+           mRecentButtonLock = false;
        }
    };
 
