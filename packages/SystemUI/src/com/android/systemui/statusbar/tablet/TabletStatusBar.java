@@ -123,12 +123,29 @@ public class TabletStatusBar extends BaseStatusBar implements
     private static final int NOTIFICATION_PRIORITY_MULTIPLIER = 10; // see NotificationManagerService
     private static final int HIDE_ICONS_BELOW_SCORE = Notification.PRIORITY_LOW * NOTIFICATION_PRIORITY_MULTIPLIER;
 
+     // used for calculating weights of Nav controls & Notification Area:
+    private static final float NAVBAR_MIN_LAND = 40f;
+    private static final float NAVBAR_MIN_PORTRAIT = 35f;
+    private static final float NAVBAR_MAX_LAND = 65f;
+    private static final float NAVBAR_MAX_PORTRAIT = 60f;
+    private static final float NAVBAR_BUTTON_WEIGHT_LAND = 10f;
+    private static final float NAVBAR_BUTTON_WEIGHT_PORTRAIT = 15f;
+    private static final float NAVBAR_BASE_AVAIL = 95f;
+    // using 100% as total bar length.  5% is used for space bar in the initial layout.
+    // that leaves 95% avail for NavBar & Notification area.
+
     // The height of the bar, as definied by the build.  It may be taller if we're plugged
     // into hdmi.
     int mNaturalBarHeight = -1;
     int mUserBarHeight , mUserBarHeightLand = -1;
     int mIconSize = -1;
     int mIconHPadding = -1;
+    int mNavIconWidth = -1;
+    int mMenuNavIconWidth = -1;
+    int mNumberOfButtons = 3;
+    float mWidthLand = 0f;
+    float mWidthPort = 0f;
+    boolean mLandscape = false;
     private int mMaxNotificationIcons = 5;
 
     TabletStatusBarView mStatusBarView;
@@ -136,6 +153,7 @@ public class TabletStatusBar extends BaseStatusBar implements
     View mNotificationTrigger;
     NotificationIconArea mNotificationIconArea;
     ViewGroup mNavigationArea;
+    ViewGroup mNotificationHolder;
 
     boolean mNotificationDNDMode;
     NotificationData.Entry mNotificationDNDDummyEntry;
@@ -378,6 +396,34 @@ public class TabletStatusBar extends BaseStatusBar implements
         super.start(); // will add the main bar view
     }
 
+     public void UpdateWeights(boolean landscape) {
+        float nav = landscape ? NAVBAR_MIN_LAND : NAVBAR_MIN_PORTRAIT;
+        if (landscape) {
+           if (mWidthLand < 1) {
+                float min = NAVBAR_MIN_LAND;
+                float max = NAVBAR_MAX_LAND;
+                float weight = NAVBAR_BUTTON_WEIGHT_LAND;
+                nav = Math.max(min,
+                              Math.min(max, mNumberOfButtons * weight));
+           } else {
+                nav = mWidthLand + 30f;
+           }
+        } else {
+           if (mWidthPort < 1) {
+                float min = NAVBAR_MIN_PORTRAIT;
+                float max = NAVBAR_MAX_PORTRAIT;
+                float weight = NAVBAR_BUTTON_WEIGHT_PORTRAIT;
+                nav = Math.max(min,
+                              Math.min(max, mNumberOfButtons * weight));
+           } else {
+                nav = mWidthPort + 30f;
+           }
+        }
+        final float notif = NAVBAR_BASE_AVAIL - nav;
+        mNavigationArea.setLayoutParams(new LinearLayout.LayoutParams(0,LayoutParams.MATCH_PARENT,nav));
+        mNotificationHolder.setLayoutParams(new LinearLayout.LayoutParams(0,LayoutParams.MATCH_PARENT,notif));
+    }
+
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         // detect theme change.
@@ -392,6 +438,12 @@ public class TabletStatusBar extends BaseStatusBar implements
                 // we're screwed here fellas
             }
         }
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mLandscape = true;
+        } else {
+            mLandscape = false;
+        }
+        UpdateWeights(mLandscape);
         loadDimens();
         final int currentHeight = getStatusBarHeight();
         final int barHeight = (isLandscape() ? mUserBarHeightLand : mUserBarHeight);
@@ -455,6 +507,7 @@ public class TabletStatusBar extends BaseStatusBar implements
         // the whole right-hand side of the bar
         mNotificationArea = sb.findViewById(R.id.notificationArea);
         mNotificationArea.setOnTouchListener(new NotificationTriggerTouchListener());
+        mNotificationHolder = (ViewGroup) sb.findViewById(R.id.notificationHolder);
 
         // the button to open the notification area
         mNotificationTrigger = sb.findViewById(R.id.notificationTrigger);
@@ -1598,6 +1651,15 @@ public class TabletStatusBar extends BaseStatusBar implements
                     Settings.System.NAVIGATION_BAR_HEIGHT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_HEIGHT_LANDSCAPE), false, this);
+             resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_BUTTONS_QTY), false,
+                    this);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_WIDTH_LAND), false,
+                    this);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_WIDTH_PORT), false,
+                    this);
         }
 
          @Override
@@ -1637,7 +1699,12 @@ public class TabletStatusBar extends BaseStatusBar implements
         if (currentHeight != barHeight) {
             onBarHeightChanged(isLandscape() ? mUserBarHeightLand : mUserBarHeight);
         }
-        mCurrentUIMode = Settings.System.getInt(cr,
-                Settings.System.CURRENT_UI_MODE, 0);
+        mCurrentUIMode = Settings.System.getInt(cr, Settings.System.CURRENT_UI_MODE, 0);
+        mNumberOfButtons = Settings.System.getInt(cr, Settings.System.NAVIGATION_BAR_BUTTONS_QTY, 3);
+        mWidthLand = Settings.System.getFloat(cr, Settings.System.NAVIGATION_BAR_WIDTH_LAND, 0f);
+        mWidthPort = Settings.System.getFloat(cr, Settings.System.NAVIGATION_BAR_WIDTH_PORT, 0f);
+        mLandscape = (mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+
+        UpdateWeights(mLandscape);
     }
 }

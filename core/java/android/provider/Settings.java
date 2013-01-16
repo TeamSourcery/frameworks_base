@@ -2831,6 +2831,18 @@ public final class Settings {
         public static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
 
         /**
+         *
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_WIDTH_PORT = "navigation_bar_width_port";
+
+        /**
+        *
+        * @hide	
+        */
+        public static final String NAVIGATION_BAR_WIDTH_LAND = "navigation_bar_width_land";
+
+        /**
          * @hide
          */
         public static final String MENU_LOCATION = "menu_location";
@@ -3014,6 +3026,18 @@ public final class Settings {
          * @hide
          */
         public static final String QUICK_TOGGLES = "quick_toggles";
+
+        /**
+         * Enable longpress on expand challenge handle to unlock device
+         * @hide
+         */
+       public static final String LOCKSCREEN_LONGPRESS_CHALLENGE = "lockscreen_longpress_challenge";	
+
+       /**
+         * Whether to use the carousel as widget container
+         * @hide
+         */
+        public static final String LOCKSCREEN_USE_WIDGET_CONTAINER_CAROUSEL = "lockscreen_use_widget_container_carousel";
 
        /**
         * Quick Settings Quick Pulldown
