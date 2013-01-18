@@ -2775,6 +2775,12 @@ public final class Settings {
        public static final String USER_UI_MODE = "user_ui_mode";
 
         /**
+         * Show the notification ticker (or not)
+         * @hide
+         */
+        public static final String STATUS_BAR_DONOTDISTURB = "status_bar_donotdisturb";
+
+        /**
          * User configurable flag for determining if NavBar is enabled
          *
          * @hide
@@ -3045,6 +3051,13 @@ public final class Settings {
         * @hide
         */
         public static final String QS_QUICK_PULLDOWN = "qs_quick_pulldown";
+
+         /**
+         * text color for quick settings
+         *
+         * @hide
+         */
+        public static final String QUICK_TOGGLES_TEXT_COLOR = "quick_toggles_text_color";
 
         /**
          * number of tiles per row in quick settings
@@ -3436,6 +3449,16 @@ public final class Settings {
        * @hide
        */
        public static final String NAVIGATION_BAR_MENU_ARROW_KEYS = "navigation_bar_menu_arrow_keys";
+
+      /**
+          * Volume keys control cursor in text fields (default is 0)
+          * 0 - Disabled
+          * 1 - Volume up/down moves cursor left/right
+          * 2 - Volume up/down moves cursor right/left
+          * @hide
+          */
+       public static final String VOLUME_KEY_CURSOR_CONTROL = "volume_key_cursor_control";
+
 
     }
 
