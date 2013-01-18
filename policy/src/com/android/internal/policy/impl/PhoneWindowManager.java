@@ -482,10 +482,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mVolBtnMusicControls;
     private boolean mIsLongPress;
 
-    // Power button torch
-     boolean mPowerButtonTorch;
-     boolean mTorchOn;
-
+   
     SettingsObserver mSettingsObserver;
     ShortcutManager mShortcutManager;
     PowerManager.WakeLock mBroadcastWakeLock;
@@ -571,8 +568,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.ACCELEROMETER_ROTATION_ANGLES), false, this,
                     UserHandle.USER_ALL);
-           resolver.registerContentObserver(Settings.System.getUriFor(
- 	            Settings.System.POWER_BUTTON_TORCH), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_SHOW), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -789,21 +784,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     };
 
-    private final Runnable mTorchLongPress = new Runnable() {
-         @Override
-         public void run() {
-             toggleTorch(true); // on
-         }
-    };
- 	
-    void toggleTorch(boolean on) {
-        Intent intent = new Intent("android.intent.action.MAIN");
-        intent.setComponent(ComponentName.unflattenFromString("com.sourcery.Torch/.TorchActivity"));
-        intent.addCategory("android.intent.category.LAUNCHER");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(intent);
-        mTorchOn = on;
-    }
 
     void showGlobalActionsDialog() {
         if (mGlobalActions == null) {
@@ -1215,10 +1195,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mVolBtnMusicControls = Settings.System.getBoolean(resolver,
                     Settings.System.VOLUME_MUSIC_CONTROLS, false);
 
-            mPowerButtonTorch = (Settings.System.getIntForUser(resolver,
-                    Settings.System.POWER_BUTTON_TORCH, 0, UserHandle.USER_CURRENT) == 1);
-
-            if (mSystemReady) {
+           if (mSystemReady) {
                 int pointerLocation = Settings.System.getIntForUser(resolver,
                         Settings.System.POINTER_LOCATION, 0, UserHandle.USER_CURRENT);
                 if (mPointerLocationMode != pointerLocation) {
@@ -1985,7 +1962,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final int metaState = event.getMetaState();
         final int flags = event.getFlags();
         final boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
-        final boolean up = event.getAction() == KeyEvent.ACTION_UP;
         final boolean canceled = event.isCanceled();
 
         if (DEBUG_INPUT) {
@@ -3547,7 +3523,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
 
         final boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
-        final boolean up = event.getAction() == KeyEvent.ACTION_UP;
         final boolean canceled = event.isCanceled();
         final int keyCode = event.getKeyCode();
 
@@ -3622,11 +3597,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // When the screen is on or if the key is injected pass the key to the application.
             result = ACTION_PASS_TO_USER;
         } else {
-            // When the screen is off and the key is not injected, determine whether
+           // When the screen is off and the key is not injected, determine whether
             // to wake the device but don't pass the key to the application.
             result = 0;
-             if (((down && !mPowerButtonTorch) || (up && !mTorchOn && mPowerButtonTorch))
-                    && isWakeKey) {
+            if (down && isWakeKey) {
                 if (keyguardActive) {
                     // send power key code to wake the screen
                     if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP) || (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && isWakeKey) {
@@ -3773,21 +3747,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             case KeyEvent.KEYCODE_POWER: {
-                 // handle power key long-press
-                 if (mPowerButtonTorch && !isScreenOn) {
-                     if (down && !mTorchOn) {
-                         mHandler.postDelayed(mTorchLongPress, 1000);
-                         return 0;
-                     }
- 	
-                    if (up) {
-                         mHandler.removeCallbacks(mTorchLongPress);
-                         if (mTorchOn) {
-                             toggleTorch(false); // off
-                             return 0;
-                         }
-                     }
-                 }
+                if ((mTopFullscreenOpaqueWindowState.getAttrs().flags
+                        & WindowManager.LayoutParams.PREVENT_POWER_KEY) != 0){
+                    return result;
+                }
                 result &= ~ACTION_PASS_TO_USER;
                 if (down) {
                     if (isScreenOn && !mPowerKeyTriggered
