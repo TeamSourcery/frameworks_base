@@ -2815,6 +2815,18 @@ public final class Settings {
         public static final String POWER_DIALOG_SHOW_TORCH_TOGGLE = "power_dialog_show_torch_toggle";
 
        /**
+        * Option to hide expanded desktop in power menu
+        * @hide
+        */
+        public static final String POWER_DIALOG_SHOW_EXPANDED_DESKTOP_TOGGLE = "power_dialog_show_expanded_desktop_toggle";
+
+       /**
+        * Statusbar State
+        * @hide
+        */
+        public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
+
+       /**
          * If checked hide extra system bar stuff
          * ie compatmode button and extra ime switcher.
          */
