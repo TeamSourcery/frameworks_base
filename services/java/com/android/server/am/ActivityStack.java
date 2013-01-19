@@ -327,11 +327,19 @@ final class ActivityStack {
                     // We don't at this point know if the activity is fullscreen,
                     // so we need to be conservative and assume it isn't.
                     Slog.w(TAG, "Activity pause timeout for " + r);
-                    synchronized (mService) {
-                        if (r.app != null) {
-                            mService.logAppTooSlow(r.app, r.pauseTime,
-                                    "pausing " + r);
-                        }
+                    int pid = -1;
+                    long pauseTime = 0;
+                    String m = null;
+                    //no need to synchronize this on mService
+ 	            if (r.app != null) {
+                        pid = r.app.pid;
+                    }
+                    pauseTime = r.pauseTime;
+                    m = "pausing " + r;
+ 
+                    //would need to synchronize this on mService, if logAppTooSlow wasn't an if(true) return;
+                    if (pid > 0) {
+                        mService.logAppTooSlow(pid, pauseTime, m);
                     }
 
                     activityPaused(r != null ? r.appToken : null, true);
@@ -352,12 +360,21 @@ final class ActivityStack {
                 } break;
                 case LAUNCH_TICK_MSG: {
                     ActivityRecord r = (ActivityRecord)msg.obj;
-                    synchronized (mService) {
-                        if (r.continueLaunchTickingLocked()) {
-                            mService.logAppTooSlow(r.app, r.launchTickTime,
-                                    "launching " + r);
+                    int pid = -1;
+                    long launchTickTime = 0;
+ 	            String m = null;
+                    //no need to synchronize this on mService
+ 	            if (r.continueLaunchTickingLocked()) {
+                        if (r.app != null) {
+                            pid = r.app.pid;
                         }
+                        launchTickTime = r.launchTickTime;
+                        m = "launching " + r;
                     }
+                    //would need to synchronize this on mService, if logAppTooSlow wasn't an if(true) return;
+                    if (pid > 0) {
+                         mService.logAppTooSlow(pid, launchTickTime, m);
+                     }
                 } break;
                 case DESTROY_TIMEOUT_MSG: {
                     ActivityRecord r = (ActivityRecord)msg.obj;
@@ -3580,9 +3597,9 @@ final class ActivityStack {
 
         // Stop any activities that are scheduled to do so but have been
         // waiting for the next one to start.
-        for (i=0; i<NS; i++) {
-            ActivityRecord r = (ActivityRecord)stops.get(i);
-            synchronized (mService) {
+         for (i=0; i<NS; i++) {
+             ActivityRecord r = (ActivityRecord)stops.get(i);
+             synchronized (mService) {
                 if (r.finishing) {
                     finishCurrentActivityLocked(r, FINISH_IMMEDIATELY, false);
                 } else {
@@ -3594,8 +3611,8 @@ final class ActivityStack {
         // Finish any activities that are scheduled to do so but have been
         // waiting for the next one to start.
         for (i=0; i<NF; i++) {
-            ActivityRecord r = (ActivityRecord)finishes.get(i);
             synchronized (mService) {
+                ActivityRecord r = (ActivityRecord)finishes.get(i);
                 activityRemoved = destroyActivityLocked(r, true, false, "finish-idle");
             }
         }
