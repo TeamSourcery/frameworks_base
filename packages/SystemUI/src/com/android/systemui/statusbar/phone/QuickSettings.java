@@ -195,8 +195,7 @@ public class QuickSettings {
     private ConnectivityManager mConnService;
     private NfcAdapter mNfcAdapter;
 
-    private SourceryTarget mSourceryTarget;
-
+    
     private BrightnessController mBrightnessController;
     private BluetoothController mBluetoothController;
 
@@ -284,8 +283,7 @@ public class QuickSettings {
         mBluetoothState = new QuickSettingsModel.BluetoothState();
         mHandler = new Handler();
 
-        mSourceryTarget = new SourceryTarget(mContext);
-
+        
         Resources r = mContext.getResources();
         mBatteryLevels = (LevelListDrawable) r.getDrawable(R.drawable.qs_sys_battery);
         mChargingBatteryLevels =
@@ -900,7 +898,7 @@ public class QuickSettings {
                 quick.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSourceryTarget.launchAction(mSourceryTarget.ACTION_VIB);
+                        SourceryTarget.getInstance(mContext).launchAction(SourceryTarget.ACTION_VIB);
                         mModel.refreshVibrateTile();
                     }
                 });
@@ -928,7 +926,7 @@ public class QuickSettings {
                 quick.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSourceryTarget.launchAction(mSourceryTarget.ACTION_SILENT);
+                        SourceryTarget.getInstance(mContext).launchAction(SourceryTarget.ACTION_SILENT);
                         mModel.refreshSilentTile();
                     }
                 });
@@ -956,7 +954,7 @@ public class QuickSettings {
                 quick.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSourceryTarget.launchAction(mSourceryTarget.ACTION_SILENT_VIB);
+                        SourceryTarget.getInstance(mContext).launchAction(SourceryTarget.ACTION_SILENT_VIB);
                         mModel.refreshSoundStateTile();
                     }
                 });
@@ -984,7 +982,7 @@ public class QuickSettings {
                 quick.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSourceryTarget.launchAction(mSourceryTarget.ACTION_TORCH);
+                        SourceryTarget.getInstance(mContext).launchAction(SourceryTarget.ACTION_TORCH);
                         mHandler.postDelayed(delayedRefresh, 1000);
                     }
                 });

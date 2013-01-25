@@ -16,12 +16,11 @@
 
 package com.android.systemui.sourcery;
 
-import java.net.URISyntaxException;
+
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.ActivityManagerNative;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -67,6 +66,7 @@ import android.widget.Toast;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.R;
 
+import java.net.URISyntaxException;
 
 public class SourceryTarget {
 
@@ -95,44 +95,41 @@ public class SourceryTarget {
     public final static String ACTION_SEARCH = "**search**";
     public final static String ACTION_NULL = "**null**";
 
-    private boolean mRecentButtonLock = false;
+   
     private int mInjectKeyCode;
-    private Context mContext;
-    private Handler mHandler;
+    final private Context mContext;
+    final private Handler mHandler;
 
     final Object mScreenshotLock = new Object();
     ServiceConnection mScreenshotConnection = null;
 
-    public SourceryTarget (Context context){
+    private static SourceryTarget sInstance = null;
+ 
+    public static SourceryTarget getInstance(Context c) {
+        if (sInstance == null) {
+            sInstance = new SourceryTarget(c);
+         }
+         return sInstance;
+    }
+ 	
+    public SourceryTarget(Context context) {
         mContext = context;
         mHandler = new Handler();
     }
 
-    public boolean launchAction (String action){
-
-        if (action.equals(ACTION_RECENTS)) {
-            if (!mRecentButtonLock) {
-                try {
-                    IStatusBarService.Stub.asInterface(
-                            ServiceManager.getService(Context.STATUS_BAR_SERVICE))
-                            .toggleRecentApps();
-                } catch (RemoteException e) {
-                    // nuu
-                }
-                mRecentButtonLock = true;
-                // 250ms animation duration + 150ms start delay of animation + 1 for good luck
-                mHandler.postDelayed(mUnlockRecents, 401);
-            }
-            return true;
-        }
-
-        try {
-            ActivityManagerNative.getDefault().dismissKeyguardOnNextActivity();
-        } catch (RemoteException e) {
-        }
+    public boolean launchAction(String action) {
 
         if (action == null || action.equals(ACTION_NULL)) {
             return false;
+        } else if (action.equals(ACTION_RECENTS)) {
+             try {
+                 IStatusBarService.Stub.asInterface(
+                         ServiceManager.getService(Context.STATUS_BAR_SERVICE))
+                         .toggleRecentApps();
+             } catch (RemoteException e) {
+                // nuu
+             }
+             return true;
         } else if (action.equals(ACTION_HOME)) {
             injectKeyDelayed(KeyEvent.KEYCODE_HOME);
             return true;
@@ -202,17 +199,17 @@ public class SourceryTarget {
             return true;
         } else if (action.equals(ACTION_VIB)) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-            if(am != null){
+            if (am != null){
                 if(am.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE) {
                     am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                     Vibrator vib = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-                    if(vib != null){
+                    if (vib != null){
                         vib.vibrate(50);
                     }
-                }else{
+                } else {
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                     ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, (int)(ToneGenerator.MAX_VOLUME * 0.85));
-                    if(tg != null){
+                    if (tg != null){
                         tg.startTone(ToneGenerator.TONE_PROP_BEEP);
                     }
                 }
@@ -220,13 +217,13 @@ public class SourceryTarget {
                 return true;
             } else if (action.equals(ACTION_SILENT)) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-            if(am != null){
+            if (am != null){
                 if(am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
                     am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                }else{
+                } else {
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                     ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, (int)(ToneGenerator.MAX_VOLUME * 0.85));
-                    if(tg != null){
+                    if (tg != null){
                         tg.startTone(ToneGenerator.TONE_PROP_BEEP);
                     }
                 }
@@ -234,19 +231,19 @@ public class SourceryTarget {
             return true;
         } else if (action.equals(ACTION_SILENT_VIB)) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-            if(am != null){
+            if (am != null){
                 if(am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                     am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                     Vibrator vib = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-                    if(vib != null){
+                    if (vib != null){
                         vib.vibrate(50);
                     }
-                } else if(am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
+                } else if (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
                     am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 } else {
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                     ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, (int)(ToneGenerator.MAX_VOLUME * 0.85));
-                    if(tg != null){
+                    if (tg != null){
                         tg.startTone(ToneGenerator.TONE_PROP_BEEP);
                     }
                 }
@@ -277,9 +274,7 @@ public class SourceryTarget {
         return false; // we didn't handle the action!
     }
 
-
-   //not using yet and dont want to take time to get drawables... yes lazy dev.
-   // Yes Steve, You are a lazy Dev.  I need this :)  - Zaphod 12-01-12(funny stuff here)
+  
    public Drawable getIconImage(String uri) {
 
         if (uri == null)
@@ -360,7 +355,7 @@ public class SourceryTarget {
             }
         }
 
-        return (friendlyName != null)  ? friendlyName : intent.toUri(0);
+        return (friendlyName != null) ? friendlyName : intent.toUri(0);
     }
 
     private String getFriendlyShortcutName(Intent intent) {
@@ -373,18 +368,19 @@ public class SourceryTarget {
         return name != null ? name : intent.toUri(0);
     }
 
-    private void injectKeyDelayed(int keycode){
+    private void injectKeyDelayed(int keycode) {
         mInjectKeyCode = keycode;
         mHandler.removeCallbacks(onInjectKey_Down);
         mHandler.removeCallbacks(onInjectKey_Up);
         mHandler.post(onInjectKey_Down);
-        mHandler.postDelayed(onInjectKey_Up,10); // introduce small delay to handle key press
+        mHandler.postDelayed(onInjectKey_Up, 10); // introduce small delay to handle key press
     }
 
     final Runnable onInjectKey_Down = new Runnable() {
         public void run() {
-            final KeyEvent ev = new KeyEvent(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
-                    KeyEvent.ACTION_DOWN, mInjectKeyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+            final KeyEvent ev = new KeyEvent(SystemClock.uptimeMillis(),
+             SystemClock.uptimeMillis(),
+             KeyEvent.ACTION_DOWN, mInjectKeyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                     KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
                     InputDevice.SOURCE_KEYBOARD);
             InputManager.getInstance().injectInputEvent(ev,
@@ -394,7 +390,8 @@ public class SourceryTarget {
 
     final Runnable onInjectKey_Up = new Runnable() {
         public void run() {
-            final KeyEvent ev = new KeyEvent(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+            final KeyEvent ev = new KeyEvent(SystemClock.uptimeMillis(),
+            SystemClock.uptimeMillis(),
                     KeyEvent.ACTION_UP, mInjectKeyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                     KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
                     InputDevice.SOURCE_KEYBOARD);
@@ -421,13 +418,7 @@ public class SourceryTarget {
         }
     };
 
-   final Runnable mUnlockRecents = new Runnable() {
-       @Override
-       public void run() {
-           mRecentButtonLock = false;
-       }
-   };
-
+  
     final Runnable mScreenshotTimeout = new Runnable() {
         @Override
         public void run() {
@@ -499,7 +490,7 @@ public class SourceryTarget {
                 public void onServiceDisconnected(ComponentName name) {
                 }
             };
-            if (mContext.bindService(intent, conn, mContext.BIND_AUTO_CREATE)) {
+            if (mContext.bindService(intent, conn, Context.BIND_AUTO_CREATE)) {
                 mScreenshotConnection = conn;
                 H.postDelayed(mScreenshotTimeout, 10000);
             }

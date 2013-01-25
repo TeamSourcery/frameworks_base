@@ -110,8 +110,7 @@ public class SearchPanelView extends FrameLayout implements
     private GlowPadView mGlowPadView;
     private IWindowManager mWm;
 
-    private SourceryTarget mSourceryTarget;
-
+    
     private PackageManager mPackageManager;
     private Resources mResources;
     private TargetObserver mTargetObserver;
@@ -146,8 +145,7 @@ public class SearchPanelView extends FrameLayout implements
 
         mContentResolver = mContext.getContentResolver();
 
-        mSourceryTarget = new SourceryTarget(context);
-
+        
         SettingsObserver observer = new SettingsObserver(new Handler());
         observer.observe();
         updateSettings();
@@ -219,7 +217,7 @@ public class SearchPanelView extends FrameLayout implements
                     Log.d(TAG,"LongPress!");
                     mBar.hideSearchPanel();
                     maybeSkipKeyguard();
-                    mSourceryTarget.launchAction(longList.get(mTarget));
+                    SourceryTarget.getInstance(mContext).launchAction(longList.get(mTarget));
                     mSearchPanelLock = true;
                  }
             }

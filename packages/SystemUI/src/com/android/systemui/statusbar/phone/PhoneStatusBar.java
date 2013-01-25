@@ -177,8 +177,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     StatusBarWindowView mStatusBarWindow;
     PhoneStatusBarView mStatusBarView;
 
-    private SourceryTarget mSourceryTarget;
-
+    
     int mPixelFormat;
     Object mQueueLock = new Object();
 
@@ -376,8 +375,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     protected PhoneStatusBarView makeStatusBarView() {
         final Context context = mContext;
 
-        mSourceryTarget = new SourceryTarget(mContext);
-
+        
         Resources res = context.getResources();
 
         updateDisplaySize(); // populates mDisplayMetrics
@@ -2292,7 +2290,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             public void run() {
                     doubleClickCounter = 0;
                     animateCollapsePanels();
-                    mSourceryTarget.launchAction(mClockActions[shortClick]);
+                    SourceryTarget.getInstance(mContext).launchAction(mClockActions[shortClick]);
             }
         };
 
@@ -2309,7 +2307,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                     mHandler.removeCallbacks(DelayShortPress);
                     vibrate();
                     animateCollapsePanels();
-                    mSourceryTarget.launchAction(mClockActions[doubleClick]);
+                    SourceryTarget.getInstance(mContext).launchAction(mClockActions[doubleClick]);
                     mHandler.postDelayed(ResetDoubleClickCounter, 50);
                 } else {
                     doubleClickCounter = doubleClickCounter + 1;
@@ -2319,7 +2317,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             } else {
                 vibrate();
                 animateCollapsePanels();
-                mSourceryTarget.launchAction(mClockActions[shortClick]);
+                SourceryTarget.getInstance(mContext).launchAction(mClockActions[shortClick]);
             }
 
         }
@@ -2329,7 +2327,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         @Override
         public boolean onLongClick(View v) {
             animateCollapsePanels();
-            mSourceryTarget.launchAction(mClockActions[longClick]);
+            SourceryTarget.getInstance(mContext).launchAction(mClockActions[longClick]);
             return true;
         }
     };
