@@ -97,7 +97,8 @@ public class KeyguardShortcuts extends LinearLayout {
             }
             ImageView i = new ImageView(mContext);
             int dimens = Math.round(res.getDimensionPixelSize(
-                    R.dimen.app_icon_size));
+                    R.dimen.app_icon_size) * (resourceString == null
+                    ? 1.4f : 1.5f));
             // Target will be 50% of the icon size for custom icons
             // and 60% for application icons, unless we're running on
             // a tablet
