@@ -301,8 +301,10 @@ public class KeyguardHostView extends KeyguardViewBase {
         @Override
         public boolean onLongClick(View v) {
             performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
+                 v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
                      HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
                      | HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
             showNextSecurityScreenOrFinish(false);
             return true;
         }
