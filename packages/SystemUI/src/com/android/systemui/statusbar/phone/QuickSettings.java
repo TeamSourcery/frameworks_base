@@ -67,6 +67,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.ContactsContract;
@@ -137,6 +139,8 @@ public class QuickSettings {
     private static final int FAV_CONTACTTHREE_TILE = 24;
     private static final int SOUND_STATE_TILE = 25;
     private static final int RAM_TILE = 26;
+    private static final int POWER_MENU_TILE = 27;
+    private static final int SCREEN_TILE = 28;
      // private static final int BT_TETHER_TILE = 30;
 
     public static final String USER_TOGGLE = "USER";
@@ -167,6 +171,8 @@ public class QuickSettings {
     public static final String FAV_CONTACTTWO_TOGGLE = "FAVCONTACTTWO";
     public static final String FAV_CONTACTTHREE_TOGGLE = "FAVCONTACTTHREE";
     public static final String SOUND_STATE_TOGGLE = "SOUNDSTATE";
+    public static final String POWER_MENU_TOGGLE = "POWERMENU";
+    public static final String SCREEN_TOGGLE = "SCREEN";
 
     private static final String DEFAULT_TOGGLES = "default";
 
@@ -251,6 +257,8 @@ public class QuickSettings {
             toggleMap.put(FAV_CONTACTTWO_TOGGLE, FAV_CONTACTTWO_TILE);
             toggleMap.put(FAV_CONTACTTHREE_TOGGLE, FAV_CONTACTTHREE_TILE);
             toggleMap.put(SOUND_STATE_TOGGLE, SOUND_STATE_TILE);
+            toggleMap.put(POWER_MENU_TOGGLE, POWER_MENU_TILE);
+            toggleMap.put(SCREEN_TOGGLE, SCREEN_TILE);
             //toggleMap.put(BT_TETHER_TOGGLE, BT_TETHER_TILE);
         }
         return toggleMap;
@@ -741,6 +749,13 @@ public class QuickSettings {
                         showBrightnessDialog();
                     }
                 });
+                quick.setOnLongClickListener(new View.OnLongClickListener() {
+                     @Override
+                     public boolean onLongClick(View v) {
+                         startSettingsActivity(android.provider.Settings.ACTION_DISPLAY_SETTINGS);
+                         return true;
+                     }
+                });
                 mModel.addBrightnessTile(quick, new QuickSettingsModel.RefreshCallback() {
                     @Override
                     public void refreshView(QuickSettingsTileView view, State state) {
@@ -753,6 +768,28 @@ public class QuickSettings {
                 });
                 mDynamicSpannedTiles.add(quick);
                 break;
+             case SCREEN_TILE:
+                quick = (QuickSettingsTileView)
+                        inflater.inflate(R.layout.quick_settings_tile, parent, false);
+                quick.setContent(R.layout.quick_settings_tile_screen, inflater);
+                TextView tv = (TextView) quick.findViewById(R.id.screen_textview);
+                tv.setTextSize(1, mTileTextSize);
+                quick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+                        pm.goToSleep(SystemClock.uptimeMillis());
+                       }
+                    });
+                    mModel.addScreenTile(quick, new QuickSettingsModel.RefreshCallback() {
+		        @Override
+			public void refreshView(QuickSettingsTileView view, State state) {
+		       	    TextView tv = (TextView) view.findViewById(R.id.screen_textview);
+			    tv.setText("Screen Off");
+                            tv.setTextSize(1, mTileTextSize);
+                        }
+                 });
+                 break;
             case SETTINGS_TILE:
                 quick = (QuickSettingsTileView)
                         inflater.inflate(R.layout.quick_settings_tile, parent, false);
@@ -1495,9 +1532,41 @@ public class QuickSettings {
                     }
                 });
                 mDynamicSpannedTiles.add(quick);
-                break;       
-        }
-        return quick;
+                break;
+        case POWER_MENU_TILE:
+                quick = (QuickSettingsTileView)
+                        inflater.inflate(R.layout.quick_settings_tile, parent, false);
+                quick.setContent(R.layout.quick_settings_tile_powermenu, inflater);
+                quick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getService().animateCollapsePanels();
+                        Intent intent=new Intent(Intent.ACTION_POWERMENU);
+                        mContext.sendBroadcast(intent);
+                    }
+                });
+                quick.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        getService().animateCollapsePanels();
+                        Intent intent=new Intent(Intent.ACTION_POWERMENU_REBOOT);
+                        mContext.sendBroadcast(intent);
+                        return true;
+                    }
+                });
+                mModel.addPowerMenuTile(quick, new QuickSettingsModel.RefreshCallback() {
+                    @Override
+                    public void refreshView(QuickSettingsTileView view, State state) {
+		       	TextView tv = (TextView) view.findViewById(R.id.powermenu_textview);
+			tv.setText(state.label);
+                        tv.setTextSize(1, mTileTextSize);
+                        tv.setCompoundDrawablesWithIntrinsicBounds(0, state.iconId, 0, 0);
+                    }
+                });
+                break;
+
+         }
+         return quick;
     }
 
     private ArrayList<String> getCustomUserTiles() {

@@ -5402,12 +5402,7 @@ public class WindowManagerService extends IWindowManager.Stub
                 mAnimatorDurationScale };
     }
 
-    @Override
-    public void reboot(String reason) {
-        ShutdownThread.reboot(getUiContext(), reason, false);
-    }
-
-    // Called by window manager policy. Not exposed externally.
+     // Called by window manager policy. Not exposed externally.
     @Override
     public int getLidState() {
         int sw = mInputManager.getSwitchState(-1, InputDevice.SOURCE_ANY,
@@ -5442,11 +5437,24 @@ public class WindowManagerService extends IWindowManager.Stub
         ShutdownThread.shutdown(getUiContext(), confirm);
     }
 
+    // Called by window manager policy.  Not exposed externally.
+    @Override
+    public void reboot(String reason) {
+        ShutdownThread.reboot(getUiContext(), reason, false);
+    }
+
+    // Called by window manager policy.  Not exposed externally.
+    @Override
+    public void rebootTile() {
+        ShutdownThread.reboot(mContext, null, true);
+    }
+
     // Called by window manager policy. Not exposed externally.
     @Override
     public void rebootSafeMode(boolean confirm) {
         ShutdownThread.rebootSafeMode(getUiContext(), confirm);
     }
+
 
     public void setInputFilter(IInputFilter filter) {
         if (!checkCallingPermission(android.Manifest.permission.FILTER_EVENTS, "setInputFilter()")) {
