@@ -1233,8 +1233,8 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
                 ? mContext.getString(R.string.quick_settings_threeg_on_label)
                 : mContext.getString(R.string.quick_settings_threeg_off_label);
 
-        if (m3gTile != null && m2gCallback != null) {
-            m3gCallback.refreshView(m2gTile, m2gState);
+        if (m3gTile != null && m3gCallback != null) {
+ 	    m3gCallback.refreshView(m3gTile, m3gState);
         }
     }
 
