@@ -141,6 +141,7 @@ public class QuickSettings {
     private static final int RAM_TILE = 26;
     private static final int POWER_MENU_TILE = 27;
     private static final int SCREEN_TILE = 28;
+     private static final int THREEG_TILE = 29;
      // private static final int BT_TETHER_TILE = 30;
 
     public static final String USER_TOGGLE = "USER";
@@ -173,6 +174,7 @@ public class QuickSettings {
     public static final String SOUND_STATE_TOGGLE = "SOUNDSTATE";
     public static final String POWER_MENU_TOGGLE = "POWERMENU";
     public static final String SCREEN_TOGGLE = "SCREEN";
+    public static final String THREEG_TOGGLE = "3G";
 
     private static final String DEFAULT_TOGGLES = "default";
 
@@ -259,6 +261,7 @@ public class QuickSettings {
             toggleMap.put(SOUND_STATE_TOGGLE, SOUND_STATE_TILE);
             toggleMap.put(POWER_MENU_TOGGLE, POWER_MENU_TILE);
             toggleMap.put(SCREEN_TOGGLE, SCREEN_TILE);
+            toggleMap.put(THREEG_TOGGLE, THREEG_TILE);
             //toggleMap.put(BT_TETHER_TOGGLE, BT_TETHER_TILE);
         }
         return toggleMap;
@@ -914,7 +917,10 @@ public class QuickSettings {
                 quick.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        startSettingsActivity(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+ 	                intent.setClassName("com.android.phone", "com.android.phone.MobileNetworkSettings");
+ 	                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+ 	                startSettingsActivity(intent);
                         return true;
                     }
                 });
@@ -922,6 +928,43 @@ public class QuickSettings {
                     @Override
                     public void refreshView(QuickSettingsTileView view, State state) {
                         TextView tv = (TextView) view.findViewById(R.id.lte_textview);
+                        tv.setCompoundDrawablesWithIntrinsicBounds(0, state.iconId, 0, 0);
+                        tv.setText(state.label);
+                        tv.setTextSize(1, mTileTextSize);
+                    }
+                });
+                break;
+            case THREEG_TILE:
+                quick = (QuickSettingsTileView)
+                        inflater.inflate(R.layout.quick_settings_tile, parent, false);
+                quick.setContent(R.layout.quick_settings_tile_threeg, inflater);
+                quick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            mDataState = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.PREFERRED_NETWORK_MODE);
+                        } catch (SettingNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        if (mDataState == PhoneConstants.NT_MODE_GSM_UMTS) {
+                            tm.toggle3G(false);
+                        } else {
+                            tm.toggle3G(true);
+                        }
+                        mModel.refresh3gTile();
+                    }
+                });
+                quick.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        startSettingsActivity(android.provider.Settings.ACTION_DATA_ROAMING_SETTINGS);
+                        return true;
+                    }
+                });
+                mModel.add3gTile(quick, new QuickSettingsModel.RefreshCallback() {
+                    @Override
+                    public void refreshView(QuickSettingsTileView view, State state) {
+                        TextView tv = (TextView) view.findViewById(R.id.threeg_textview);
                         tv.setCompoundDrawablesWithIntrinsicBounds(0, state.iconId, 0, 0);
                         tv.setText(state.label);
                         tv.setTextSize(1, mTileTextSize);

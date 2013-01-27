@@ -314,6 +314,10 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     private RefreshCallback m2gCallback;
     private State m2gState = new State();
 
+    private QuickSettingsTileView m3gTile;
+    private RefreshCallback m3gCallback;
+    private State m3gState = new State();
+
     private QuickSettingsTileView mLTETile;
     private RefreshCallback mLTECallback;
     private State mLTEState = new State();
@@ -439,6 +443,8 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
                 refresh2gTile();
             if (toggle.equals(QuickSettings.LTE_TOGGLE))
                 refreshLTETile();
+            if (toggle.equals(QuickSettings.THREEG_TOGGLE))
+                refresh3gTile();
             if (toggle.equals(QuickSettings.POWER_MENU_TOGGLE))
                 refreshPowerMenuTile();
         }
@@ -1201,6 +1207,39 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     void refresh2gTile() {
         if (m2gTile != null) {
             on2gChanged();
+        }
+    }
+
+    // 3g
+    void add3gTile(QuickSettingsTileView view, RefreshCallback cb) {
+        m3gTile = view;
+        m3gCallback = cb;
+        on3gChanged();
+    }
+
+    void on3gChanged() {
+        try {
+            dataState = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.PREFERRED_NETWORK_MODE);
+        } catch (SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        boolean enabled = dataState == PhoneConstants.NT_MODE_GSM_UMTS;
+        m3gState.enabled = enabled;
+        m3gState.iconId = enabled
+                ? R.drawable.ic_qs_3g_on
+                : R.drawable.ic_qs_3g_off;
+        m3gState.label = enabled
+                ? mContext.getString(R.string.quick_settings_threeg_on_label)
+                : mContext.getString(R.string.quick_settings_threeg_off_label);
+
+        if (m3gTile != null && m2gCallback != null) {
+            m3gCallback.refreshView(m2gTile, m2gState);
+        }
+    }
+
+    void refresh3gTile() {
+        if (m3gTile != null) {
+            on3gChanged();
         }
     }
 

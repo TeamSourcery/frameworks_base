@@ -574,6 +574,8 @@
     <string name="quick_settings_sound_on">Sound on</string>
     <string name="quick_settings_powermenu">Power Menu</string>
     <string name="quick_settings_screen">Screen off</string>
+    <string name="quick_settings_threeg_on_label">3g On</string>
+    <string name="quick_settings_threeg_off_label">3g Off</string>
 
     <!--  RamBar -->
     <string name="memory">RAM</string>

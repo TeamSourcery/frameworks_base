@@ -539,6 +539,16 @@ public class TelephonyManager {
     /**
      * @hide
      */
+    public void toggle3G(boolean threeGees) {
+        try {
+            getITelephony().toggle3G(threeGees);
+         } catch (RemoteException e) {
+         }
+    }
+
+    /**
+     * @hide
+     */
     public void toggleLTE(boolean lte) {
         try {
             getITelephony().toggleLTE(lte);
