@@ -109,8 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, dbNameForUser(userHandle), null, DATABASE_VERSION);
         mContext = context;
         mUserHandle = userHandle;
-        setWriteAheadLoggingEnabled(true);
-    }
+   }
 
     public static boolean isValidTable(String name) {
         return mValidTables.contains(name);

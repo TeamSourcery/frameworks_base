@@ -267,15 +267,15 @@ static void videoEditor_clearSurface(JNIEnv* pEnv,
                                     jobject surface);
 
 static JNINativeMethod gManualEditMethods[] = {
-    {"getVersion",               "()L"VERSION_CLASS_NAME";",
+    {"getVersion",               "()L" VERSION_CLASS_NAME ";",
                                 (void *)videoEditor_getVersion      },
     {"_init",                    "(Ljava/lang/String;Ljava/lang/String;)V",
                                 (void *)videoEditor_init    },
     {"nativeStartPreview",       "(Landroid/view/Surface;JJIZ)V",
                                 (void *)videoEditor_startPreview    },
     {"nativePopulateSettings",
-            "(L"EDIT_SETTINGS_CLASS_NAME";L"PREVIEW_PROPERTIES_CLASS_NAME";L"
-            AUDIO_SETTINGS_CLASS_NAME";)V",
+            "(L" EDIT_SETTINGS_CLASS_NAME ";L" PREVIEW_PROPERTIES_CLASS_NAME ";L"
+            AUDIO_SETTINGS_CLASS_NAME ";)V",
                                 (void *)videoEditor_populateSettings    },
     {"nativeRenderPreviewFrame", "(Landroid/view/Surface;JII)I",
                                 (int *)videoEditor_renderPreviewFrame     },
@@ -299,7 +299,7 @@ static JNINativeMethod gManualEditMethods[] = {
                                 (int *)videoEditor_generateAudioWaveFormSync },
     {"nativeGenerateRawAudio",  "(Ljava/lang/String;Ljava/lang/String;)I",
                                 (int *)videoEditor_generateAudioRawFile      },
-    {"nativeGenerateClip",      "(L"EDIT_SETTINGS_CLASS_NAME";)I",
+    {"nativeGenerateClip",      "(L" EDIT_SETTINGS_CLASS_NAME ";)I",
                                 (void *)videoEditor_generateClip  },
     {"nativeClearSurface",       "(Landroid/view/Surface;)V",
                                 (void *)videoEditor_clearSurface  },
@@ -1063,6 +1063,10 @@ static int videoEditor_renderMediaItemPreviewFrame(JNIEnv* pEnv,
         "videoEditor_renderMediaItemPreviewFrame() timeMs=%d", timeMs);
     /* get thumbnail*/
     result = ThumbnailOpen(&tnContext,(const M4OSA_Char*)pString, M4OSA_TRUE);
+    if (pString != NULL) {
+        pEnv->ReleaseStringUTFChars(filePath, pString);
+    }
+
     if (result != M4NO_ERROR || tnContext  == M4OSA_NULL) {
         return timeMs;
     }
@@ -1157,10 +1161,6 @@ static int videoEditor_renderMediaItemPreviewFrame(JNIEnv* pEnv,
     free(yuvPlane[0].pac_data);
 
     ThumbnailClose(tnContext);
-
-    if (pString != NULL) {
-        pEnv->ReleaseStringUTFChars(filePath, pString);
-    }
 
     return timeMs;
 }
@@ -1616,7 +1616,7 @@ videoEditor_populateSettings(
                                      "not initialized");
 
     jfieldID fid = pEnv->GetFieldID(mPreviewClipPropClazz,"clipProperties",
-            "[L"PROPERTIES_CLASS_NAME";"  );
+            "[L" PROPERTIES_CLASS_NAME ";"  );
     videoEditJava_checkAndThrowIllegalStateException(&needToBeLoaded, pEnv,
                                      (M4OSA_NULL == fid),
                                      "not initialized");
@@ -1686,7 +1686,7 @@ videoEditor_populateSettings(
             M4OSA_TRACE1_0("cannot find object field for mEffectsClazz");
             goto videoEditor_populateSettings_cleanup;
         }
-        fid = pEnv->GetFieldID(mEditClazz,"effectSettingsArray", "[L"EFFECT_SETTINGS_CLASS_NAME";"  );
+        fid = pEnv->GetFieldID(mEditClazz,"effectSettingsArray", "[L" EFFECT_SETTINGS_CLASS_NAME ";"  );
         if(fid == M4OSA_NULL)
         {
             M4OSA_TRACE1_0("cannot find field for effectSettingsArray Array");
@@ -2253,10 +2253,11 @@ static int videoEditor_getPixels(
     }
 
     err = ThumbnailOpen(&mContext,(const M4OSA_Char*)pString, M4OSA_FALSE);
+    if (pString != NULL) {
+        env->ReleaseStringUTFChars(path, pString);
+    }
+
     if (err != M4NO_ERROR || mContext == M4OSA_NULL) {
-        if (pString != NULL) {
-            env->ReleaseStringUTFChars(path, pString);
-        }
         if (env != NULL) {
             jniThrowException(env, "java/lang/RuntimeException", "ThumbnailOpen failed");
         }
@@ -2274,9 +2275,6 @@ static int videoEditor_getPixels(
     env->ReleaseIntArrayElements(pixelArray, m_dst32, 0);
 
     ThumbnailClose(mContext);
-    if (pString != NULL) {
-        env->ReleaseStringUTFChars(path, pString);
-    }
 
     return timeMS;
 }
@@ -2305,11 +2303,12 @@ static int videoEditor_getPixelsList(
     }
 
     err = ThumbnailOpen(&mContext,(const M4OSA_Char*)pString, M4OSA_FALSE);
+    if (pString != NULL) {
+        env->ReleaseStringUTFChars(path, pString);
+    }
+
     if (err != M4NO_ERROR || mContext == M4OSA_NULL) {
         jniThrowException(env, "java/lang/RuntimeException", "ThumbnailOpen failed");
-        if (pString != NULL) {
-            env->ReleaseStringUTFChars(path, pString);
-        }
         return err;
     }
 
@@ -2342,9 +2341,6 @@ static int videoEditor_getPixelsList(
     env->ReleaseIntArrayElements(indexArray, indices, 0);
 
     ThumbnailClose(mContext);
-    if (pString != NULL) {
-        env->ReleaseStringUTFChars(path, pString);
-    }
 
     if (err != M4NO_ERROR && !env->ExceptionCheck()) {
         jniThrowException(env, "java/lang/RuntimeException",\
