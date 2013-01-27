@@ -229,6 +229,7 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     private final BugreportObserver mBugreportObserver;
     private final BrightnessObserver mBrightnessObserver;
     private NfcAdapter mNfcAdapter;
+    private boolean mUseDefaultTheme = true;
 
     private QuickSettingsTileView mUserTile;
     private RefreshCallback mUserCallback;
@@ -1545,5 +1546,9 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
 
     public void setNfcAdapter(NfcAdapter adapter) {
         mNfcAdapter = adapter;
+    }
+
+    public void setDefaultTheme(boolean theme) {
+         mUseDefaultTheme = theme;
     }
 }
