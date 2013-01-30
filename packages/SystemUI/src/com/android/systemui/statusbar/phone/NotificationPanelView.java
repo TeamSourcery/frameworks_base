@@ -89,7 +89,7 @@ public class NotificationPanelView extends PanelView {
                 d.setAlpha((int) (wallpaperAlpha * 255));
                 this.setBackground(d);
 	    } else {
-       this.setBackground(this.getResources().getDrawable(R.drawable.notification_panel_bg));
+       this.setBackground(this.getResources().getDrawable(R.drawable.sourcery_animation));
        }
        } else {
             if (landscape.exists()) {
@@ -97,7 +97,7 @@ public class NotificationPanelView extends PanelView {
                 d.setAlpha((int) (wallpaperAlpha * 255));
                 this.setBackground(d);
        } else {
-       this.setBackground(this.getResources().getDrawable(R.drawable.notification_panel_bg));
+       this.setBackground(this.getResources().getDrawable(R.drawable.sourcery_animation));
        }
         }
     }
