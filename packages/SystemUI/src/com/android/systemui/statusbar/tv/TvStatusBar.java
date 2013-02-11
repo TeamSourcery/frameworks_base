@@ -94,12 +94,16 @@ public class TvStatusBar extends BaseStatusBar {
     public void toggleNotificationShade() {
     }
 
-     @Override
+    @Override
     protected void onBarTouchEvent(MotionEvent ev) {
     }
 
     @Override
-    protected void showBar(){
+    protected void showBar(boolean showSearch){
+    }
+
+    @Override
+    protected void setSearchLightOn(boolean on){
     }
 
     @Override

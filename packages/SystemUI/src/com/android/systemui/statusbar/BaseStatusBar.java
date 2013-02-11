@@ -1004,7 +1004,9 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     // To be used to tell StatusBar to inflate NavBar/SystemBar
-    protected abstract void showBar();
+    // boolean to launch NavRing at same time
+    protected abstract void showBar(boolean showSearch);
+    protected abstract void setSearchLightOn(boolean on);
     // used to tell statusbar that NavBar/Systembar has been touched - in order to reset AutoHide Timer
     protected abstract void onBarTouchEvent(MotionEvent ev);
 

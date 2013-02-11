@@ -799,9 +799,13 @@ public class TabletStatusBar extends BaseStatusBar implements
     @Override
     protected void onBarTouchEvent(MotionEvent ev) {
     }
+ 
+    @Override
+    protected void showBar(boolean showSearch){
+    }
 
     @Override
-    protected void showBar(){
+    protected void setSearchLightOn(boolean on){
     }
 
     public int getStatusBarHeight() {

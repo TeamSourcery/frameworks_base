@@ -576,6 +576,8 @@
     <string name="quick_settings_screen">Screen off</string>
     <string name="quick_settings_threeg_on_label">3g On</string>
     <string name="quick_settings_threeg_off_label">3g Off</string>
+    <string name="quick_settings_navbar_hide_on_label">NavBar Hide On</string>
+    <string name="quick_settings_navbar_hide_off_label">NavBAr Hide Off</string>
 
     <!--  RamBar -->
     <string name="memory">RAM</string>

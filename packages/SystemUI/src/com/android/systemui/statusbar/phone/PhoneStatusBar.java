@@ -61,6 +61,7 @@ import android.util.Pair;
 import android.util.Slog;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.IWindowManager;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -160,6 +161,8 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     PhoneStatusBarPolicy mIconPolicy;
 
+    private IWindowManager mWm;
+
     // These are no longer handled by the policy, because we need custom strategies for them
     BluetoothController mBluetoothController;
     BatteryController mBatteryController;
@@ -254,6 +257,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     private GestureCatcherView mGesturePanel;
     private boolean mAutoHideVisible = false;
     private int mAutoHideTimeOut = 3000;
+    private boolean mLockscreenOn;
 
     // the tracker view
     int mTrackingPosition; // the position of the top of the tracking view.
@@ -382,6 +386,8 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         
         Resources res = context.getResources();
+
+        mWm = IWindowManager.Stub.asInterface(ServiceManager.getService("window"));
 
         updateDisplaySize(); // populates mDisplayMetrics
         loadDimens();
@@ -677,12 +683,9 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         // listen for USER_SETUP_COMPLETE setting (per-user)
         resetUserSetupObserver();
-        
-        // update everything here
- 	updateSettings();
-        
+    
         return mStatusBarView;
-    }
+     }
 
     @Override
     protected View getStatusBarView() {
@@ -760,6 +763,10 @@ public class PhoneStatusBar extends BaseStatusBar {
     public void showSearchPanel() {
         super.showSearchPanel();
         mHandler.removeCallbacks(mShowSearchPanel);
+        // need to keep NavBar from trying to hide
+        if (mNavBarAutoHide) {
+            mHandler.removeCallbacks(delayHide);
+        }
 
         // we want to freeze the sysui state wherever it is
         mSearchPanelView.setSystemUiVisibility(mSystemUiVisibility);
@@ -777,6 +784,11 @@ public class PhoneStatusBar extends BaseStatusBar {
             (android.view.WindowManager.LayoutParams) mNavigationBarView.getLayoutParams();
         lp.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         mWindowManager.updateViewLayout(mNavigationBarView, lp);
+       // reset time for autohide NavBar if necessary
+        if (mNavBarAutoHide && mAutoHideTimeOut > 0) {
+            mHandler.removeCallbacks(delayHide); // reset
+            mHandler.postDelayed(delayHide,mAutoHideTimeOut);
+        }
     }
 
     protected int getStatusBarGravity() {
@@ -831,26 +843,25 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
     }
 
-    private void setupAutoHide(){
-        if (mNavigationBarView !=null){ 
-            mNavigationBarView.setOnTouchListener(new View.OnTouchListener () {
-                @Override
-                public boolean onTouch(View v,MotionEvent event) {
-                    Log.d("PopUpNav","Got NavBar Touch");
-                    if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-                        // Action is outside the NavBar, immediately hide the NavBar
-                        mHandler.removeCallbacks(delayHide);
-                        hideNavBar();
-                    } else {
-                        // Action must be inside the View - reset the timer;
-                        if (mAutoHideTimeOut > 0) {
-                            mHandler.removeCallbacks(delayHide); // reset
-                            mHandler.postDelayed(delayHide,mAutoHideTimeOut);
-                        }
-                    }
-                    return false;
+   View.OnTouchListener mNavBarListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v,MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                // Action is outside the NavBar, immediately hide the NavBar
+                mHandler.removeCallbacks(delayHide);
+                if (mGesturePanel != null) {
+                    // possible that we disabled AutoHide, but still have this listener 
+                    // hanging around.
+                    hideNavBar();
                 }
-            });
+            }
+            return false;
+        }
+    };
+
+    private void setupAutoHide(){
+        if (mNavigationBarView !=null){
+            mNavigationBarView.setOnTouchListener(mNavBarListener);
             if (mGesturePanel == null) {
                 mGesturePanel = new GestureCatcherView(mContext,null,this);
             }
@@ -865,31 +876,26 @@ public class PhoneStatusBar extends BaseStatusBar {
     };
 
     private void showNavBar(){
-        Log.d("PopUpNav","showNavBar()");
         if (mWindowManager != null && !mAutoHideVisible){
             mWindowManager.removeView(mGesturePanel);
             mAutoHideVisible = true;
-            Log.d("PopUpNav","adding NavBar");
             mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
             repositionNavigationBar();
             if (mAutoHideTimeOut > 0) {
                 mHandler.postDelayed(delayHide, mAutoHideTimeOut);
             }
-                // Start the timer to hide the NavBar;
+                // Start the timer to hide the NavBar; <-- I LOLZ. Mike even comments in java. ;-)
         }
     }
 
     private void hideNavBar() {
-        if (mNavigationBarView != null) {
-            Log.d("PopUpNav","Removing NavBar");
+        if (mNavigationBarView != null && !mLockscreenOn) {
             try {
                 mWindowManager.removeView(mNavigationBarView);
-                mWindowManager.removeView(mGesturePanel);
             } catch (IllegalArgumentException e) {
                 // we are probably in a state where NavBar has been created, but not actually added to the window
                 Log.d("PopUpNav","Failed Removing NavBar");
             }
-            Log.d("PopUpNav","Removing GesturePanel");
             try {
                 // we remove the GesturePanel just to make sure we don't have a case where we are
                 // trying to add two gesture panels
@@ -898,7 +904,6 @@ public class PhoneStatusBar extends BaseStatusBar {
                 // we are probably in a state where NavBar has been created, but not actually added to the window
                 Log.d("PopUpNav","Failed Removing Gesture");
             }
-            Log.d("PopUpNav","adding GesturePanel");
             mWindowManager.addView(mGesturePanel, mGesturePanel.getGesturePanelLayoutParams());
             mAutoHideVisible = false;
         }
@@ -912,26 +917,42 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
         mGesturePanel = null;
         mHandler.removeCallbacks(delayHide);
-        mAutoHideVisible = false;
+        addNavigationBar();
+        // let's force the NavBar back On
+        Settings.System.putBoolean(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_SHOW_NOW, true);
     }
 
     @Override
-    protected void showBar(){
-        Log.d("PopUpNav","showBar()");
+    public void setSearchLightOn(boolean on) {
+        try {
+            mLockscreenOn = mWm.isKeyguardLocked();
+        } catch (RemoteException e) {
+
+        }
+        if (on)
+            showNavBar();
+        else
+            hideNavBar();
+    }
+
+    @Override
+    protected void showBar(boolean showSearch){
         showNavBar();
+        if (showSearch) {
+            mHandler.removeCallbacks(mShowSearchPanel);
+            mHandler.postDelayed(mShowSearchPanel, mShowSearchHoldoff);
+        }
     }
 
     @Override
     protected void onBarTouchEvent(MotionEvent ev){
         // NavBar/SystemBar reports a touch event - reset the hide timer if applicable
-        Log.d("PopUpNav","onBarTouchEvent()");
         if (mNavBarAutoHide && mAutoHideTimeOut > 0) {
             mHandler.removeCallbacks(delayHide); // reset
             mHandler.postDelayed(delayHide,mAutoHideTimeOut);
         }
     }
-
-
     private void prepareNavigationBarView() {
         mNavigationBarView.reorient();
         mNavigationBarView.getSearchLight().setOnTouchListener(mHomeSearchActionListener);
@@ -945,9 +966,10 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         prepareNavigationBarView();
 
-         if (!mNavBarAutoHide) {
+          if (!mNavBarAutoHide) {
             // we don't add the NavBar if AutoHide is on.
             mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
+           
         }
     }
 
@@ -961,12 +983,11 @@ public class PhoneStatusBar extends BaseStatusBar {
             return;
         }
         prepareNavigationBarView();
-        if (!mNavBarAutoHide || (mNavBarAutoHide && mAutoHideVisible)) {
-            // we only want to update the NavBar if we know it's attached to the window.
-            mWindowManager.updateViewLayout(mNavigationBarView, getNavigationBarLayoutParams());
-        }
+         if (!mNavBarAutoHide || (mNavBarAutoHide && mAutoHideVisible)) {
+             // we only want to update the NavBar if we know it's attached to the window.
+             mWindowManager.updateViewLayout(mNavigationBarView, getNavigationBarLayoutParams());
+         }
     }
-
 
     private void notifyNavigationBarScreenOn(boolean screenOn) {
         if (mNavigationBarView == null) return;
@@ -1462,6 +1483,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                 haltTicker();
             }
         }
+     
     }
 
     @Override
@@ -2491,10 +2513,10 @@ public class PhoneStatusBar extends BaseStatusBar {
                             && (mCurrentUIMode == 0));
                  }
                 if (mGesturePanel !=null) {
-                    mGesturePanel.setSwapXY((mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-                            && (mCurrentUIMode == 0));
-                    hideNavBar(); // Reset the Gesture window to the new orientation.
-                }
+ 	            mGesturePanel.setSwapXY((mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+ 	                    && (mCurrentUIMode == 0));
+ 	            hideNavBar(); // Reset the Gesture window to the new orientation.
+ 	        }
             }
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 // work around problem where mDisplay.getRotation() is not stable while screen is off (bug 7086018)
@@ -2644,9 +2666,12 @@ public class PhoneStatusBar extends BaseStatusBar {
     }
 
     void vibrate() {
-        android.os.Vibrator vib = (android.os.Vibrator)mContext.getSystemService(
-                Context.VIBRATOR_SERVICE);
-        vib.vibrate(50);
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.HAPTIC_FEEDBACK_ENABLED, 1, UserHandle.USER_CURRENT) != 0) {
+            android.os.Vibrator vib = (android.os.Vibrator)mContext.getSystemService(
+                    Context.VIBRATOR_SERVICE);
+            vib.vibrate(50);
+        }
     }
 
     Runnable mStartTracing = new Runnable() {
@@ -2729,7 +2754,9 @@ public class PhoneStatusBar extends BaseStatusBar {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.CURRENT_UI_MODE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NAV_HIDE_ENABLE), false, this);
+                     Settings.System.NAV_HIDE_ENABLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.NAV_HIDE_TIMEOUT), false, this);
             
          }
 

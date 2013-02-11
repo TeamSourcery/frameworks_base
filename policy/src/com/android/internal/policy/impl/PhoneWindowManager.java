@@ -1270,11 +1270,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         Settings.System.NAVIGATION_BAR_SHOW, showByDefault);
         boolean showNavBarNow = Settings.System.getBoolean(resolver,
                Settings.System.NAVIGATION_BAR_SHOW_NOW, showByDefault);
-         mNavBarAutoHide = Settings.System.getBoolean(resolver, Settings.System.NAV_HIDE_ENABLE, false);
-        if (mNavBarAutoHide && !showNavBarNow) {// if we are autohiding, then let's force the NavBar to 'Show' status
+        boolean NavHide = Settings.System.getBoolean(resolver, Settings.System.NAV_HIDE_ENABLE, false);
+        if (NavHide && !showNavBarNow) {// if we are autohiding, then let's force the NavBar to 'Show' status
             showNavBarNow = true;
             Settings.System.putBoolean(resolver,
-                    Settings.System.NAVIGATION_BAR_SHOW_NOW, showNavBarNow);
+                     Settings.System.NAVIGATION_BAR_SHOW_NOW, showNavBarNow);
         }
         int NavHeight = Settings.System.getInt(resolver,
                Settings.System.NAVIGATION_BAR_HEIGHT, 0);
@@ -1296,6 +1296,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (mUserUIMode != Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.USER_UI_MODE,mStockUIMode)) {
             resetScreenHelper();
+        }
+        if (NavHide != mNavBarAutoHide) {
+           mNavBarAutoHide = NavHide;
+           resetScreenHelper();
         }
     }
 
@@ -1642,7 +1646,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     public int getNonDecorDisplayWidth(int fullWidth, int fullHeight, int rotation) {
-        if (mHasNavigationBar) {
+         if (mHasNavigationBar && !mNavBarAutoHide) {
             // For a basic navigation bar, when we are in landscape mode we place
             // the navigation bar to the side.
             if (mNavigationBarCanMove && fullWidth > fullHeight) {
@@ -1657,7 +1661,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // For the system navigation bar, we always place it at the bottom.
             return fullHeight - mNavigationBarHeightForRotation[rotation];
         }
-        if (mHasNavigationBar) {
+        if (mHasNavigationBar && !mNavBarAutoHide) {
             // For a basic navigation bar, when we are in portrait mode we place
             // the navigation bar to the bottom.
             if (!mNavigationBarCanMove || fullWidth < fullHeight) {
@@ -2702,7 +2706,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         mStableRight = mStableFullscreenRight = mTmpNavigationFrame.left;
                     if (navVisible) {
                         mNavigationBar.showLw(true);
-                        mSystemRight = mDockRight = mTmpNavigationFrame.left - mDockLeft;
+                        if (!mNavBarAutoHide)
+ 	                    mSystemRight = mDockRight = mTmpNavigationFrame.left - mDockLeft;
                     } else {
                         // We currently want to hide the navigation UI.
                         mNavigationBar.hideLw(true);

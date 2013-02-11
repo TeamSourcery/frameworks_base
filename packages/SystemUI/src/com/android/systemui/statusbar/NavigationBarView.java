@@ -21,6 +21,7 @@ import java.io.File;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
+import android.app.KeyguardManager;
 import android.app.StatusBarManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -81,6 +82,9 @@ public class NavigationBarView extends LinearLayout {
     int mBarSize;
     boolean mVertical;
     boolean mScreenOn;
+
+    private boolean mNavBarAutoHide = false;
+    private boolean isRotating = false;
 
     boolean mHidden, mLowProfile, mShowMenu;
     int mDisabledFlags = 0;
@@ -543,6 +547,13 @@ public class NavigationBarView extends LinearLayout {
         setDisabledFlags(disabledFlags, false);
     }
 
+    private boolean isKeyguardEnabled() {
+        KeyguardManager km = (KeyguardManager)mContext.getSystemService(Context.KEYGUARD_SERVICE);
+        if(km == null) return false;
+
+        return km.isKeyguardLocked();
+    }
+
     public void setDisabledFlags(int disabledFlags, boolean force) {
         if (!force && mDisabledFlags == disabledFlags) return;
 
@@ -580,7 +591,14 @@ public class NavigationBarView extends LinearLayout {
 
             }
         }
-        getSearchLight().setVisibility((disableHome && !disableSearch) ? View.VISIBLE : View.GONE);
+        getSearchLight().setVisibility(isKeyguardEnabled() ? View.VISIBLE : View.GONE);
+        if (mNavBarAutoHide && !isRotating) {
+            if (isKeyguardEnabled())
+                mBar.setSearchLightOn(true);
+            else
+                mBar.setSearchLightOn(false);
+        }
+        isRotating = false;
         updateMenuArrowKeys();
     }
 
@@ -804,6 +822,7 @@ public class NavigationBarView extends LinearLayout {
 
         // force the low profile & disabled states into compliance
         setLowProfile(mLowProfile, false, true /* force */);
+        isRotating = true;
         setDisabledFlags(mDisabledFlags, true /* force */);
         setMenuVisibility(mShowMenu, true /* force */);
 
@@ -962,6 +981,8 @@ public class NavigationBarView extends LinearLayout {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_LEFTY_MODE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
+ 	            Settings.System.NAV_HIDE_ENABLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
  	            Settings.System.NAVIGATION_BAR_MENU_ARROW_KEYS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_BACKGROUND_STYLE), false, this);
@@ -1034,6 +1055,8 @@ public class NavigationBarView extends LinearLayout {
                 Settings.System.CURRENT_UI_MODE,0);
         mLeftyMode = Settings.System.getBoolean(resolver,
                 Settings.System.NAVIGATION_BAR_LEFTY_MODE, false);
+        mNavBarAutoHide = Settings.System.getBoolean(resolver,
+                Settings.System.NAV_HIDE_ENABLE, false);
         mNumberOfButtons = Settings.System.getInt(resolver,
                 Settings.System.NAVIGATION_BAR_BUTTONS_QTY, 0);
         if (mNumberOfButtons == 0) {
