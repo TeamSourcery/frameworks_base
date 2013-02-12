@@ -2715,6 +2715,16 @@ public final class Settings {
          */
         public static final String MVNO_ROAMING = "mvno_roaming";
 
+       /**
+        * @hide
+        */
+       public static final String SYSTEM_POWER_ENABLE_CRT_OFF = "system_power_enable_crt_off";
+ 
+       /**
+        * @hide
+        */
+       public static final String SYSTEM_POWER_ENABLE_CRT_ON = "system_power_enable_crt_on";
+
         /**
          * Whether to enable quiet hours.
          * @hide
@@ -2827,6 +2837,12 @@ public final class Settings {
          * @hide
          */
         public static final String POWER_DIALOG_SHOW_TORCH_TOGGLE = "power_dialog_show_torch_toggle";
+
+        /**
+         * Show the Reboot on lockscreen dialog in Power menu
+         * @hide
+         */
+        public static final String POWER_DIALOG_SHOW_REBOOT_HIDE = "power_dialog_show_reboot_hide";
 
        /**
         * Option to hide expanded desktop in power menu
