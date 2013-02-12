@@ -191,7 +191,6 @@ static jstring android_net_wifi_doStringCommand(JNIEnv* env, jobject, jstring jI
 }
 
 
-
 // ----------------------------------------------------------------------------
 
 /*
@@ -217,6 +216,7 @@ static JNINativeMethod gWifiMethods[] = {
             (void*) android_net_wifi_doIntCommand },
     { "doStringCommand", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;",
             (void*) android_net_wifi_doStringCommand },
+    
 };
 
 int register_android_net_wifi_WifiManager(JNIEnv* env)

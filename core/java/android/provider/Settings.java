@@ -3113,6 +3113,13 @@ public final class Settings {
         */
         public static final String QS_QUICK_PULLDOWN = "qs_quick_pulldown";
 
+       /**
+        * Quick Settings Quick Pulldown if no notifications are present
+        *
+        * @hide
+        */
+       public static final String QS_NO_NOTIFICATION_PULLDOWN = "qs_no_notification_pulldown";
+
          /**
          * text color for quick settings
          *
