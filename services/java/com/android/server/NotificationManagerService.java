@@ -1177,47 +1177,22 @@ public class NotificationManagerService extends INotificationManager.Stub
                     && !notificationIsAnnoying(pkg)
                     && (r.userId == UserHandle.USER_ALL ||
                         (r.userId == userId && r.userId == currentUser))
-                    && canInterrupt
                     && mSystemReady) {
 
                 final AudioManager audioManager = (AudioManager) mContext
+                .getSystemService(Context.AUDIO_SERVICE);
 
-                        .getSystemService(Context.AUDIO_SERVICE);
                 // sound
                 final boolean useDefaultSound =
                     (notification.defaults & Notification.DEFAULT_SOUND) != 0;
                 if (!(inQuietHours && mQuietHoursMute)
                         && (useDefaultSound || notification.sound != null)) {
-                Uri soundUri = null;
-                boolean hasValidSound = false;
+                Uri uri;
                     if (useDefaultSound) {
-                    soundUri = Settings.System.DEFAULT_NOTIFICATION_URI;
-
-                    // check to see if the default notification sound is silent
-                    ContentResolver resolver = mContext.getContentResolver();
-                    hasValidSound = Settings.System.getString(resolver,
-                           Settings.System.NOTIFICATION_SOUND) != null;
-                } else if (notification.sound != null) {
-                    soundUri = notification.sound;
-                    hasValidSound = (soundUri != null);
-                }
-
-                Uri soundUri = null;
-                boolean hasValidSound = false;
-
-                if (useDefaultSound) {
-                    soundUri = Settings.System.DEFAULT_NOTIFICATION_URI;
-
-                    // check to see if the default notification sound is silent
-                    ContentResolver resolver = mContext.getContentResolver();
-                    hasValidSound = Settings.System.getString(resolver,
-                           Settings.System.NOTIFICATION_SOUND) != null;
-                } else if (notification.sound != null) {
-                    soundUri = notification.sound;
-                    hasValidSound = (soundUri != null);
-                }
-
-                if (hasValidSound) {
+                        uri = Settings.System.DEFAULT_NOTIFICATION_URI;
+                    } else {
+                        uri = notification.sound;
+                    }
                     boolean looping = (notification.flags & Notification.FLAG_INSISTENT) != 0;
                     int audioStreamType;
                     if (notification.audioStreamType >= 0) {
@@ -1234,7 +1209,7 @@ public class NotificationManagerService extends INotificationManager.Stub
                         try {
                             final IRingtonePlayer player = mAudioService.getRingtonePlayer();
                             if (player != null) {
-                                player.playAsync(soundUri, user, looping, audioStreamType);
+                                player.playAsync(uri, user, looping, audioStreamType);
                             }
                         } catch (RemoteException e) {
                         } finally {
@@ -1251,7 +1226,6 @@ public class NotificationManagerService extends INotificationManager.Stub
                 // and no other vibration is specified, we fall back to vibration
                 final boolean convertSoundToVibration =
                            !hasCustomVibrate
-                        && hasValidSound
                         && (useDefaultSound || notification.sound != null)
                         && (audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE)
                         && (Settings.System.getBoolean(mContext.getContentResolver(), Settings.System.NOTIFICATION_CONVERT_SOUND_TO_VIBRATION, false));
@@ -1294,8 +1268,7 @@ public class NotificationManagerService extends INotificationManager.Stub
 
              //Slog.i(TAG, "notification.lights="
             //        + ((old.notification.lights.flags & Notification.FLAG_SHOW_LIGHTS) != 0));
-            if ((notification.flags & Notification.FLAG_SHOW_LIGHTS) != 0
-                    && canInterrupt) {
+            if ((notification.flags & Notification.FLAG_SHOW_LIGHTS) != 0) {
                 mLights.add(r);
                 updateLightsLocked();
             } else {

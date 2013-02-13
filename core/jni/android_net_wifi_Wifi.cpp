@@ -122,9 +122,9 @@ static jboolean android_net_wifi_startSupplicant(JNIEnv* env, jobject, jboolean 
     return (jboolean)(::wifi_start_supplicant(p2pSupported) == 0);
 }
 
-static jboolean android_net_wifi_killSupplicant(JNIEnv* env, jobject)
+static jboolean android_net_wifi_killSupplicant(JNIEnv* env, jobject, jboolean p2pSupported)
 {
-    return (jboolean)(::wifi_stop_supplicant() == 0);
+    return (jboolean)(::wifi_stop_supplicant(p2pSupported) == 0);
 }
 
 static jboolean android_net_wifi_connectToSupplicant(JNIEnv* env, jobject, jstring jIface)

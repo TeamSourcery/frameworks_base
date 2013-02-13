@@ -1760,98 +1760,7 @@ public class QuickSettings {
         return tiles;
     }
 
-    private void addSystemTiles(ViewGroup parent, LayoutInflater inflater) {
-        // Wi-fi
-        final QuickSettingsTileView wifiTile = (QuickSettingsTileView)
-                inflater.inflate(R.layout.quick_settings_tile, parent, false);
-        wifiTile.setContent(R.layout.quick_settings_tile_wifi, inflater);
-        wifiTile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSettingsActivity(android.provider.Settings.ACTION_WIFI_SETTINGS);
-            }
-        });
-        if (LONG_PRESS_TOGGLES) {
-            wifiTile.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    final boolean enable =
-                            (mWifiManager.getWifiState() != WifiManager.WIFI_STATE_ENABLED);
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... args) {
-                            // Disable tethering if enabling Wifi
-                            final int wifiApState = mWifiManager.getWifiApState();
-                            if (enable && ((wifiApState == WifiManager.WIFI_AP_STATE_ENABLING) ||
-                                           (wifiApState == WifiManager.WIFI_AP_STATE_ENABLED))) {
-                                mWifiManager.setWifiApEnabled(null, false);
-                            }
-
-                            mWifiManager.setWifiEnabled(enable);
-                            return null;
-                        }
-                    }.execute();
-                    wifiTile.setPressed(false);
-                    return true;
-                }} );
-        }
-        mModel.addWifiTile(wifiTile, new QuickSettingsModel.RefreshCallback() {
-            @Override
-            public void refreshView(QuickSettingsTileView view, State state) {
-                WifiState wifiState = (WifiState) state;
-                TextView tv = (TextView) view.findViewById(R.id.wifi_textview);
-                tv.setCompoundDrawablesWithIntrinsicBounds(0, wifiState.iconId, 0, 0);
-                tv.setText(wifiState.label);
-                view.setContentDescription(mContext.getString(
-                        R.string.accessibility_quick_settings_wifi,
-                        wifiState.signalContentDescription,
-                        (wifiState.connected) ? wifiState.label : ""));
-            }
-        });
-        parent.addView(wifiTile);
-
-        if (mModel.deviceHasMobileData()) {
-            // RSSI
-            QuickSettingsTileView rssiTile = (QuickSettingsTileView)
-                    inflater.inflate(R.layout.quick_settings_tile, parent, false);
-            rssiTile.setContent(R.layout.quick_settings_tile_rssi, inflater);
-            rssiTile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName(
-                            "com.android.settings",
-                            "com.android.settings.Settings$DataUsageSummaryActivity"));
-                    startSettingsActivity(intent);
-                }
-            });
-            mModel.addRSSITile(rssiTile, new QuickSettingsModel.RefreshCallback() {
-                @Override
-                public void refreshView(QuickSettingsTileView view, State state) {
-                    RSSIState rssiState = (RSSIState) state;
-                    ImageView iv = (ImageView) view.findViewById(R.id.rssi_image);
-                    ImageView iov = (ImageView) view.findViewById(R.id.rssi_overlay_image);
-                    TextView tv = (TextView) view.findViewById(R.id.rssi_textview);
-                    iv.setImageResource(rssiState.signalIconId);
-
-                    if (rssiState.dataTypeIconId > 0) {
-                        iov.setImageResource(rssiState.dataTypeIconId);
-                    } else {
-                        iov.setImageDrawable(null);
-                    }
-                    tv.setText(state.label);
-                    view.setContentDescription(mContext.getResources().getString(
-                            R.string.accessibility_quick_settings_mobile,
-                            rssiState.signalContentDescription, rssiState.dataContentDescription,
-                            state.label));
-                }
-            });
-            parent.addView(rssiTile);
-        }
-
-      
-
-    private ArrayList<String> getDefaultTiles() {
+     private ArrayList<String> getDefaultTiles() {
         ArrayList<String> tiles = new ArrayList<String>();
         tiles.add(USER_TOGGLE);
         tiles.add(BRIGHTNESS_TOGGLE);
@@ -1867,59 +1776,6 @@ public class QuickSettings {
         tiles.add(AIRPLANE_TOGGLE);
         if (mModel.deviceSupportsBluetooth()) {
             tiles.add(BLUETOOTH_TOGGLE);
-
-            final QuickSettingsTileView bluetoothTile = (QuickSettingsTileView)
-                    inflater.inflate(R.layout.quick_settings_tile, parent, false);
-            bluetoothTile.setContent(R.layout.quick_settings_tile_bluetooth, inflater);
-            bluetoothTile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startSettingsActivity(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
-                }
-            });
-            if (LONG_PRESS_TOGGLES) {
-                bluetoothTile.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        if (mBluetoothAdapter.isEnabled()) {
-                            mBluetoothAdapter.disable();
-                        } else {
-                            mBluetoothAdapter.enable();
-                        }
-                        bluetoothTile.setPressed(false);
-                        return true;
-                    }});
-            }
-            mModel.addBluetoothTile(bluetoothTile, new QuickSettingsModel.RefreshCallback() {
-                @Override
-                public void refreshView(QuickSettingsTileView view, State state) {
-                    BluetoothState bluetoothState = (BluetoothState) state;
-                    TextView tv = (TextView) view.findViewById(R.id.bluetooth_textview);
-                    tv.setCompoundDrawablesWithIntrinsicBounds(0, state.iconId, 0, 0);
-
-                    Resources r = mContext.getResources();
-                    String label = state.label;
-                    /*
-                    //TODO: Show connected bluetooth device label
-                    Set<BluetoothDevice> btDevices =
-                            mBluetoothController.getBondedBluetoothDevices();
-                    if (btDevices.size() == 1) {
-                        // Show the name of the bluetooth device you are connected to
-                        label = btDevices.iterator().next().getName();
-                    } else if (btDevices.size() > 1) {
-                        // Show a generic label about the number of bluetooth devices
-                        label = r.getString(R.string.quick_settings_bluetooth_multiple_devices_label,
-                                btDevices.size());
-                    }
-                    */
-                    view.setContentDescription(mContext.getString(
-                            R.string.accessibility_quick_settings_bluetooth,
-                            bluetoothState.stateContentDescription));
-                    tv.setText(label);
-                }
-            });
-            parent.addView(bluetoothTile);
-
         }
         return tiles;
     }
@@ -1937,6 +1793,7 @@ public class QuickSettings {
             }
         }
     }
+
 
     private void addTemporaryTiles(final ViewGroup parent, final LayoutInflater inflater) {
         // Alarm tile
