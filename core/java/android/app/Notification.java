@@ -322,7 +322,7 @@ public class Notification implements Parcelable
     /**
      * Bit to be bitwise-ored into the {@link #flags} field that should be
      * set if the notification should be canceled when it is clicked by the
-     * user.  On tablets, the
+     * user.
 
      */
     public static final int FLAG_AUTO_CANCEL        = 0x00000010;
@@ -388,8 +388,8 @@ public class Notification implements Parcelable
      * Priority is an indication of how much of the user's valuable attention should be consumed by
      * this notification. Low-priority notifications may be hidden from the user in certain
      * situations, while the user might be interrupted for a higher-priority notification. The
-     * system will make a determination about how to interpret notification priority as described in 
-     * MUMBLE MUMBLE.
+     * system will make a determination about how to interpret this priority when presenting
+     * the notification.
      */
     public int priority;
     
@@ -855,7 +855,9 @@ public class Notification implements Parcelable
         }
         // TODO(dsandler): defaults take precedence over local values, so reorder the branches below
         sb.append(" vibrate=");
-        if (this.vibrate != null) {
+        if ((this.defaults & DEFAULT_VIBRATE) != 0) {
+            sb.append("default");
+        } else if (this.vibrate != null) {
             int N = this.vibrate.length-1;
             sb.append("[");
             for (int i=0; i<N; i++) {
@@ -866,16 +868,14 @@ public class Notification implements Parcelable
                 sb.append(this.vibrate[N]);
             }
             sb.append("]");
-        } else if ((this.defaults & DEFAULT_VIBRATE) != 0) {
-            sb.append("default");
         } else {
             sb.append("null");
         }
         sb.append(" sound=");
-        if (this.sound != null) {
-            sb.append(this.sound.toString());
-        } else if ((this.defaults & DEFAULT_SOUND) != 0) {
+        if ((this.defaults & DEFAULT_SOUND) != 0) {
             sb.append("default");
+        } else if (this.sound != null) {
+            sb.append(this.sound.toString());
         } else {
             sb.append("null");
         }

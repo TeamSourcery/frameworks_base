@@ -34,6 +34,7 @@ import android.util.Slog;
 
 public class StorageNotification extends StorageEventListener {
     private static final String TAG = "StorageNotification";
+    private static final boolean DEBUG = false;
 
     private static final boolean POP_UMS_ACTIVITY_ON_CONNECT = true;
 
@@ -71,9 +72,9 @@ public class StorageNotification extends StorageEventListener {
 
         mStorageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
         final boolean connected = mStorageManager.isUsbMassStorageConnected();
-        Slog.d(TAG, String.format( "Startup with UMS connection %s (media state %s)", mUmsAvailable,
-            Environment.getExternalStorageState()));
-
+        if (DEBUG) Slog.d(TAG, String.format( "Startup with UMS connection %s (media state %s)",
+                mUmsAvailable, Environment.getExternalStorageState()));
+        
         HandlerThread thr = new HandlerThread("SystemUI StorageNotification");
         thr.start();
         mAsyncEventHandler = new Handler(thr.getLooper());
@@ -102,7 +103,8 @@ public class StorageNotification extends StorageEventListener {
          */
         String st = Environment.getExternalStorageState();
 
-        Slog.i(TAG, String.format("UMS connection changed to %s (media state %s)", connected, st));
+        if (DEBUG) Slog.i(TAG, String.format("UMS connection changed to %s (media state %s)",
+                connected, st));
 
         if (connected && (st.equals(
             Environment.MEDIA_REMOVED) || st.equals(Environment.MEDIA_CHECKING))) {
@@ -128,7 +130,8 @@ public class StorageNotification extends StorageEventListener {
     }
 
     private void onStorageStateChangedAsync(String path, String oldState, String newState) {
-        Slog.i(TAG, String.format("Media {%s} state changed from {%s} -> {%s}", path, oldState, newState));
+        if (DEBUG) Slog.i(TAG, String.format(
+                "Media {%s} state changed from {%s} -> {%s}", path, oldState, newState));
         if (newState.equals(Environment.MEDIA_SHARED)) {
            /*
             * Storage is now shared. Modify the UMS notification
