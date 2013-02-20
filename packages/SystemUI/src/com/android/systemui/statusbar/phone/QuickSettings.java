@@ -329,6 +329,7 @@ public class QuickSettings {
         filter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         filter.addAction(Intent.ACTION_USER_SWITCHED);
+        filter.addAction(WifiManager.WIFI_AP_STATE_CHANGED_ACTION);	
         mContext.registerReceiver(mReceiver, filter);
 
         IntentFilter profileFilter = new IntentFilter();
@@ -339,6 +340,7 @@ public class QuickSettings {
 
         new SettingsObserver(new Handler()).observe();
         new SoundObserver(new Handler()).observe();
+        new NetworkModeObserver(new Handler()).observe();
     }
 
     public void setBar(PanelBar bar) {
@@ -367,6 +369,7 @@ public class QuickSettings {
         reloadFavContactInfo();
         reloadFavContactTwoInfo();
         reloadFavContactThreeInfo();
+        
 
         ArrayList<String> userTiles = getCustomUserTiles();
         if (userTiles.contains(SIGNAL_TOGGLE) || userTiles.contains(WIFI_TOGGLE))
@@ -1226,7 +1229,9 @@ public class QuickSettings {
                 quick.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        startSettingsActivity(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                        Intent intent = new Intent();
+                        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$TetherSettingsActivity"));
+                        startSettingsActivity(intent);
                         return true;
                     }
                 });
@@ -1258,7 +1263,9 @@ public class QuickSettings {
                 quick.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        startSettingsActivity(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                        Intent intent = new Intent();
+ 	                intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$TetherSettingsActivity"));
+                        startSettingsActivity(intent);
                         return true;
                     }
                 });
@@ -2079,6 +2086,8 @@ public class QuickSettings {
                 reloadFavContactInfo();
                 reloadFavContactTwoInfo();
                 reloadFavContactThreeInfo();
+            } else if (WifiManager.WIFI_AP_STATE_CHANGED_ACTION.equals(action)) {
+                mHandler.postDelayed(delayedRefresh, 750);
             }
         }
     };
@@ -2207,6 +2216,8 @@ public class QuickSettings {
         setupQuickSettings();
         updateWifiDisplayStatus();
         updateResources();
+        mModel.refreshNavBarHideTile();
+        mModel.refreshTorchTile();
     }
 
     class SettingsObserver extends ContentObserver {
@@ -2265,8 +2276,7 @@ public class QuickSettings {
             mModel.refreshVibrateTile();
             mModel.refreshSilentTile();
             mModel.refreshSoundStateTile();
-            mModel.refreshNavBarHideTile();
-            mModel.refreshTorchTile();
+            
         }
 
         @Override
@@ -2274,8 +2284,26 @@ public class QuickSettings {
             mModel.refreshVibrateTile();
             mModel.refreshSilentTile();
             mModel.refreshSoundStateTile();
-            mModel.refreshNavBarHideTile();
- 	    mModel.refreshTorchTile();
+           }
+        }
+         class NetworkModeObserver extends ContentObserver {
+        NetworkModeObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.Global
+                    .getUriFor(Settings.Global.PREFERRED_NETWORK_MODE),
+                    false, this);
+            mModel.refresh2gTile();
+            mModel.refreshLTETile();
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            mModel.refresh2gTile();
+            mModel.refreshLTETile();
         }
     }
 }

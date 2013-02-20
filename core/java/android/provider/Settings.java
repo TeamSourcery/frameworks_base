@@ -2517,29 +2517,27 @@ public final class Settings {
         public static final String STATUSBAR_BACKGROUND_COLOR = "statusbar_background_color";
 
         /**
-         * Sets navbar background color/alpha
+         * Navigation bar alpha while in homescreen and lockscreen.
          * @hide
          */
-       public static final String NAVIGATION_BAR_BACKGROUND_COLOR = "navigation_bar_background_color";
+       public static final String NAVIGATION_BAR_ALPHA = "navigation_bar_alpha";
 
         /**
-         * Statusbar background style
-         * 0 - Color/alpha only
-         * 1 - Default drawable with color/alpha
-         * 2 - Default drawable only
+         * Navigation bar color.
          * @hide
          */
-        public static final String STATUSBAR_BACKGROUND_STYLE = "statusbar_background_style";
+        public static final String NAVIGATION_BAR_COLOR = "navigation_bar_color";
  
-       /**
-        * Sets the navbar background style
-        * 1 - Color/alpha
-        * 2 - Default drawable plus color/alpha
-        * 3 - Default drawable
-        * @hide
-        */
-        public static final String NAVIGATION_BAR_BACKGROUND_STYLE = "navigation_bar_background_style";
+        /**
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ALPHA_CONFIG = "navigation_bar_alpha_config";
  
+         /**
+          * @hide
+          */
+        public static final String STATUS_BAR_ALPHA_CONFIG = "status_bar_alpha_config";
+      
         /**
          * use Alt Activity Resolver Grid (GB style)
          * boolean
