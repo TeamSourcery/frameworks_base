@@ -315,6 +315,16 @@ public abstract class SensorManager {
     /** rate (default) suitable for screen orientation changes */
     public static final int SENSOR_DELAY_NORMAL = 3;
 
+    /**
+     * set no rate requirement. Delay between subsequent sensor data
+     * could be arbitrary long. Intel add this constant to enable
+     * interrupt mode sensor data reporting for power efficiency purpose.
+     * The accelerometer supports this constant to report sensor data
+     * only when there are orientation changes.
+     * @hide
+     */
+    public static final int SENSOR_DELAY_NOPOLL = 4;
+
 
     /**
      * The values returned by this sensor cannot be trusted, calibration is
@@ -638,6 +648,9 @@ public abstract class SensorManager {
             case SENSOR_DELAY_NORMAL:
                 delay = 200000;
                 break;
+            case SENSOR_DELAY_NOPOLL:
+                delay = 0x7fffffff;
+ 	        break;
             default:
                 delay = rate;
                 break;
