@@ -1184,15 +1184,25 @@ public class NotificationManagerService extends INotificationManager.Stub
 
                 // sound
                 final boolean useDefaultSound =
-                    (notification.defaults & Notification.DEFAULT_SOUND) != 0;
+                        (notification.defaults & Notification.DEFAULT_SOUND) != 0;
+
+                Uri soundUri = null;
+                boolean hasValidSound = false;
+
                 if (!(inQuietHours && mQuietHoursMute)
-                        && (useDefaultSound || notification.sound != null)) {
-                Uri uri;
-                    if (useDefaultSound) {
-                        uri = Settings.System.DEFAULT_NOTIFICATION_URI;
-                    } else {
-                        uri = notification.sound;
-                    }
+                        && (useDefaultSound)) {
+                    soundUri = Settings.System.DEFAULT_NOTIFICATION_URI;
+
+                    // check to see if the default notification sound is silent
+                    ContentResolver resolver = mContext.getContentResolver();
+                    hasValidSound = Settings.System.getString(resolver,
+                           Settings.System.NOTIFICATION_SOUND) != null;
+                } else if (!(inQuietHours && mQuietHoursMute) && notification.sound != null) {
+                    soundUri = notification.sound;
+                    hasValidSound = (soundUri != null);
+                }
+
+                if (hasValidSound) {
                     boolean looping = (notification.flags & Notification.FLAG_INSISTENT) != 0;
                     int audioStreamType;
                     if (notification.audioStreamType >= 0) {
