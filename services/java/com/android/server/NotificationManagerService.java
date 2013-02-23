@@ -1219,7 +1219,7 @@ public class NotificationManagerService extends INotificationManager.Stub
                         try {
                             final IRingtonePlayer player = mAudioService.getRingtonePlayer();
                             if (player != null) {
-                                player.playAsync(uri, user, looping, audioStreamType);
+                                 player.playAsync(soundUri, user, looping, audioStreamType);
                             }
                         } catch (RemoteException e) {
                         } finally {
