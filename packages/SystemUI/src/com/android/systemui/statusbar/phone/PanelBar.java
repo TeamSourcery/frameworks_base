@@ -19,7 +19,6 @@ package com.android.systemui.statusbar.phone;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Slog;
 import android.view.MotionEvent;
@@ -89,18 +88,7 @@ public class PanelBar extends FrameLayout {
         }
     }
 
-    /*
-     * ]0 < alpha < 1[
-     */
-   public void setBackgroundAlpha(float alpha) {
-       Drawable bg = getBackground();
-       if (bg == null)
-           return;
- 
-        int a = (int) (alpha * 255);
-        bg.setAlpha(a);
-   }
-
+  
     public float getBarHeight() {
         return getMeasuredHeight();
     }

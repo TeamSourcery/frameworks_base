@@ -36,6 +36,7 @@ import android.content.res.Configuration;
 import android.content.res.CustomTheme;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.ColorFilterMaker;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -1803,6 +1804,7 @@ public class TabletStatusBar extends BaseStatusBar implements
          @Override
         public void onChange(boolean selfChange) {
             updateSettings();
+            
         }
     }
 
@@ -1845,4 +1847,6 @@ public class TabletStatusBar extends BaseStatusBar implements
 
         UpdateWeights(mLandscape);
     }
+
+    
 }

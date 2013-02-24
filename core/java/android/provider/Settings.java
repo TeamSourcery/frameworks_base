@@ -2517,28 +2517,84 @@ public final class Settings {
         public static final String STATUSBAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
 
         /**
-         * Statusbar background color/alpha chooser
+        * Is current activity launcher or not
          * @hide
          */
         public static final String STATUSBAR_BACKGROUND_COLOR = "statusbar_background_color";
 
         /**
-         * Navigation bar alpha while in homescreen and lockscreen.
-         * @hide
-         */
-       public static final String NAVIGATION_BAR_ALPHA = "navigation_bar_alpha";
-
-        /**
-         * Navigation bar color.
+         * Navigation bar color
          * @hide
          */
         public static final String NAVIGATION_BAR_COLOR = "navigation_bar_color";
- 
+
+      
         /**
+         * Navigation bar alpha
          * @hide
          */
-        public static final String NAVIGATION_BAR_ALPHA_CONFIG = "navigation_bar_alpha_config";
+        public static final String NAVIGATION_BAR_ALPHA = "navigation_bar_alpha";
+
+        /**
+        * Sets the portrait background of notification drawer
+        * @hide
+        */
+        public static final String NOTIFICATION_BACKGROUND = "notification_background";
+
+        /**
+        * Sets the landscape background of notification drawer
+        * @hide
+        */
+        public static final String NOTIFICATION_BACKGROUND_LANDSCAPE = "notification_background_landscape";
+
+        /**
+        * Sets the alpha (transparency) of notification wallpaper
+        * @hide
+        */
+        public static final String NOTIF_WALLPAPER_ALPHA = "notif_wallpaper_alpha";
+
+        /**
+        * Sets the alpha (transparency) of notifications
+        * @hide
+        */
+        public static final String NOTIF_ALPHA = "notif_alpha";
+
+        
+        /**
+         * Sets transparency mode of statusbar
+         * 0 = only home, 1 = keyguard and home (default), 2 = always
+         * @hide
+         */
+        public static final String STATUS_BAR_ALPHA_MODE = "status_bar_alpha_mode";
+
+       
+        /**
+         * Is current activity launcher or not
+         * @hide
+         */
+       public static final String IS_HOME = "is_home";
+
+
+        /**
+         * Sets transparency of statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_ALPHA = "status_bar_alpha";
+
+         /**
+          * Sets transparency mode of status and navigation bar
+          * 0 = only home, 1 = keyguard and home (default), 2 = always
+          * @hide
+          */
+       public static final String STATUS_NAV_BAR_ALPHA_MODE = "status_nav_bar_alpha_mode";
  
+        /**
+         * Sets color of statusbar
+         * @hide
+         */
+       public static final String STATUS_BAR_COLOR = "status_bar_color";
+
+      
          /**
           * @hide
           */
@@ -2559,12 +2615,7 @@ public final class Settings {
          */
         public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
 
-        /**
-         * Sets the alpha of notification wallpaper
-         * @hide
-         */
-        public static final String NOTIF_WALLPAPER_ALPHA = "notif_wallpaper_alpha";
-
+        
         /**
          * Sets the alpha (transparency) of application wallpaper
          * @hide
@@ -2905,6 +2956,12 @@ public final class Settings {
          * @hide
          */
         public static final String PIE_MENU = "pie_menu";
+
+        /**
+         * Pie will not rotate. Should default to 0 (no, rotate)
+         * @hide
+         */
+        public static final String PIE_STICK = "pie_stick";
 
         /**
          * Center Pie? Should default to 1 (yes, center)
