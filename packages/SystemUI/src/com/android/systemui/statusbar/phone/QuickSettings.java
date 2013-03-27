@@ -968,7 +968,7 @@ public class QuickSettings {
                 quick.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mBar.collapseAllPanels(true);
+                        getService().animateCollapsePanels();
                         boolean enabled = Settings.System.getBoolean(mContext.getContentResolver(),
                                  Settings.System.NAV_HIDE_ENABLE, false);
                         Settings.System.putBoolean(mContext.getContentResolver(),

@@ -202,7 +202,7 @@ public class PanelBar extends FrameLayout {
             go(STATE_CLOSED);
             onAllPanelsCollapsed();
         }
-       if(mStatusBar.mPieControlPanel != null) mStatusBar.mPieControlPanel.animateCollapsePanels();
+       if(mStatusBar != null && mStatusBar.mPieControlPanel != null) mStatusBar.mPieControlPanel.animateCollapsePanels();
     }
 
     public void onPanelPeeked() {

@@ -4,6 +4,7 @@
 package com.android.systemui.recent;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
@@ -14,10 +15,15 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.widget.LinearLayout;
 
+import android.R.color;
+
 public class LinearColorBar extends LinearLayout {
-    static final int LEFT_COLOR = 0xff0099cc;
-    static final int MIDDLE_COLOR = 0xff0099cc;
-    static final int RIGHT_COLOR = 0xff888888;
+//    static final int LEFT_COLOR = 0xff0099cc;
+//    static final int MIDDLE_COLOR = 0xff0099cc;
+//    static final int RIGHT_COLOR = 0xff0099cc;
+    static final int LEFT_COLOR = Resources.getSystem().getColor(android.R.color.sourceryThemeColor);
+    static final int MIDDLE_COLOR = Resources.getSystem().getColor(android.R.color.sourceryThemeColor);
+    static final int RIGHT_COLOR = Resources.getSystem().getColor(android.R.color.sourceryTextColor2);
 
     private float mRedRatio;
     private float mYellowRatio;

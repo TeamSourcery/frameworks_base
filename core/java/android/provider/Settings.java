@@ -2671,6 +2671,12 @@ public final class Settings {
         */
         public static final String TORCH_STATE = "torch_state";
 
+      /**
+        * Status Bar notification icon opacity
+        * @hide
+        */
+       public static final String STATUS_BAR_NOTIF_ICON_OPACITY = "status_bar_notif_icon_opacity";
+
         /**
          * whether to hide the kill-all-button on recent switcher
          *
@@ -2943,6 +2949,12 @@ public final class Settings {
         * @hide
         */
         public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
+
+        /*
+         * Restart Launcher
+         * @hide
+         */
+        public static final String EXPANDED_DESKTOP_RESTART_LAUNCHER = "expanded_desktop_restart_launcher";
 
         /*
          * On or off the Pie.
@@ -3431,6 +3443,16 @@ public final class Settings {
          * @hide
          */
          public static final String MUTE_ANNOYING_NOTIFICATIONS_THRESHOLD = "mute_annoying_notifications_threshold";
+
+       /**
+         * Low battery warning dialog and sound
+         * 0 = off
+         * 1 = dialog only
+         * 2 = sound only
+         * 3 = dialog and sound
+         * @hide
+         */
+        public static final String POWER_UI_LOW_BATTERY_WARNING_POLICY = "power_ui_low_battery_warning_policy";
 
 
         /**
