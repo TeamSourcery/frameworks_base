@@ -88,6 +88,7 @@ public class PanelBar extends FrameLayout {
         }
     }
 
+   
   
     public float getBarHeight() {
         return getMeasuredHeight();

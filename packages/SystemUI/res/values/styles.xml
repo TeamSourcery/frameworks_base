@@ -140,8 +140,8 @@
         <item name="android:paddingRight">6dp</item>
         <item name="android:paddingBottom">2dp</item>
         <item name="android:drawablePadding">12dp</item>
-        <item name="android:textSize">12dp</item>
         <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/toggle_text</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:fadingEdge">horizontal</item>
@@ -247,6 +247,17 @@
         <item name="android:shadowDy">2</item>
         <item name="android:shadowRadius">2.0</item>
         <item name="android:lineSpacingMultiplier">1.1</item>
+    </style>
+
+     <style name="TextAppearance.StatusBar.Toggle" parent="@*android:style/TextAppearance.StatusBar.Icon">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@android:color/holo_blue_light</item>
+    </style>
+
+     <style name="brucekey_icon">
+       <item name="android:layout_width">wrap_content</item>
+       <item name="android:layout_height">wrap_content</item>
     </style>
 
 </resources>

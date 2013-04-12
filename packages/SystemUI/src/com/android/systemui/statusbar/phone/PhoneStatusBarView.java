@@ -16,17 +16,19 @@
 
 package com.android.systemui.statusbar.phone;
 
+import java.util.List;
+
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.database.ContentObserver;
@@ -47,7 +49,6 @@ import android.view.accessibility.AccessibilityEvent;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BackgroundAlphaColorDrawable;
 
-import java.util.List;
 
 public class PhoneStatusBarView extends PanelBar {
     private static final String TAG = "PhoneStatusBarView";
@@ -55,7 +56,8 @@ public class PhoneStatusBarView extends PanelBar {
 
     ActivityManager mActivityManager;
     KeyguardManager mKeyguardManager;
- 
+
+   
     PhoneStatusBar mBar;
     int mScrimColor;
     float mSettingsPanelDragzoneFrac;
@@ -120,7 +122,7 @@ public class PhoneStatusBarView extends PanelBar {
         } catch (NotFoundException ex) {
             mSettingsPanelDragzoneFrac = 0f;
         }
-       mFullWidthNotifications = mSettingsPanelDragzoneFrac <= 0f;
+        mFullWidthNotifications = mSettingsPanelDragzoneFrac <= 0f;
         mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         mKeyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
@@ -142,17 +144,17 @@ public class PhoneStatusBarView extends PanelBar {
         return mFullWidthNotifications;
     }
 
-    @Override
+     @Override
     public void onAttachedToWindow() {
         for (PanelView pv : mPanels) {
             pv.setRubberbandingEnabled(!mFullWidthNotifications);
         }
-        IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+       
+     IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_OFF);
         mContext.registerReceiver(mBroadcastReceiver, f);
         updateBackgroundAlpha();
         
         }
-    
 
     @Override
     public void addPanel(PanelView pv) {
@@ -169,6 +171,7 @@ public class PhoneStatusBarView extends PanelBar {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mBar.onBarViewDetached();
+        
         mContext.unregisterReceiver(mBroadcastReceiver);
     }
  
@@ -176,8 +179,8 @@ public class PhoneStatusBarView extends PanelBar {
     public boolean panelsEnabled() {
         return ((mBar.mDisabled & StatusBarManager.DISABLE_EXPAND) == 0);
     }
-
-     private boolean isKeyguardEnabled() {
+   
+    private boolean isKeyguardEnabled() {
         if(mKeyguardManager == null) return false;
         return mKeyguardManager.isKeyguardLocked();
     }
@@ -317,7 +320,7 @@ public class PhoneStatusBarView extends PanelBar {
         mBar.updateCarrierLabelVisibility(false);
     }
 
-    /*
+   /*
      * ]0 < alpha < 1[
      */
     protected void setBackgroundAlpha(float alpha) {
@@ -386,7 +389,5 @@ public class PhoneStatusBarView extends PanelBar {
                 Settings.System.STATUS_BAR_COLOR, -1);
 
         updateBackgroundAlpha();
-
     }
-
 }

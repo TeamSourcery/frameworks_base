@@ -195,6 +195,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected Display mDisplay;
 
     
+    
     private boolean mDeviceProvisioned = false;
 
      public void collapse() {
@@ -372,7 +373,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         } catch (RemoteException ex) {
             // If the system process isn't there we're doomed anyway.
         }
-       
+        
         createAndAddWindows();
 
         mWidgetView = new WidgetView(mContext,null);
