@@ -206,9 +206,9 @@ public class AwesomeAction {
                 intentAlarm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intentAlarm);
                 break;
-            case ACTION_LAST_APP:
-                toggleLastApp(mContext);
-                break;
+         //   case ACTION_LAST_APP:
+           //     toggleLastApp(mContext);
+          //      break;
             case ACTION_NOTIFICATIONS:
                 try {
                     IStatusBarService.Stub.asInterface(
