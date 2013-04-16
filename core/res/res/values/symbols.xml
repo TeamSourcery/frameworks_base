@@ -1602,6 +1602,7 @@
   <java-symbol type="integer" name="config_notificationsBatteryLedOn" />
   <java-symbol type="integer" name="config_notificationsBatteryLowARGB" />
   <java-symbol type="integer" name="config_notificationsBatteryMediumARGB" />
+  <java-symbol type="integer" name="config_notificationsBatteryAlmostARGB" />
   <java-symbol type="integer" name="config_radioScanningTimeout" />
   <java-symbol type="integer" name="config_screenBrightnessSettingMinimum" />
   <java-symbol type="integer" name="config_screenBrightnessSettingMaximum" />
@@ -1917,6 +1918,8 @@
   <java-symbol type="string" name="action_event"/>
   <java-symbol type="string" name="action_today"/>
   <java-symbol type="string" name="action_alarm"/>
+  <java-symbol type="string" name="action_unlock"/>
+  <java-symbol type="string" name="action_camera"/>
   <java-symbol type="string" name="action_null"/>
   <java-symbol type="string" name="action_app"/>
 

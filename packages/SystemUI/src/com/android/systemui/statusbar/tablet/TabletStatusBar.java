@@ -76,7 +76,7 @@ import android.widget.TextView;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusBarNotification;
 import com.android.systemui.R;
-import com.android.systemui.sourcery.SourceryTarget;
+import com.android.systemui.sourcery.AwesomeAction;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.DoNotDisturb;
@@ -226,7 +226,6 @@ public class TabletStatusBar extends BaseStatusBar implements
     private int doubleClickCounter = 0;
     public String[] mClockActions = new String[3];
     private boolean mClockDoubleClicked;
-    private SourceryTarget mSourceryTarget;
     private View mDateTimeView;
 
     public Context getContext() { return mContext; }
@@ -562,7 +561,7 @@ public class TabletStatusBar extends BaseStatusBar implements
         mNavBarView.setDisabledFlags(mDisabled);
         mNavBarView.setBar(this);
         mNavBarView.getSearchLight().setOnTouchListener(mHomeSearchActionListener);
-        mSourceryTarget = new SourceryTarget(mContext);
+        
 
         LayoutTransition lt = new LayoutTransition();
         lt.setDuration(250);
@@ -733,6 +732,8 @@ public class TabletStatusBar extends BaseStatusBar implements
         mWindowManager.updateViewLayout(mStatusBarView, lp);
     }
 
+    
+
     @Override
     public void hideSearchPanel() {
         super.hideSearchPanel();
@@ -772,7 +773,7 @@ public class TabletStatusBar extends BaseStatusBar implements
         public void run() {
                 doubleClickCounter = 0;
                 animateCollapsePanels();
-                mSourceryTarget.launchAction(mClockActions[shortClick]);
+                AwesomeAction.launchAction(mContext, mClockActions[shortClick]);
         }
     };
 
@@ -789,7 +790,7 @@ public class TabletStatusBar extends BaseStatusBar implements
                     mHandler.removeCallbacks(DelayShortPress);
                     v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                     animateCollapsePanels();
-                    mSourceryTarget.launchAction(mClockActions[doubleClick]);
+                    AwesomeAction.launchAction(mContext, mClockActions[doubleClick]);
                     mHandler.postDelayed(ResetDoubleClickCounter, 50);
                 } else {
                     doubleClickCounter = doubleClickCounter + 1;
@@ -799,7 +800,7 @@ public class TabletStatusBar extends BaseStatusBar implements
             } else {
                 v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 animateCollapsePanels();
-                mSourceryTarget.launchAction(mClockActions[shortClick]);
+                AwesomeAction.launchAction(mContext, mClockActions[shortClick]);
             }
         }
     };
@@ -809,7 +810,7 @@ public class TabletStatusBar extends BaseStatusBar implements
         public boolean onLongClick(View v) {
             animateCollapsePanels();
             v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            mSourceryTarget.launchAction(mClockActions[longClick]);
+            AwesomeAction.launchAction(mContext, mClockActions[longClick]);
             return true;
         }
     };

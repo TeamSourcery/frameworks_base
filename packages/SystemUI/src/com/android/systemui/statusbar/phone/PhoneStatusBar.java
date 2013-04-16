@@ -70,6 +70,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewPropertyAnimator;
 import android.view.ViewStub;
 import android.view.WindowManager;
+import android.view.WindowManager.BadTokenException;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -104,7 +105,7 @@ import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
 import com.android.systemui.statusbar.policy.Prefs;
 import com.android.systemui.statusbar.toggles.ToggleManager;
-import com.android.systemui.sourcery.SourceryTarget;
+import com.android.systemui.sourcery.AwesomeAction;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -886,10 +887,17 @@ public class PhoneStatusBar extends BaseStatusBar {
         if (mWindowManager != null && !mAutoHideVisible){
             mWindowManager.removeView(mGesturePanel);
             mAutoHideVisible = true;
-            mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
-            repositionNavigationBar();
-            if (mAutoHideTimeOut > 0) {
-                mHandler.postDelayed(delayHide, mAutoHideTimeOut);
+            try {
+                mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
+                repositionNavigationBar();
+                if (mAutoHideTimeOut > 0) {
+                    mHandler.postDelayed(delayHide, mAutoHideTimeOut);
+                }
+            } catch (BadTokenException e) {
+                // We failed adding the NavBar & we have removed the GestureCatcher
+                // this happens when we touch the NavBar while it is trying to hide.
+                // Let's go back to hidden Mode
+                hideNavBar();
             }
                 // Start the timer to hide the NavBar; <-- I LOLZ. Mike even comments in java. ;-)
         }
@@ -2466,7 +2474,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             public void run() {
                     doubleClickCounter = 0;
                     animateCollapsePanels();
-                    SourceryTarget.getInstance(mContext).launchAction(mClockActions[shortClick]);
+                    AwesomeAction.launchAction(mContext, mClockActions[shortClick]);
             }
         };
 
@@ -2483,7 +2491,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                     mHandler.removeCallbacks(DelayShortPress);
                     vibrate();
                     animateCollapsePanels();
-                    SourceryTarget.getInstance(mContext).launchAction(mClockActions[doubleClick]);
+                    AwesomeAction.launchAction(mContext, mClockActions[doubleClick]);
                     mHandler.postDelayed(ResetDoubleClickCounter, 50);
                 } else {
                     doubleClickCounter = doubleClickCounter + 1;
@@ -2493,7 +2501,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             } else {
                 vibrate();
                 animateCollapsePanels();
-                SourceryTarget.getInstance(mContext).launchAction(mClockActions[shortClick]);
+                AwesomeAction.launchAction(mContext, mClockActions[shortClick]);
             }
 
         }
@@ -2503,7 +2511,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         @Override
         public boolean onLongClick(View v) {
             animateCollapsePanels();
-            SourceryTarget.getInstance(mContext).launchAction(mClockActions[longClick]);
+            AwesomeAction.launchAction(mContext, mClockActions[longClick]);
             return true;
         }
     };

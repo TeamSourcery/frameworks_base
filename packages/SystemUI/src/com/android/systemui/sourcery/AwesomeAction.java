@@ -109,10 +109,10 @@ public class AwesomeAction {
             case ACTION_RECENTS_GB:
                 injectKeyDelayed(KeyEvent.KEYCODE_APP_SWITCH);
                 break;
-         //   case ACTION_KILL:
-         //       KillTask mKillTask = new KillTask(mContext);
-         //       mHandler.post(mKillTask);
-         //       break;
+            case ACTION_KILL:
+                KillTask mKillTask = new KillTask(mContext);
+                mHandler.post(mKillTask);
+                break;
             case ACTION_VIB:
                 if(am != null){
                     if(am.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE) {
@@ -206,8 +206,8 @@ public class AwesomeAction {
                 intentAlarm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intentAlarm);
                 break;
-         //   case ACTION_LAST_APP:
-           //     toggleLastApp(mContext);
+          //  case ACTION_LAST_APP:
+          //      toggleLastApp(mContext);
           //      break;
             case ACTION_NOTIFICATIONS:
                 try {
@@ -272,30 +272,30 @@ public class AwesomeAction {
         }
     }
 
- //   public static class KillTask implements Runnable {
-  //       private Context mContext;
-  //       public KillTask(Context context) {
-  //           this.mContext = context;
-  //       }
-  //       public void run() {
-  //          final Intent intent = new Intent(Intent.ACTION_MAIN);
-  //          final ActivityManager am = (ActivityManager) mContext
-  //                  .getSystemService(Activity.ACTIVITY_SERVICE);
-  //          String defaultHomePackage = "com.android.launcher";
-  //          intent.addCategory(Intent.CATEGORY_HOME);
-  //          final ResolveInfo res = mContext.getPackageManager().resolveActivity(intent, 0);
-  //          if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
-  //              defaultHomePackage = res.activityInfo.packageName;
-  //          }
-  //          String packageName = am.getRunningTasks(1).get(0).topActivity.getPackageName();
-  //            if (SysUIPackage.equals(packageName))
-  //              return; // don't kill SystemUI
-  //          if (!defaultHomePackage.equals(packageName)) {
-  //              am.forceStopPackage(packageName);
-  //              Toast.makeText(mContext, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
-  //          }
-  //      }
-  //   }
+    public static class KillTask implements Runnable {
+         private Context mContext;
+         public KillTask(Context context) {
+             this.mContext = context;
+         }
+         public void run() {
+            final Intent intent = new Intent(Intent.ACTION_MAIN);
+            final ActivityManager am = (ActivityManager) mContext
+                    .getSystemService(Activity.ACTIVITY_SERVICE);
+            String defaultHomePackage = "com.android.launcher";
+            intent.addCategory(Intent.CATEGORY_HOME);
+            final ResolveInfo res = mContext.getPackageManager().resolveActivity(intent, 0);
+            if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
+                defaultHomePackage = res.activityInfo.packageName;
+            }
+            String packageName = am.getRunningTasks(1).get(0).topActivity.getPackageName();
+            if (SysUIPackage.equals(packageName))
+                return; // don't kill SystemUI
+            if (!defaultHomePackage.equals(packageName)) {
+                am.forceStopPackage(packageName);
+                Toast.makeText(mContext, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
+            }
+        }
+     }
 
     private static void toggleLastApp(Context mContext) {
         int lastAppId = 0;
