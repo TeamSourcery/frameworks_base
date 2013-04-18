@@ -58,7 +58,6 @@ import com.android.internal.util.sourcery.NavBarHelpers;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.statusbar.policy.key.ExtensibleKeyButtonView;
-import com.android.systemui.statusbar.policy.key.RecentsKeyButtonView;
 import com.android.systemui.statusbar.BackgroundAlphaColorDrawable;
 
 public class NavigationBarView extends LinearLayout {
@@ -455,13 +454,8 @@ public class NavigationBarView extends LinearLayout {
             String iconUri) {
 
         final int iconSize = 80;
-        ExtensibleKeyButtonView v = null;
-        if(clickAction.equals(AwesomeConstant.ACTION_RECENTS)) {
-            v = new RecentsKeyButtonView(mContext, null, clickAction, longpress);
-        } else {
-            v = new ExtensibleKeyButtonView(mContext, null, clickAction,
-                longpress);
-        }
+       ExtensibleKeyButtonView v = new ExtensibleKeyButtonView(mContext, null,
+                clickAction, longpress);
         v.setLayoutParams(getLayoutParams(landscape, iconSize));
         v.setGlowBackground(landscape ? R.drawable.ic_sysbar_highlight_land
                 : R.drawable.ic_sysbar_highlight);
