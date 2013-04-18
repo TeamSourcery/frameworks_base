@@ -3518,16 +3518,9 @@ public final class Settings {
 	* Setting to enable/disable the dim feature of notification pulldown
 	* @hide
 	*/
-	public static final String PREF_NOTIFICATION_DIMMER = "pref_notification_dimmer";
+	public static final String PREF_NOTIFICATION_DIMMER = "notification_dimmer";
 
-       /**
-	* Setting to enable/disable the dim feature of notification pulldown
-	* @hide
-	*/
-	public static final String NOTIFICATION_DIMMER = "notification_dimmer";
-
-
-
+     
         /**
          * Whether to unlock the screen with the home key.  The value is boolean (1 or 0).
          * @hide
