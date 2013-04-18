@@ -141,10 +141,7 @@ public class ToggleManager {
                     .getPhoneType() == PhoneConstants.PHONE_TYPE_GSM) {
                 toggleMap.put(TWOG_TOGGLE, TwoGToggle.class);
             }
-            if (TelephonyManager.getLteOnCdmaModeStatic() == PhoneConstants.LTE_ON_CDMA_TRUE
-                    || TelephonyManager.getLteOnGsmModeStatic() != 0) {
-                toggleMap.put(LTE_TOGGLE, LteToggle.class);
-            }
+            toggleMap.put(LTE_TOGGLE, LteToggle.class);
             toggleMap.put(FAV_CONTACT_TOGGLE, FavoriteUserToggle.class);
             toggleMap.put(SOUND_STATE_TOGGLE, SoundStateToggle.class);
             toggleMap.put(NAVBAR_HIDE_TOGGLE, NavbarHideToggle.class);
