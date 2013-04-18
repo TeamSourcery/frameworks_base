@@ -131,8 +131,6 @@ public class PhoneStatusBar extends BaseStatusBar {
     public static final String ACTION_STATUSBAR_START
             = "com.android.internal.policy.statusbar.START";
 
-    private static boolean DIM_BEHIND_EXPANDED_PANEL = true;
-
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
     private static final int MSG_CLOSE_PANELS = 1001;
     private static final int MSG_OPEN_SETTINGS_PANEL = 1002;
@@ -455,8 +453,6 @@ public class PhoneStatusBar extends BaseStatusBar {
         if (file.exists() || fileLand.exists()) {
    mStatusBarWindow.setBackground(null);
    mNotificationPanel.setBackground(null);
-   DIM_BEHIND_EXPANDED_PANEL = Settings.System.getBoolean(mStatusBarView.getContext()
-               .getContentResolver(), Settings.System.NOTIFICATION_DIMMER, false);
   }
 
        
