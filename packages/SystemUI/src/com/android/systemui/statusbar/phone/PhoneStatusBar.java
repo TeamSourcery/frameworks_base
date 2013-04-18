@@ -131,6 +131,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     public static final String ACTION_STATUSBAR_START
             = "com.android.internal.policy.statusbar.START";
 
+    
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
     private static final int MSG_CLOSE_PANELS = 1001;
     private static final int MSG_OPEN_SETTINGS_PANEL = 1002;
@@ -454,7 +455,6 @@ public class PhoneStatusBar extends BaseStatusBar {
    mStatusBarWindow.setBackground(null);
    mNotificationPanel.setBackground(null);
   }
-
        
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();

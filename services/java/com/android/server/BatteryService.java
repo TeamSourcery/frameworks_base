@@ -699,7 +699,7 @@ public final class BatteryService extends Binder {
                     com.android.internal.R.integer.config_notificationsBatteryLedOff);
         }
 
-        /**
+         /**
          * Synchronize on BatteryService.
          */
         public void updateLightsLocked() {
@@ -716,14 +716,13 @@ public final class BatteryService extends Binder {
                 }
             } else if (status == BatteryManager.BATTERY_STATUS_CHARGING
                     || status == BatteryManager.BATTERY_STATUS_FULL) {
-                if (level >= 70 && level < 100) {
+                 if (status == BatteryManager.BATTERY_STATUS_FULL || level >= 100) {
+                    // Solid green when fully charged
+                    mBatteryLight.setColor(mBatteryFullARGB);
+                } else if (level >= 70 && level < 99) {
                     // Solid yellow when charging and between 70-99%
                     mBatteryLight.setColor(mBatteryAlmostARGB);
-                } else if (status == BatteryManager.BATTERY_STATUS_FULL || level == 100) {
-                    // Solid green when full -- 100%
-                    mBatteryLight.setColor(mBatteryFullARGB);
-                } else {
-                    // Solid orange when charging and between 15-69%
+                } else { // Solid orange when charging and between 15-69%
                     mBatteryLight.setColor(mBatteryMediumARGB);
                 }
             } else {

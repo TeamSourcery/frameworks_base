@@ -514,7 +514,7 @@
     <integer name="config_notificationsBatteryMediumARGB">0xFFFF7F00</integer>
 
     <!-- Default value for led color when batter is almost charged: 70-99% -->
-    <integer name="config_notificationsBatteryAlmostARGB">0xFFFFFF00</integer>
+    <integer name="config_notificationsBatteryAlmostARGB">0xFFECFF00</integer>
 
     <!-- Default value for led color when battery is fully charged: 100% -->
     <integer name="config_notificationsBatteryFullARGB">0xFF00FF00</integer>

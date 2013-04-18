@@ -3518,7 +3518,14 @@ public final class Settings {
 	* Setting to enable/disable the dim feature of notification pulldown
 	* @hide
 	*/
-	public static final String PREF_NOTIFICATION_DIMMER = "notification_dimmer";
+	public static final String PREF_NOTIFICATION_DIMMER = "pref_notification_dimmer";
+
+       /**
+	* Setting to enable/disable the dim feature of notification pulldown
+	* @hide
+	*/
+	public static final String NOTIFICATION_DIMMER = "notification_dimmer";
+
 
 
         /**
