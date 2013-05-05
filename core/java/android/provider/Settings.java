@@ -1195,11 +1195,12 @@ public final class Settings {
          * @return true if the value was set, false on database errors
          */
         public static boolean putArrayList(ContentResolver cr, String name, ArrayList<String> list) {
-            if (list.size() > 0) {
+            if (list != null && list.size() > 0) {
                 String joined = TextUtils.join("|",list);
                 return putString(cr, name, joined);
+            } else {
+                return putString(cr, name, "");
             }
-            return false;
         }
 
 
@@ -1207,14 +1208,15 @@ public final class Settings {
             String v = getString(cr, name);
             ArrayList<String> list = new ArrayList<String>();
             if (v != null) {
-                String[] split = v.split("\\|");
-                for (String i : split) {
-                    list.add(i);
+                if (!v.isEmpty()){
+                    String[] split = v.split("\\|");
+                    for (String i : split) {
+                        list.add(i);
+                    }
                 }
             }
             return list;
         }
-
 
         /**
          * Convenience function for retrieving a single system settings value
@@ -2414,6 +2416,277 @@ public final class Settings {
          */
         public static final String POINTER_SPEED = "pointer_speed";
 
+         /**
+         * Whether to enable pie controls
+         * The value is 1, 2 or 0).
+         * Default: 0
+         * On expanded desktop: 1
+         * always: 2
+         * @hide
+         */
+        public static final String PIE_CONTROLS = "pie_controls";
+
+        /**
+         * Pie show text (0 or 1)
+         * @hide
+         */
+        public static final String PIE_SHOW_TEXT = "pie_show_text";
+
+        /**
+         * Pie disable redundant statusbar infos (0 or 1)
+         * @hide
+         */
+        public static final String PIE_DISABLE_STATUSBAR_INFO = "pie_disable_statusbar_info";
+
+        /**
+         * Pie show snap (0 or 1)
+         * @hide
+         */
+        public static final String PIE_SHOW_SNAP = "pie_show_snap";
+
+        /**
+         * Pie show background (0 or 1)
+         * @hide
+         */
+        public static final String PIE_SHOW_BACKGROUND = "pie_show_background";
+
+        /**
+         * Locations of the pie in the screen.
+         * (1<<0) = LEFT
+         * (1<<1) = BOTTOM
+         * (1<<2) = RIGHT
+         * (1<<3) = TOP
+         * Default: LEFT
+         * @hide
+         */
+        public static final String PIE_GRAVITY = "pie_gravity";
+
+        /**
+         * Mask for the locations of the pie for certain UI situations
+         * (1<<0) = LEFT
+         * (1<<1) = BOTTOM
+         * (1<<2) = RIGHT
+         * (1<<3) = TOP
+         * Default: LEFT
+         * @hide
+         */
+        public static final String PIE_TRIGGER_MASK = "pie_trigger_mask";
+
+        /**
+         * Relative pie size (fraction)
+         * Default: 1.0f
+         * @hide
+         */
+        public static final String PIE_SIZE = "pie_size";
+
+        /**
+         * Relative pie trigger thickness
+         * @hide
+         */
+        public static final String PIE_TRIGGER_THICKNESS = "pie_trigger_thickness";
+
+        /**
+         * Relative pie trigger height for left and right trigger
+         * @hide
+         */
+        public static final String PIE_TRIGGER_HEIGHT = "pie_trigger_height";
+
+        /**
+         * Pie trigger vertical gravity
+         * @hide
+         */
+        public static final String PIE_TRIGGER_GRAVITY_LEFT_RIGHT = "pie_trigger_gravity_left_right";
+
+        /**
+         * Show pie trigger
+         * @hide
+         */
+        public static final String PIE_TRIGGER_SHOW = "pie_trigger_show";
+
+        /**
+         * Pie IME softkeyboard state toggle (0 or 1)
+         * @hide
+         */
+        public static final String PIE_SOFTKEYBOARD_IS_SHOWING = "pie_softkeyboard_is_showing";
+
+        /**
+         * Pie allow to adjust triggers if IME is showing (0 or 1)
+         * @hide
+         */
+        public static final String PIE_ADJUST_TRIGGER_FOR_IME = "pie_adjust_trigger_for_ime";
+
+        /**
+         * Pie button color
+         * @hide
+         */
+        public static final String PIE_BUTTON_COLOR = "pie_button_color";
+
+        /**
+         * Pie button press color
+         * @hide
+         */
+        public static final String PIE_BUTTON_PRESSED_COLOR = "pie_button_pressed_color";
+
+        /**
+         * Pie button long press color
+         * @hide
+         */
+        public static final String PIE_BUTTON_LONG_PRESSED_COLOR = "pie_button_long_pressed_color";
+
+        /**
+         * Pie button outline color
+         * @hide
+         */
+        public static final String PIE_BUTTON_OUTLINE_COLOR = "pie_button_outline_color";
+
+        /**
+         * Pie background color
+         * @hide
+         */
+        public static final String PIE_BACKGROUND_COLOR = "pie_background_color";
+
+        /**
+         * Pie snap color
+         * @hide
+         */
+        public static final String PIE_SNAP_COLOR = "pie_snap_color";
+
+        /**
+         * Pie text color
+         * @hide
+         */
+        public static final String PIE_TEXT_COLOR = "pie_text_color";
+
+        /**
+         * Pie icon color
+         * @hide
+         */
+        public static final String PIE_ICON_COLOR = "pie_icon_color";
+
+        /**
+         * Pie icon color mode
+         * @hide
+         */
+        public static final String PIE_ICON_COLOR_MODE = "pie_icon_color_mode";
+
+        /**
+         * Pie button alpha
+         * @hide
+         */
+        public static final String PIE_BUTTON_ALPHA = "pie_button_alpha";
+
+        /**
+         * Pie button pressed and long pressed alpha
+         * @hide
+         */
+        public static final String PIE_BUTTON_PRESSED_ALPHA = "pie_button_pressed_alpha";
+
+        /**
+         * Pie background alpha
+         * @hide
+         */
+        public static final String PIE_BACKGROUND_ALPHA = "pie_background_alpha";
+
+        /**
+         * @hide
+         */
+        public static final String PIE_BUTTONS_QTY = "pie_buttons_qty";
+
+        /**
+         * @hide
+         */
+        public static final String[] PIE_CUSTOM_ACTIVITIES = new String[] {
+            "pie_custom_intent_0",
+            "pie_custom_intent_1",
+            "pie_custom_intent_2",
+            "pie_custom_intent_3",
+            "pie_custom_intent_4",
+        };
+
+        /**
+         * @hide
+         */
+        public static final String[] PIE_LONGPRESS_ACTIVITIES = new String[] {
+            "pie_longpress_intent_0",
+            "pie_longpress_intent_1",
+            "pie_longpress_intent_2",
+            "pie_longpress_intent_3",
+            "pie_longpress_intent_4",
+        };
+
+        /**
+         * @hide
+         */
+        public static final String[] PIE_CUSTOM_ICONS = new String[] {
+            "pie_custom_icon_0",
+            "pie_custom_icon_1",
+            "pie_custom_icon_2",
+            "pie_custom_icon_3",
+            "pie_custom_icon_4",
+        };
+
+       /**
+        *
+        * @hide
+        */
+        public static final String PIE_LONG_PRESS_ENABLE = "pie_long_press_enable";
+
+        /**
+         * @hide
+         */
+        public static final String PIE_SECOND_LAYER_ACTIVE = "pie_second_layer_active";
+
+        /**
+         * @hide
+         */
+        public static final String PIE_BUTTONS_QTY_SECOND_LAYER = "pie_buttons_qty_second_layer";
+
+        /**
+         * @hide
+         */
+        public static final String[] PIE_CUSTOM_ACTIVITIES_SECOND_LAYER = new String[] {
+            "pie_custom_intent_sec_0",
+            "pie_custom_intent_sec_1",
+            "pie_custom_intent_sec_2",
+            "pie_custom_intent_sec_3",
+            "pie_custom_intent_sec_4",
+            "pie_custom_intent_sec_5",
+            "pie_custom_intent_sec_6",
+        };
+
+        /**
+         * @hide
+         */
+        public static final String[] PIE_LONGPRESS_ACTIVITIES_SECOND_LAYER = new String[] {
+            "pie_longpress_intent_sec_0",
+            "pie_longpress_intent_sec_1",
+            "pie_longpress_intent_sec_2",
+            "pie_longpress_intent_sec_3",
+            "pie_longpress_intent_sec_4",
+            "pie_longpress_intent_sec_5",
+            "pie_longpress_intent_sec_6",
+        };
+
+        /**
+         * @hide
+         */
+        public static final String[] PIE_CUSTOM_ICONS_SECOND_LAYER = new String[] {
+            "pie_custom_icon_sec_0",
+            "pie_custom_icon_sec_1",
+            "pie_custom_icon_sec_2",
+            "pie_custom_icon_sec_3",
+            "pie_custom_icon_sec_4",
+            "pie_custom_icon_sec_5",
+            "pie_custom_icon_sec_6",
+        };
+
+       /**
+        *
+        * @hide
+        */
+        public static final String PIE_LONG_PRESS_ENABLE_SECOND_LAYER = "pie_long_press_enable_second_layer";
+
+
         /**
          * Whether to use a separate delay for "slide to unlock" and security
          * lock
@@ -2469,6 +2742,20 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_MAXIMIZE_WIDGETS = "lockscreen_maximize_widgets";
+
+       /**
+         * Whether to minimize lockscreen challenge on screen turned on
+         * @hide
+         */
+        public static final String LOCKSCREEN_MINIMIZE_LOCKSCREEN_CHALLENGE = "lockscreen_minimize_lockscreen_challenge";
+
+
+       /**
+         * Setting to allow Unlimited Widgets
+         * @hide
+         */
+        public static final String LOCKSCREEN_UNLIMITED_WIDGETS = "lockscreen_unlimited_widgets";
+
 
         /**  
          * Allows to show the background activity back the lockscreen
@@ -2636,7 +2923,97 @@ public final class Settings {
          */
         public static final String STATUS_BAR_ALPHA_CONFIG = "status_bar_alpha_config";
         
-      
+       /**
+         * Use the Notification Power Widget? (Who wouldn't!)
+         *
+         * @hide
+         */
+        public static final String EXPANDED_VIEW_WIDGET = "expanded_view_widget";
+
+        /**
+         * Whether to hide the notification screen after clicking on a widget
+         * button
+         *
+         * @hide
+         */
+        public static final String EXPANDED_HIDE_ONCHANGE = "expanded_hide_onchange";
+
+        /**
+         * Hide scroll bar in power widget
+         *
+         * @hide
+         */
+        public static final String EXPANDED_HIDE_SCROLLBAR = "expanded_hide_scrollbar";
+
+        /**
+         * Haptic feedback in power widget
+         *
+         * @hide
+         */
+        public static final String EXPANDED_HAPTIC_FEEDBACK = "expanded_haptic_feedback";
+
+        /**
+         * Widget Buttons to Use
+         *
+         * @hide
+         */
+        public static final String WIDGET_BUTTONS = "expanded_widget_buttons";
+
+        /**
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_SLIDER = "statusbar_brightness_slider";
+
+        /**
+         * @hide
+         */
+        public static final String STATUSBAR_TOGGLES_BRIGHTNESS_LOC = "statusbar_toggles_brightness_loc";
+
+        /**
+        * Notification Power Widget - Custom Brightness Mode
+        * @hide
+        */
+        public static final String EXPANDED_BRIGHTNESS_MODE = "expanded_brightness_mode";
+
+        /**
+        * Notification Power Widget - Custom Network Mode
+        * @hide
+        */
+        public static final String EXPANDED_NETWORK_MODE = "expanded_network_mode";
+
+        /**
+        * Notification Power Widget - Custom Screen Timeout
+        * @hide
+        */
+        public static final String EXPANDED_SCREENTIMEOUT_MODE = "expanded_screentimeout_mode";
+
+        /**
+        * Notification Power Widget - Custom Ring Mode
+        * @hide
+        */
+        public static final String EXPANDED_RING_MODE = "expanded_ring_mode";
+
+        /**
+        * Notification Power Widget - Custom Torch Mode
+        * @hide
+        */
+        public static final String EXPANDED_FLASH_MODE = "expanded_flash_mode";
+
+        /**
+         * Whether custom light sensor levels & values are enabled. The value is
+         * boolean (1 or 0).
+         *
+         * @hide
+         */
+        public static final String LIGHT_SENSOR_CUSTOM = "light_sensor_custom";
+
+        /**
+         * Screen dim value to use if LIGHT_SENSOR_CUSTOM is set. The value is int.
+         * Default is android.os.BRIGHTNESS_DIM.
+         *
+         * @hide
+         */
+        public static final String LIGHT_SCREEN_DIM = "light_screen_dim";
       
         /**
          * 0 == QuickSettings Tile
@@ -2833,10 +3210,7 @@ public final class Settings {
          */
         public static final String NFC_POLLING_MODE = "nfc_polling_mode";
 
-        /**
-         * @hide
-         */
-        public static final String STATUS_BAR_BRIGHTNESS_SLIDER = "status_bar_brightness_slider";
+        
 
        /**
         * Whether to show the alarm icon in the status bar
@@ -3045,142 +3419,7 @@ public final class Settings {
          */
         public static final String EXPANDED_DESKTOP_RESTART_LAUNCHER = "expanded_desktop_restart_launcher";
 
-        /*
-         * On or off the Pie.
-         *
-         * @hide
-         */
-        public static final String PIE_CONTROLS = "pie_controls";
-
-        /**
-         * Pie menu, should default to 0 (no, show only when needed)
-         * @hide
-         */
-        public static final String PIE_MENU = "pie_menu";
-
-        /**
-         * Pie will not rotate. Should default to 0 (no, rotate)
-         * @hide
-         */
-        public static final String PIE_STICK = "pie_stick";
-
-        /**
-         * Center Pie? Should default to 1 (yes, center)
-         * @hide
-         */
-        public static final String PIE_CENTER = "pie_center";
-
-        /**
-         * Pie search, should default to 1 (yes, show)
-         * @hide
-         */
-        public static final String PIE_SEARCH = "pie_search";
-
-        /*
-         * Pie gap angle, should default to 1
-         * @hide
-         */
-        public static final String PIE_GAP = "pie_gap";
-
-        /**
-         * Pie trigger fraction, should default to 1
-         * @hide
-         */
-        public static final String PIE_TRIGGER = "pie_trigger";
-
-        /**
-         * Location of the pie in the screen
-         * 0 = Gravity.LEFT
-         * 1 = Gravity.TOP
-         * 2 = Gravity.RIGHT
-         * 3 = Gravity.BOTTOM (default)
-         * @hide
-         */
-        public static final String PIE_GRAVITY = "pie_gravity";
-
-        /**
-         * Whether to use a separate delay for "slide to unlock" and security
-         * lock
-         * Pie status report
-         * 0 = Bare
-         * 1 = Quick
-         * 2 = Default
-         * 3 = Slow
-         * @hide
-         */
-        public static final String PIE_MODE = "pie_mode";
-
-        /**
-         * Pie size fraction
-         * @hide
-         */
-        public static final String PIE_SIZE = "pie_size";
-
-        /**
-         * Pie Notification Ability
-         * @hide
-         */
-        public static final String PIE_NOTIFICATIONS = "pie_notifications";
-
-       // PIE COLORS EVERYWHERE! //
-
-        /**
-         * @hide
-         */
-        public static final String PIE_ENABLE_COLOR = "pie_enable_color";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_JUICE = "pie_juice";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_BUTTON_COLOR = "pie_button_color";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_SNAP_BACKGROUND = "pie_snap_background";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_BACKGROUND = "pie_background";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_SELECT = "pie_select";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_OUTLINES = "pie_outlines";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_STATUS_CLOCK = "pie_status_clock";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_STATUS = "pie_status";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_CHEVRON_LEFT = "pie_chevron_left";
-
-        /**
-         * @hide
-         */
-        public static final String PIE_CHEVRON_RIGHT = "pie_chevron_right";
-
-       // PIE COLORS EVERYWHERE! //
-
+        
 
        /**
          * If checked hide extra system bar stuff
@@ -3371,6 +3610,54 @@ public final class Settings {
         public static final String STATUSBAR_WIFI_SIGNAL_TEXT_COLOR = "statusbar_wifi_signal_text_color";
 
         /**
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_TARGETS_LONGPRESS = "lockscreen_targets_longpress";
+
+        /**
+         * @hide
+         */
+        public static final String[] LOCKSCREEN_TARGETS_SHORT = new String[] {
+            "lockscreen_targets_short_0",
+            "lockscreen_targets_short_1",
+            "lockscreen_targets_short_2",
+            "lockscreen_targets_short_3",
+            "lockscreen_targets_short_4",
+            "lockscreen_targets_short_5",
+            "lockscreen_targets_short_6",
+            "lockscreen_targets_short_7",
+        };
+
+        /**
+         * @hide
+         */
+        public static final String[] LOCKSCREEN_TARGETS_LONG = new String[] {
+            "lockscreen_targets_long_0",
+            "lockscreen_targets_long_1",
+            "lockscreen_targets_long_2",
+            "lockscreen_targets_long_3",
+            "lockscreen_targets_long_4",
+            "lockscreen_targets_long_5",
+            "lockscreen_targets_long_6",
+            "lockscreen_targets_long_7",
+        };
+
+        /**
+         * @hide
+         */
+        public static final String[] LOCKSCREEN_TARGETS_ICON = new String[] {
+            "lockscreen_targets_icon_0",
+            "lockscreen_targets_icon_1",
+            "lockscreen_targets_icon_2",
+            "lockscreen_targets_icon_3",
+            "lockscreen_targets_icon_4",
+            "lockscreen_targets_icon_5",
+            "lockscreen_targets_icon_6",
+            "lockscreen_targets_icon_7",
+        };
+
+        /**
          * Whether to use the custom quick unlock screen control
          * @hide
          */
@@ -3449,6 +3736,207 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_USE_WIDGET_CONTAINER_CAROUSEL = "lockscreen_use_widget_container_carousel";
+
+       /**
+         * Ribbon Targets
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_TARGETS_SHORT = new String[] {
+            "ribbon_targets_short_lockscreen",
+            "ribbon_targets_short_notification",
+            "ribbon_targets_short_swipe",
+            "ribbon_targets_short_quicksettings",
+            "ribbon_targets_short_swipe_right",
+            "ribbon_targets_short_swipe_bottom",
+        };
+
+        /**
+         * Ribbon Targets
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_TARGETS_LONG = new String[] {
+            "ribbon_targets_long_lockscreen",
+            "ribbon_targets_long_notification",
+            "ribbon_targets_long_swipe",
+            "ribbon_targets_long_quicksettings",
+            "ribbon_targets_long_swipe_right",
+            "ribbon_targets_long_swipe_bottom",
+        };
+
+        /**
+         * Ribbon Targets
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_TARGETS_ICONS = new String[] {
+            "ribbon_targets_icons_lockscreen",
+            "ribbon_targets_icons_notification",
+            "ribbon_targets_icons_swipe",
+            "ribbon_targets_icons_quicksettings",
+            "ribbon_targets_icons_swipe_right",
+            "ribbon_targets_icons_swipe_bottom",
+        };
+
+        /**
+         * Ribbon Targets
+         *
+         * @hide
+         */
+        public static final String[] ENABLE_RIBBON_TEXT = new String[] {
+            "ribbon_text_lockscreen",
+            "ribbon_text_notification",
+            "ribbon_text_swipe",
+            "ribbon_text_quicksettings",
+            "ribbon_text_swipe_right",
+            "ribbon_text_swipe_bottom",
+        };
+
+        /**
+         * Ribbon Targets
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_TEXT_COLOR = new String[] {
+            "color_text_lockscreen",
+            "color_text_notification",
+            "color_text_swipe",
+            "color_text_quicksettings",
+            "color_text_swipe_right",
+            "color_text_swipe_bottom",
+        };
+
+        /**
+         * Ribbon Targets
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_ICON_SIZE = new String[] {
+            "ribbon_icon_lockscreen",
+            "ribbon_icon_notification",
+            "ribbon_icon_swipe",
+            "ribbon_icon_quicksettings",
+            "ribbon_icon_swipe_right",
+            "ribbon_icon_swipe_bottom",
+        };
+
+        public static final String[] ENABLE_RIBBON_LOCATION = new String[] {
+            "ribbon_swipe_bottom",
+            "ribbon_swipe_left",
+            "ribbon_swipe_right",
+        };
+
+        /**
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_ICON_SPACE = new String[] {
+            "ribbon_icon_lockscreen_space",
+            "ribbon_icon_notification_space",
+            "ribbon_icon_swipe_space_left",
+            "ribbon_icon_quicksettings_space",
+            "ribbon_icon_swipe_space_right",
+            "ribbon_icon_swipe_space_bottom",
+        };
+
+        
+        /**
+         * Ribbon Targets
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_ICON_VIBRATE = new String[] {
+            "ribbon_icon_lockscreen_vibrate",
+            "ribbon_icon_notification_vibrate",
+            "ribbon_icon_swipe_vibrate",
+            "ribbon_icon_quicksettings_vibrate",
+            "ribbon_icon_swipe_vibrate_right",
+            "ribbon_icon_swipe_vibrate_bottom",
+        };
+
+        /**
+         * Ribbon Targets
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_ICON_COLORIZE = new String[] {
+            "ribbon_icon_lockscreen_colorize",
+            "ribbon_icon_notification_colorize",
+            "ribbon_icon_swipe_colorize",
+            "ribbon_icon_quicksettings_colorize",
+            "ribbon_icon_swipe_colorize_right",
+            "ribbon_icon_swipe_colorize_bottom",
+        };
+
+        /**
+         *
+         * @hide
+         */
+       public static final String[] RIBBON_HIDE_TIMEOUT = new String[] {
+           "ribbon_hide_timeout_left",
+           "ribbon_hide_timeout_right",
+           "ribbon_hide_timeout_bottom",
+        };
+
+        /**
+         *
+         * @hide
+         */
+        public static final String[] SWIPE_RIBBON_OPACITY = new String[] {
+            "swipe_ribbon_opacity_left",
+            "swipe_ribbon_opacity_right",
+            "swipe_ribbon_opacity_bottom",
+        };
+
+        /**
+         *
+         * @hide
+         */
+        public static final String[] SWIPE_RIBBON_COLOR = new String[] {
+            "swipe_ribbon_color_left",
+            "swipe_ribbon_color_right",
+            "swipe_ribbon_color_bottom",
+        };
+
+        /**
+         *
+         * @hide
+         */
+        public static final String RIBBON_DRAG_HANDLE_WEIGHT = "ribbon_drag_handle_weight";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String RIBBON_DRAG_HANDLE_LOCATION = "ribbon_drag_handle_location";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String[] RIBBON_ICON_LOCATION = new String[] {
+            "ribbon_icon_location_left",
+            "ribbon_icon_location_right",
+        };
+
+        /**
+         *
+         * @hide
+         */
+        public static final String SWIPE_RIBBON_VIBRATE = "swipe_ribbon_vibrate";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String RIBBON_DRAG_HANDLE_HEIGHT = "ribbon_drag_handle_height";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String RIBBON_DRAG_HANDLE_OPACITY = "ribbon_drag_handle_opacity";
 
        /**
         * Quick Settings Quick Pulldown
@@ -5458,6 +5946,8 @@ public final class Settings {
          * @hide
          */
         public static final String SCREENSAVER_DEFAULT_COMPONENT = "screensaver_default_component";
+
+        public static final String ENABLE_PERMISSIONS_MANAGEMENT = "enable_permissions_management";
 
         /**
          * This are the settings to be backed up.

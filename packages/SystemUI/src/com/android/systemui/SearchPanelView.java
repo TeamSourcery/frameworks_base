@@ -223,12 +223,13 @@ public class SearchPanelView extends FrameLayout implements
        final Runnable SetLongPress = new Runnable () {
             public void run() {
                 if (!mSearchPanelLock) {
-                    mLongPress = true;
-                    Log.d(TAG,"LongPress!");
-                    mBar.hideSearchPanel();
-                    maybeSkipKeyguard();
-                    AwesomeAction.launchAction(mContext, longList.get(mTarget));
                     mSearchPanelLock = true;
+                    mLongPress = true;
+                    if (shouldUnlock(longList.get(mTarget))) {
+                    maybeSkipKeyguard();
+                    }
+                    AwesomeAction.launchAction(mContext, longList.get(mTarget));
+                    mBar.hideSearchPanel();
                  }
             }
         };
@@ -266,7 +267,9 @@ public class SearchPanelView extends FrameLayout implements
                 if (AwesomeConstant.ACTION_ASSIST.equals(intentList.get(target))) {
                     startAssistActivity();
                 } else {
-                    maybeSkipKeyguard();
+                    if (shouldUnlock(intentList.get(target))) {
+                        maybeSkipKeyguard();
+                    }
                     AwesomeAction.launchAction(mContext, intentList.get(target));
                 }
                 mHandler.removeCallbacks(SetLongPress);
@@ -300,6 +303,17 @@ public class SearchPanelView extends FrameLayout implements
 
         updateSettings();
         setDrawables();
+    }
+
+    private boolean shouldUnlock(String action) {
+        if (action.equals(AwesomeConstant.ACTION_SILENT_VIB.value()) ||
+            action.equals(AwesomeConstant.ACTION_VIB.value()) ||
+            action.equals(AwesomeConstant.ACTION_POWER.value()) ||
+            action.equals(AwesomeConstant.ACTION_SILENT.value())) {
+            return false;
+        }
+
+        return true;
     }
 
     private void maybeSkipKeyguard() {

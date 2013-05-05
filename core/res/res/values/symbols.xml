@@ -170,6 +170,7 @@
   <java-symbol type="id" name="switch_old" />
   <java-symbol type="id" name="switchWidget" />
   <java-symbol type="id" name="text" />
+  <java-symbol type="id" name="label" />
   <java-symbol type="id" name="time" />
   <java-symbol type="id" name="time_current" />
   <java-symbol type="id" name="timeDisplayBackground" />
@@ -820,6 +821,7 @@
   <java-symbol type="string" name="volume_icon_description_media" />
   <java-symbol type="string" name="volume_icon_description_notification" />
   <java-symbol type="string" name="volume_icon_description_ringer" />
+  <java-symbol type="string" name="reset_perms" />
   <java-symbol type="string" name="wait" />
   <java-symbol type="string" name="wday1_date1_time1_wday2_date2_time2" />
   <java-symbol type="string" name="wday1_date1_wday2_date2" />
@@ -1117,6 +1119,10 @@
   <java-symbol type="anim" name="slide_in_child_bottom" />
   <java-symbol type="anim" name="slide_in_right" />
   <java-symbol type="anim" name="slide_out_left" />
+  <java-symbol type="anim" name="slide_in_left" />
+  <java-symbol type="anim" name="slide_out_right" />
+  <java-symbol type="anim" name="slide_in_up" />
+  <java-symbol type="anim" name="slide_out_down" />
 
   <java-symbol type="menu" name="webview_copy" />
   <java-symbol type="menu" name="webview_find" />
@@ -1370,7 +1376,6 @@
   <java-symbol type="id" name="keyguard_user_selector" />
   <java-symbol type="id" name="key_enter" />
   <java-symbol type="id" name="keyguard_selector_view_frame" />
-  <java-symbol type="id" name="shortcuts" />
   <java-symbol type="integer" name="config_carDockRotation" />
   <java-symbol type="integer" name="config_defaultUiModeType" />
   <java-symbol type="integer" name="config_deskDockRotation" />
@@ -1394,7 +1399,6 @@
   <java-symbol type="layout" name="keyguard_screen_unlock_landscape" />
   <java-symbol type="layout" name="keyguard_screen_unlock_portrait" />
   <java-symbol type="layout" name="keyguard_selector_view" />
-   <java-symbol type="layout" name="keyguard_shortcuts" />
   <java-symbol type="layout" name="keyguard_pattern_view" />
   <java-symbol type="layout" name="keyguard_password_view" />
   <java-symbol type="layout" name="keyguard_pin_view" />
@@ -1622,6 +1626,8 @@
   <java-symbol type="string" name="aerr_application" />
   <java-symbol type="string" name="aerr_process" />
   <java-symbol type="string" name="aerr_title" />
+  <java-symbol type="string" name="aerr_revoked_application" />
+  <java-symbol type="string" name="aerr_revoked_process" />
   <java-symbol type="string" name="android_upgrading_apk" />
   <java-symbol type="string" name="android_upgrading_complete" />
   <java-symbol type="string" name="android_upgrading_starting_apps" />
@@ -1872,29 +1878,14 @@
   <!-- Wifi -->
   <java-symbol type="bool" name="config_wifiApStartInterface" />
 
-   <!-- From lockscreen targets -->
-  <java-symbol type="drawable" name="list_selector_holo_dark" />
-  <java-symbol type="drawable" name="ic_lockscreen_alarm" />
-  <java-symbol type="drawable" name="ic_lockscreen_browser" />
-  <java-symbol type="drawable" name="ic_lockscreen_calendar" />
-  <java-symbol type="drawable" name="ic_lockscreen_camera" />
-  <java-symbol type="drawable" name="ic_lockscreen_email" />
-  <java-symbol type="drawable" name="ic_lockscreen_email2" />
-  <java-symbol type="drawable" name="ic_lockscreen_facebook" />
-  <java-symbol type="drawable" name="ic_lockscreen_gallery" />
-  <java-symbol type="drawable" name="ic_lockscreen_google_small" />
-  <java-symbol type="drawable" name="ic_lockscreen_gplus" />
-  <java-symbol type="drawable" name="ic_lockscreen_gtalk" />
-  <java-symbol type="drawable" name="ic_lockscreen_maps" />
-  <java-symbol type="drawable" name="ic_lockscreen_movie" />
-  <java-symbol type="drawable" name="ic_lockscreen_music" />
-  <java-symbol type="drawable" name="ic_lockscreen_nav" />
-  <java-symbol type="drawable" name="ic_lockscreen_phone" />
-  <java-symbol type="drawable" name="ic_lockscreen_podcast" />
-  <java-symbol type="drawable" name="ic_lockscreen_rss" />
-  <java-symbol type="drawable" name="ic_lockscreen_sms" />
-  <java-symbol type="drawable" name="ic_lockscreen_twitter" />
+  <!-- Lockscreen -->
+  <java-symbol type="drawable" name="ic_lockscreen_empty" />
+  <java-symbol type="drawable" name="ic_empty" />
+  <java-symbol type="drawable" name="ic_lockscreen_lock_pressed" />
+  <java-symbol type="drawable" name="ic_lockscreen_target_activated" />
+  <java-symbol type="id" name="keyguard_glow_pad_container" />
 
+  
   <!--  Awesome Action -->
   <java-symbol type="string" name="action_home"/>
   <java-symbol type="string" name="action_back"/>
@@ -1922,6 +1913,18 @@
   <java-symbol type="string" name="action_camera"/>
   <java-symbol type="string" name="action_null"/>
   <java-symbol type="string" name="action_app"/>
+  <java-symbol type="string" name="action_ribbon"/>
+  <java-symbol type="string" name="action_widgets"/>
+
+  <!-- Ribbon -->
+  <java-symbol type="layout" name="target_button" />
+  <java-symbol type="id" name="ribbon" />
+  <java-symbol type="id" name="container" />
+  <java-symbol type="id" name="keyguard_ribbon_and_battery" />
+  <java-symbol type="dimen" name="icon_size_20" />
+  <java-symbol type="dimen" name="icon_size_15" />
+  <java-symbol type="dimen" name="notification_ribbon_padding" />
+  <java-symbol type="dimen" name="lockscreen_ribbon_padding" />
 
  <!-- Navigation Ring -->
   <java-symbol type="drawable" name="ic_navbar_blank" />
@@ -1930,5 +1933,15 @@
   
 
    <java-symbol type="string" name="config_fastChargePath" />
+
+  <!-- Power widget -->
+  <java-symbol type="string" name="hour" />
+  <java-symbol type="string" name="hours" />
+  <java-symbol type="string" name="minute" />
+  <java-symbol type="string" name="minutes" />
+  <java-symbol type="string" name="second" />
+  <java-symbol type="string" name="seconds" />
+
+  <java-symbol type="string" name="notify_turn_wifi_ap_off_title" />
 
 </resources>

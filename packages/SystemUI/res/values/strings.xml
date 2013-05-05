@@ -589,6 +589,15 @@
     <string name="quick_settings_screenshot">Screenshot</string>
     <string name="quick_settings_reboot">Reboot</string>
     <string name="quick_settings_reboot_message">Your device is rebooting</string>
+    <string name="quick_settings_stayawake_on">Stay Awake On</string>
+    <string name="quick_settings_stayawake_off">Stay Awake Off</string>
+    <string name="quick_settings_adb_on"><xliff:g id="ip" example="192.168.1.5">%s</xliff:g></string>
+    <string name="quick_settings_adb_off">Wireless ADB Off</string>
+    <string name="quick_settings_expanded_desktop">Expanded</string>
+    <string name="quick_settings_expanded_desktop_off">Normal</string>
+    <string name="quick_settings_volume">Volume</string>
+    <string name="quick_settings_jbtool_label">JBS Tools</string>
+    <string name="quick_settings_jbcontrol_label">JBS Control</string>
 
     <!--  RamBar -->
     <string name="memory">RAM</string>
@@ -617,11 +626,7 @@
     <!-- [CHAR LIMIT=NONE] Label of a running process that represents another user -->
     <string name="running_process_item_user_label">User: <xliff:g id="user_name">%1$s</xliff:g></string>
 
-   <!-- PIE -->
-    <string name="pie_date_format">ccc, dd MMM yyyy</string>
-    <string name="pie_hour_format_12">hh:mm</string>
-    <string name="pie_hour_format_24">HH:mm</string>
-    <string name="pie_am_pm">a</string>
+  
 
    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permdesc_screenshot">Capture screenshot</string>
@@ -629,6 +634,17 @@
     <string name="permlab_screenshot">Allows the app to cature a screenshot. This is protected by SystemUI.</string>
     <string name="screenshot_toast">Screenshot in %1$d seconds</string>
     
+   <string name="powerwidget_screen_timeout_toast">Screen timeout set to: %1$d %2$s</string>
+   <string name="brightness_label">Brightness</string>
 
+   <!-- Battery status in pie controls -->
+    <string name="pie_battery_status_charging">Charging (<xliff:g id="percent">%d</xliff:g>%%)</string>
+    <string name="pie_battery_status_full">Charged</string>
+    <string name="pie_battery_status_discharging"><xliff:g id="percent">%d</xliff:g>%% remaining</string>
+
+    <!-- Phone status in pie controls -->
+    <string name="pie_phone_status_no_service">No service</string>
+    <string name="pie_phone_status_airplane_mode">Airplane mode on</string>
+    <string name="pie_phone_status_emergency_only">Emergency calls only</string>
     
 </resources>

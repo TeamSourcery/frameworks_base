@@ -95,6 +95,12 @@ public class ToggleManager {
     public static final String SCREENSHOT_TOGGLE = "SCREENSHOT";
     public static final String REBOOT_TOGGLE = "REBOOT";
     public static final String CUSTOM_TOGGLE = "CUSTOM";
+    public static final String STAYAWAKE_TOGGLE = "STAYAWAKE";
+    public static final String WIRELESS_ADB_TOGGLE = "WIRELESSADB";
+    public static final String EXPANDED_DESKTOP_TOGGLE = "EXPANDEDDESKTOP";
+    public static final String VOLUME_TOGGLE = "VOLUME";
+    public static final String JBCONTROL_TOGGLE = "JBCONTROL";
+    public static final String JBTOOL_TOGGLE = "JBTOOL";
 
     private int mStyle;
 
@@ -151,6 +157,12 @@ public class ToggleManager {
             toggleMap.put(SCREENSHOT_TOGGLE, ScreenshotToggle.class);
             toggleMap.put(REBOOT_TOGGLE, RebootToggle.class);
             toggleMap.put(CUSTOM_TOGGLE, CustomToggle.class);
+            toggleMap.put(STAYAWAKE_TOGGLE, StayAwakeToggle.class);
+            toggleMap.put(WIRELESS_ADB_TOGGLE, WirelessAdbToggle.class);
+            toggleMap.put(EXPANDED_DESKTOP_TOGGLE, ExpandedDesktopToggle.class);
+            toggleMap.put(VOLUME_TOGGLE, VolumeToggle.class);
+            toggleMap.put(JBTOOL_TOGGLE, JBToolToggle.class);
+            toggleMap.put(JBCONTROL_TOGGLE, JBControlToggle.class);
              // toggleMap.put(BT_TETHER_TOGGLE, null);
         }
         return toggleMap;

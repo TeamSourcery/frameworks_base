@@ -286,6 +286,7 @@ public class GlowPadView extends View {
         }
         if (mTargetDrawables == null || mTargetDrawables.size() == 0) {
             throw new IllegalStateException("Must specify at least one target drawable");
+        
         }
 
         // Read array of target descriptions
@@ -655,6 +656,7 @@ public class GlowPadView extends View {
     private void internalSetTargetResources(ArrayList<TargetDrawable> drawList) {
         mTargetResourceId = 0;
         mTargetDrawables = drawList;
+        
         updateTargetPositions(mWaveCenterX, mWaveCenterY);
         updatePointCloudPosition(mWaveCenterX, mWaveCenterY);
         hideTargets(false, false);
@@ -672,6 +674,14 @@ public class GlowPadView extends View {
         } else {
             internalSetTargetResources(resourceId);
         }
+    }
+
+    public void setMagneticTargets(boolean active) {
+        mMagneticTargets = active;
+    }
+
+    public void setOffset(float offset) {
+        mFirstItemOffset = (float) Math.toRadians(offset);
     }
 
     public void setTargetResources(ArrayList<TargetDrawable> drawList) {

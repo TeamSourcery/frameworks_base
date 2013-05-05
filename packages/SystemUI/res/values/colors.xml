@@ -48,28 +48,20 @@
     <color name="qcMenuBackground">#C0000000</color>
     <color name="qc_tab_nr">#F033B5E5</color>
 
-    <!-- THEMEABLE PIE PIE PIE PIE PIE? -->
-
-    <color name="pie_menu_background">#C0000000</color>
-
-    <color name="alpha_mask">#aa000000</color>
-    <color name="opaque_mask">#ff000000</color>
-    <color name="snap_background">#ffffffff</color>
-    <color name="pie_background">#aa333333</color>
-    <color name="pie_button">#b2ffffff</color>
-    <color name="pie_select">#aa33b5e5</color>
-    <color name="pie_outlines">#ffffffff</color>
-    <color name="chevron_left">#0999cc</color>
-    <color name="chevron_right">#33b5e5</color>
-    <color name="battery_juice">#33b5e5</color>
-    <color name="battery_juice_low">#ffbb33</color>
-    <color name="battery_juice_critical">#ff4444</color>
-    <color name="battery_background">#ffffff</color>
-    <color name="status">#ffffff</color>
-
-    <!-- THEMEABLE PIE PIE PIE PIE PIE? -->
-
+   
     <color name="toggle_text">#ffffffff</color>
     <color name="toggle_text_changing_state_color">#ff787878</color>
     <color name="toggle_image_changing_state_overlay">@color/toggle_text_changing_state_color</color>
+
+    <!-- ==================== pie controls ==================== -->
+    <!-- this color is used to darkening the whole screen when pie controls are active -->
+    <color name="pie_overlay_color">#ff000000</color>
+    <!-- color of an active snap point (inactive are blended with a 0x40 alpha channel) -->
+    <color name="pie_snap_color">@android:color/holo_blue_light</color>
+    <color name="pie_text_color">#ffffffff</color>
+    <color name="pie_foreground_color">#ffffffff</color>
+    <color name="pie_background_color">#ff0099cc</color>
+    <color name="pie_selected_color">@android:color/holo_blue_light</color>
+    <color name="pie_long_pressed_color">#ff8ad5f0</color>
+    <color name="pie_outline_color">#ff0099cc</color>
 </resources>

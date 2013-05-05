@@ -918,7 +918,7 @@ public class NetworkController extends BroadcastReceiver {
                     info = mWifiManager.getConnectionInfo();
                 }
                 if (info != null) {
-                    mWifiSsid = huntForSsid(mWifiManager, info);
+                    mWifiSsid = huntForSsid(info);
                 } else {
                     mWifiSsid = null;
                 }
@@ -952,13 +952,13 @@ public class NetworkController extends BroadcastReceiver {
         }
     }
 
-    protected static String huntForSsid(WifiManager manager, WifiInfo info) {
+    private String huntForSsid(WifiInfo info) {
         String ssid = info.getSSID();
         if (ssid != null) {
             return ssid;
         }
         // OK, it's not in the connectionInfo; we have to go hunting for it
-        List<WifiConfiguration> networks = manager.getConfiguredNetworks();
+        List<WifiConfiguration> networks = mWifiManager.getConfiguredNetworks();
         for (WifiConfiguration net : networks) {
             if (net.networkId == info.getNetworkId()) {
                 return net.SSID;
@@ -1185,7 +1185,12 @@ public class NetworkController extends BroadcastReceiver {
             // look again; your radios are now airplanes
             mContentDescriptionPhoneSignal = mContext.getString(
                     R.string.accessibility_airplane_mode);
-            mAirplaneIconId = R.drawable.stat_sys_signal_flightmode;
+            if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.PIE_DISABLE_STATUSBAR_INFO, 0) == 0) {
+                mAirplaneIconId = R.drawable.stat_sys_signal_flightmode;
+            } else {
+                mAirplaneIconId = 0;
+            }
             mPhoneSignalIconId = mDataSignalIconId = mDataTypeIconId = mQSDataTypeIconId = 0;
             mQSPhoneSignalIconId = 0;
 

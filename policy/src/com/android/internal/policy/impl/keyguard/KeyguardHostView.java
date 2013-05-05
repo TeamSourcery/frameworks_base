@@ -28,6 +28,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -58,6 +59,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RemoteViews.OnClickHandler;
 
 import com.android.internal.R;
+import com.android.internal.app.ThemeUtils;
 import com.android.internal.policy.impl.keyguard.KeyguardSecurityModel.SecurityMode;
 import com.android.internal.widget.LockPatternUtils;
 
@@ -73,7 +75,8 @@ public class KeyguardHostView extends KeyguardViewBase {
     // Found in KeyguardAppWidgetPickActivity.java
     static final int APPWIDGET_HOST_ID = 0x4B455947;
 
-    private final int MAX_WIDGETS = 5;
+    private int MAX_WIDGETS;
+    private boolean mUnlimitedWidgets;
 
     private AppWidgetHost mAppWidgetHost;
     private AppWidgetManager mAppWidgetManager;
@@ -289,14 +292,16 @@ public class KeyguardHostView extends KeyguardViewBase {
         if (!(mContext instanceof Activity)) {
             setSystemUiVisibility(getSystemUiVisibility() | View.STATUS_BAR_DISABLE_BACK);
         }
-     
+        
         updateBackground();
         addDefaultWidgets();
 
         addWidgetsFromSettings();
+
         if (!shouldEnableAddWidget()) {
             mAppWidgetContainer.setAddWidgetEnabled(false);
         }
+
         checkAppWidgetConsistency();
         mSwitchPageRunnable.run();
         // This needs to be called after the pages are all added.
@@ -305,18 +310,15 @@ public class KeyguardHostView extends KeyguardViewBase {
         showPrimarySecurityScreen(false);
         updateSecurityViews();
 
-         mExpandChallengeView = (View) findViewById(R.id.expand_challenge_handle);
- 	 if (mExpandChallengeView != null) {
-            if (Settings.System.getBoolean(getContext().getContentResolver(),
-                Settings.System.LOCKSCREEN_LONGPRESS_CHALLENGE, false)) {
-                mExpandChallengeView.setOnLongClickListener(mFastUnlockClickListener);
-            }
+        mExpandChallengeView = (View) findViewById(R.id.expand_challenge_handle);
+        if (mExpandChallengeView != null) {
+            mExpandChallengeView.setOnLongClickListener(mFastUnlockClickListener);
         }
 
-        minimizeChallengeIfDesired();
+        minimizeChallengeIfNeeded();
     }
 
-     private void updateBackground() {
+    private void updateBackground() {
         String background = Settings.System.getStringForUser(getContext().getContentResolver(),
                 Settings.System.LOCKSCREEN_BACKGROUND, UserHandle.USER_CURRENT);
 
@@ -342,7 +344,18 @@ public class KeyguardHostView extends KeyguardViewBase {
         }
     }
 
-     private final OnLongClickListener mFastUnlockClickListener = new OnLongClickListener() {
+    private boolean shouldEnableAddWidget() {
+        mUnlimitedWidgets = Settings.System.getBoolean(getContext().getContentResolver(),
+                                  Settings.System.LOCKSCREEN_UNLIMITED_WIDGETS, false);
+        if (mUnlimitedWidgets) {
+            MAX_WIDGETS = numWidgets() + 1;
+        } else {
+            MAX_WIDGETS = 5;
+        }
+        return numWidgets() < MAX_WIDGETS && mUserSetupCompleted;
+    }
+
+    private final OnLongClickListener mFastUnlockClickListener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             if (mLockPatternUtils.isTactileFeedbackEnabled()) {
@@ -354,11 +367,6 @@ public class KeyguardHostView extends KeyguardViewBase {
             return true;
         }
     };
-
-    private boolean shouldEnableAddWidget() {
-        return numWidgets() < MAX_WIDGETS && mUserSetupCompleted;
-    }
-
 
     private int getDisabledFeatures(DevicePolicyManager dpm) {
         int disabledFeatures = DevicePolicyManager.KEYGUARD_DISABLE_FEATURES_NONE;
@@ -650,7 +658,7 @@ public class KeyguardHostView extends KeyguardViewBase {
      * @param turningOff true if the device is being turned off
      */
     void showPrimarySecurityScreen(boolean turningOff) {
-        final boolean lockBeforeUnlock = Settings.System.getIntForUser(mContext.getContentResolver(),
+       final boolean lockBeforeUnlock = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.LOCK_BEFORE_UNLOCK, 0, UserHandle.USER_CURRENT) == 1;
         final boolean isSimOrAccount = mCurrentSecuritySelection == SecurityMode.SimPin
                 || mCurrentSecuritySelection == SecurityMode.SimPuk
@@ -669,10 +677,8 @@ public class KeyguardHostView extends KeyguardViewBase {
                 securityMode = mSecurityModel.getAlternateFor(securityMode);
             }
             showSecurityScreen(securityMode);
-        }
     }
-
-
+}
     /**
      * Shows the backup security screen for the current security mode.  This could be used for
      * password recovery screens but is currently only used for pattern unlock to show the
@@ -868,7 +874,7 @@ public class KeyguardHostView extends KeyguardViewBase {
         }
         int layoutId = getLayoutIdFor(securityMode);
         if (view == null && layoutId != 0) {
-            final LayoutInflater inflater = LayoutInflater.from(mContext);
+            final LayoutInflater inflater = LayoutInflater.from(ThemeUtils.createUiContext(mContext));
             if (DEBUG) Log.v(TAG, "inflating id = " + layoutId);
             View v = inflater.inflate(layoutId, mSecurityViewContainer, false);
             mSecurityViewContainer.addView(v);
@@ -961,10 +967,16 @@ public class KeyguardHostView extends KeyguardViewBase {
         if (mViewStateManager != null) {
             mViewStateManager.showUsabilityHints();
         }
+        requestFocus();
+        minimizeChallengeIfNeeded();
+    }
 
-     minimizeChallengeIfDesired();
-     requestFocus();
-
+    private void minimizeChallengeIfNeeded() {
+        if (Settings.System.getBoolean(getContext().getContentResolver(), Settings.System.LOCKSCREEN_MINIMIZE_LOCKSCREEN_CHALLENGE, false)) {
+            if (mSlidingChallengeLayout != null) {
+                mSlidingChallengeLayout.fadeOutChallenge();
+            }
+        }
     }
 
     @Override
@@ -1048,19 +1060,6 @@ public class KeyguardHostView extends KeyguardViewBase {
             // otherwise, go to the unlock screen, see if they can verify it
             mIsVerifyUnlockOnly = true;
             showSecurityScreen(securityMode);
-        }
-    }
-
-    private void minimizeChallengeIfDesired() {
-       if (mSlidingChallengeLayout == null) {
-             return;
-        }
-
-        int setting = Settings.System.getIntForUser(getContext().getContentResolver(),
-                 Settings.System.LOCKSCREEN_MAXIMIZE_WIDGETS, 0, UserHandle.USER_CURRENT);
- 
-        if (setting == 1) {
-            mSlidingChallengeLayout.fadeOutChallenge();
         }
     }
 
@@ -1591,7 +1590,7 @@ public class KeyguardHostView extends KeyguardViewBase {
 
     @Override
     public void cleanUp() {
-     
+
     }
 
     /**
@@ -1626,15 +1625,6 @@ public class KeyguardHostView extends KeyguardViewBase {
         mSwitchPageRunnable.run();
     }
 
-    public boolean handleMenuKey() {
-        // The following enables the MENU key to work for testing automation
-        if (shouldEnableMenuKey()) {
-            showNextSecurityScreenOrFinish(false);
-            return true;
-        }
-        return false;
-    }
-
     public boolean handleHomeKey() {
          // The following enables the HOME key to work for testing automation
          if (shouldEnableHomeKey()) {
@@ -1642,6 +1632,15 @@ public class KeyguardHostView extends KeyguardViewBase {
              return true;
          }
          return false;
+    }
+
+    public boolean handleMenuKey() {
+        // The following enables the MENU key to work for testing automation
+        if (shouldEnableMenuKey()) {
+            showNextSecurityScreenOrFinish(false);
+            return true;
+        }
+        return false;
     }
 
     public boolean handleBackKey() {
