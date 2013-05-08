@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.provider.Settings;
 import android.text.StaticLayout;
 import android.text.Layout.Alignment;
 import android.text.TextPaint;
@@ -29,7 +28,6 @@ import android.util.Slog;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ImageSwitcher;
@@ -42,7 +40,6 @@ import com.android.internal.util.CharSequences;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.StatusBarIconView;
-
 
 public abstract class Ticker {
     private static final int TICKER_SEGMENT_DELAY = 3000;
@@ -184,7 +181,6 @@ public abstract class Ticker {
         // Copy the paint style of one of the TextSwitchers children to use later for measuring
         TextView text = (TextView)mTextSwitcher.getChildAt(0);
         mPaint = text.getPaint();
-        
     }
 
 

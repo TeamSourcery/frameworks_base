@@ -69,9 +69,6 @@ public class KeyButtonView extends ImageView {
     RectF mRect = new RectF(0f,0f,0f,0f);
     AnimatorSet mPressedAnim;
 
-    private boolean mAttached = false;
-    private SettingsObserver mSettingsObserver;
-
     Runnable mCheckLongPress = new Runnable() {
         public void run() {
             if (isPressed()) {
@@ -115,28 +112,8 @@ public class KeyButtonView extends ImageView {
 
         setClickable(true);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-        }
-
-        @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-
-        if (!mAttached) {
-            mAttached = true;
-            mSettingsObserver = new SettingsObserver(new Handler());
-            mSettingsObserver.observe();
-            updateSettings();
-        }
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
-        if (mAttached) {
-            getContext().getContentResolver().unregisterContentObserver(mSettingsObserver);
-            mAttached = false;
-        }
+        SettingsObserver settingsObserver = new SettingsObserver(new Handler());
+        settingsObserver.observe();
     }
 
     public void setSupportsLongPress(boolean supports) {

@@ -2803,6 +2803,8 @@ public final class Settings {
          */
         public static final String STATUSBAR_CLOCK_WEEKDAY = "statusbar_clock_weekday";
 
+       
+
         /**
          * Show the pending notification counts as overlays on the statusbar
          * @hide
@@ -3401,6 +3403,18 @@ public final class Settings {
          */
         public static final String POWER_DIALOG_SHOW_REBOOT_HIDE = "power_dialog_show_reboot_hide";
 
+       /**
+        * Option to hide expanded desktop in power menu
+        * @hide
+        */
+        public static final String POWER_DIALOG_SHOW_EXPANDED_DESKTOP_TOGGLE = "power_dialog_show_expanded_desktop_toggle";
+
+       /**
+        * Statusbar State
+        * @hide
+        */
+        public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
+
         /*
          * Restart Launcher
          * @hide
@@ -3876,31 +3890,6 @@ public final class Settings {
             "swipe_ribbon_opacity_right",
             "swipe_ribbon_opacity_bottom",
         };
-
-         /**
-         * Navigation bar State
-         * @hide
-         */
-        public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
-
-        /**
-         * Status bar State
-         * @hide
-         */
-        public static final String EXPANDED_DESKTOP_STATUS_BAR_STATE = "expanded_desktop_status_bar_state";
-
-        /**
-         * Whether power menu expanded desktop is enabled
-         * @hide
-         */
-        public static final String POWER_MENU_EXPANDED_DESKTOP_ENABLED = "power_menu_expanded_desktop_enabled";
-
-         
-         /** 
-         * Expanded desktop style (with status bar or without status bar)
-         * @hide
-         */
-        public static final String EXPANDED_DESKTOP_STYLE = "expanded_desktop_style";
 
         /**
          *

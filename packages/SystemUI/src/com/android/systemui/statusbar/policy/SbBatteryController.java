@@ -71,7 +71,7 @@ public class SbBatteryController extends LinearLayout {
 
     private int mLevel = -1;
     private boolean mPlugged = false;
-   
+
     public static final int STYLE_ICON_ONLY = 0;
     public static final int STYLE_ICON_TEXT = 1;
     public static final int STYLE_ICON_CENTERED_TEXT = 2;
@@ -245,7 +245,7 @@ public class SbBatteryController extends LinearLayout {
         ContentResolver cr = mContext.getContentResolver();
         mBatteryStyle = Settings.System.getInt(cr,
                 Settings.System.STATUSBAR_BATTERY_ICON, 0);
-        
+
         switch (mBatteryStyle) {
             case STYLE_ICON_ONLY:
                 mBatteryCenterText.setVisibility(View.GONE);
@@ -312,7 +312,7 @@ public class SbBatteryController extends LinearLayout {
                 break;
         }
 
-                setBatteryIcon(mLevel, mPlugged);
+        setBatteryIcon(mLevel, mPlugged);
 
     }
 }

@@ -2436,7 +2436,6 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     private void addStatusBarWindow() {
         // Put up the view
-        
         final int height = getStatusBarHeight();
 
         // Now that the status bar window encompasses the sliding panel and its
@@ -2784,18 +2783,17 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
     }
 
-    protected void loadDimens() {
+     protected void loadDimens() {
         final Resources res = mContext.getResources();
 
         mNaturalBarHeight = res.getDimensionPixelSize(
-            com.android.internal.R.dimen.status_bar_height);
+                com.android.internal.R.dimen.status_bar_height);
 
-        int newIconSize = res.getDimensionPixelSize(		
-            com.android.internal.R.dimen.status_bar_icon_size);		
+        int newIconSize = res.getDimensionPixelSize(
+            com.android.internal.R.dimen.status_bar_icon_size);
         int newIconHPadding = res.getDimensionPixelSize(
-             R.dimen.status_bar_icon_padding);
-        
-       
+            R.dimen.status_bar_icon_padding);
+
         if (newIconHPadding != mIconHPadding || newIconSize != mIconSize) {
 //            Slog.d(TAG, "size=" + newIconSize + " padding=" + newIconHPadding);
             mIconHPadding = newIconHPadding;
@@ -2841,7 +2839,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             mNotificationPanelMinHeightFrac = 0f;
         }
 
-        if (false) Slog.v(TAG, "updateResources");
+       if (false) Slog.v(TAG, "updateResources");
     }
 
     //
