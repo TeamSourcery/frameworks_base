@@ -32,6 +32,7 @@ import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.tablet.StatusBarPanel;
 import com.android.systemui.statusbar.WidgetView;
 import com.android.systemui.sourcery.SwipeRibbon;
+import com.android.systemui.sourcery.AppWindow;
 
 import com.android.systemui.statusbar.pie.PieLayout;
 import com.android.systemui.statusbar.policy.PieController;
@@ -119,6 +120,7 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     private WidgetView mWidgetView;
     private SwipeRibbon mSwipeRibbon;
+    private AppWindow mAppWindow;
 
     private boolean mPieShowTrigger = false;
     private boolean mDisableTriggers = false;
@@ -380,6 +382,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         mSwipeRibbon = new SwipeRibbon(mContext,null,"bottom");
         mSwipeRibbon = new SwipeRibbon(mContext,null,"left");
         mSwipeRibbon = new SwipeRibbon(mContext,null,"right");
+        mAppWindow = new AppWindow(mContext,null);
         disable(switches[0]);
         setSystemUiVisibility(switches[1], 0xffffffff);
         topAppWindowChanged(switches[2] != 0);
@@ -1506,6 +1509,11 @@ public abstract class BaseStatusBar extends SystemUI implements
                     mPieTrigger[i] = null;
                 }
             }
+
+            // destroy the pie container
+            mPieContainer = null;
+            // unregister listener and receiver
+            mPieController.destroyPie();
         }
     }
 

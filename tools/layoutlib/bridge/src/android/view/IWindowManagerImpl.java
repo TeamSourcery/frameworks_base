@@ -457,11 +457,7 @@ public class IWindowManagerImpl implements IWindowManager {
 
     }
 
-    @Override
-    public void updateDisplayMetrics() {
-
-    }
-
+  
     @Override
     public IBinder getFocusedWindowToken() {
         // TODO Auto-generated method stub

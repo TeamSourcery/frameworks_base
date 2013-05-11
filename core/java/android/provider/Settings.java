@@ -3891,35 +3891,75 @@ public final class Settings {
         };
 
         /**
-         * Navigation bar State
+         * Whether Status bar should be hidden when there are no
+         * notifications
          * @hide
          */
-        public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
+        public static final String AUTO_HIDE_STATUSBAR = "auto_hide_statusbar";
 
         /**
-         * Status bar State
+         * Whether Status Bar is currently hidden or not
          * @hide
          */
-        public static final String EXPANDED_DESKTOP_STATUS_BAR_STATE = "expanded_desktop_status_bar_state";
+        public static final String HIDE_STATUSBAR = "hide_statusbar";
+
+       /**
+         * Whether Status Bar is currently hidden or not for notification
+         * toggle notification shade
+         *
+         * @hide
+         */
+        public static final String TOGGLE_NOTIFICATION_SHADE = "toggle_notification_shade";
 
         /**
+          * Whether Expanded desktop is currently running or not
+          * @hide
+          */
+         public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
+ 
+         /**
+         * Expanded desktop mode
+         * 0 = none, 1 = hide only navbar, 2 = hide only statusbar, 3 = hide both
+         * @hide
+         */
+        public static final String EXPANDED_DESKTOP_MODE = "expanded_desktop_mode";
+
+       /**
          * Whether power menu expanded desktop is enabled
          * @hide
          */
         public static final String POWER_MENU_EXPANDED_DESKTOP_ENABLED = "power_menu_expanded_desktop_enabled";
 
-         
-         /** 
-         * Expanded desktop style (with status bar or without status bar)
-         * @hide
-         */
-        public static final String EXPANDED_DESKTOP_STYLE = "expanded_desktop_style";
-
+        
         /**
          *
          * @hide
          */
         public static final String RIBBON_DRAG_HANDLE_WEIGHT = "ribbon_drag_handle_weight";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String APP_WINDOW_COLOR_BG = "app_window_color_bg";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String APP_WINDOW_COLUMNS = "app_window_columns";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String APP_WINDOW_COLOR_TEXT = "app_window_color_text";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String APP_WINDOW_OPACITY = "app_window_opacity";
 
         /**
          *

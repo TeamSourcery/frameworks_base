@@ -4053,6 +4053,8 @@
     <string name="global_actions_expanded_desktop_mode_on_status">Enabled</string>
     <!-- status message in phone options dialog for when expand desktop mode is off -->
     <string name="global_actions_expanded_desktop_mode_off_status">Disabled</string>
+    <!-- Notification for Expanded desktop default -->
+    <string name="expanded_mode_default_set">Expanded desktop set to hide StatusBar only. Configure in Power menu settings</string>
 
     <!-- Awesome Action Stuff-->
     <string name="action_home">Home</string>
@@ -4081,6 +4083,7 @@
     <string name="action_camera">Camera</string>
     <string name="action_null">Blank</string>
     <string name="action_widgets">Nav Widgets</string>
+    <string name="action_app_window">App Window</string>
     <string name="action_ribbon">Ribbon</string>
     <string name="action_app">Custom App/Shortcut</string>
 

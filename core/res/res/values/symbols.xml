@@ -1866,8 +1866,13 @@
   <java-symbol type="string" name="global_action_torch" />
   <java-symbol type="drawable" name="ic_lock_expanded_desktop" />
   <java-symbol type="drawable" name="ic_lock_expanded_desktop_off" />
-
+  <java-symbol type="string" name="global_actions_toggle_expanded_desktop_mode" />
+  <java-symbol type="string" name="global_actions_expanded_desktop_mode_off_status" />
+  <java-symbol type="string" name="global_actions_expanded_desktop_mode_on_status" />
+  <java-symbol type="drawable" name="ic_lock_expanded_desktop" />
   <java-symbol type="bool" name="config_samsung_stk" />
+  <!-- Expanded desktop default set -->
+  <java-symbol type="string" name="expanded_mode_default_set" />
 
   <!-- Lockscreen -->
   <java-symbol type="bool" name="config_disableHomeUnlockSetting" />
@@ -1912,6 +1917,7 @@
   <java-symbol type="string" name="action_app"/>
   <java-symbol type="string" name="action_ribbon"/>
   <java-symbol type="string" name="action_widgets"/>
+  <java-symbol type="string" name="action_app_window"/>
 
   <!-- Ribbon -->
   <java-symbol type="layout" name="target_button" />
@@ -1922,6 +1928,8 @@
   <java-symbol type="dimen" name="icon_size_15" />
   <java-symbol type="dimen" name="notification_ribbon_padding" />
   <java-symbol type="dimen" name="lockscreen_ribbon_padding" />
+  <java-symbol type="anim" name="recents_fade_in" />
+  <java-symbol type="anim" name="recents_fade_out" />
 
  <!-- Navigation Ring -->
   <java-symbol type="drawable" name="ic_navbar_blank" />
