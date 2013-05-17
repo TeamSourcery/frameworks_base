@@ -31,6 +31,7 @@ import com.android.systemui.recent.TaskDescription;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.tablet.StatusBarPanel;
 import com.android.systemui.statusbar.WidgetView;
+import com.android.systemui.sourcery.SwipeRibbon;
 
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
@@ -129,6 +130,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected int mCurrentUIMode;
 
     private WidgetView mWidgetView;
+    private SwipeRibbon mSwipeRibbon;
 
     protected static final boolean ENABLE_INTRUDERS = false;
 
@@ -377,6 +379,9 @@ public abstract class BaseStatusBar extends SystemUI implements
         createAndAddWindows();
 
         mWidgetView = new WidgetView(mContext,null);
+        mSwipeRibbon = new SwipeRibbon(mContext,null,"bottom");
+        mSwipeRibbon = new SwipeRibbon(mContext,null,"left");
+        mSwipeRibbon = new SwipeRibbon(mContext,null,"right");
         disable(switches[0]);
         setSystemUiVisibility(switches[1], 0xffffffff);
         topAppWindowChanged(switches[2] != 0);
