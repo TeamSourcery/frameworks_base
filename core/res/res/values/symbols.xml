@@ -1949,4 +1949,6 @@
 
   <java-symbol type="string" name="notify_turn_wifi_ap_off_title" />
 
+  <!-- Panel auto brightness -->
+  <java-symbol type="integer" name="config_panelAutoBrightnessValue" />
 </resources>

@@ -48,13 +48,14 @@ public class AwesomeConstants {
         ACTION_WIDGETS       { @Override public String value() { return "**widgets**";}},
         ACTION_APP_WINDOW    { @Override public String value() { return "**app_window**";}},
         ACTION_NOTIFICATIONS { @Override public String value() { return "**notifications**";}},
-        ACTION_CLOCKOPTIONS  { @Override public String value() { return "**clockoptions**";}},
         ACTION_VOICEASSIST   { @Override public String value() { return "**voiceassist**";}},
        // ACTION_LAST_APP      { @Override public String value() { return "**lastapp**";}},
         ACTION_RECENTS_GB    { @Override public String value() { return "**recentsgb**";}},
         ACTION_TORCH         { @Override public String value() { return "**torch**";}},
         ACTION_IME           { @Override public String value() { return "**ime**";}},
         ACTION_KILL          { @Override public String value() { return "**kill**";}},
+        ACTION_NULL          { @Override public String value() { return "**null**";}},
+        ACTION_CLOCKOPTIONS  { @Override public String value() { return "**clockoptions**";}},
         ACTION_SILENT        { @Override public String value() { return "**ring_silent**";}},
         ACTION_VIB           { @Override public String value() { return "**ring_vib**";}},
         ACTION_SILENT_VIB    { @Override public String value() { return "**ring_vib_silent**";}},
@@ -63,7 +64,6 @@ public class AwesomeConstants {
         ACTION_ALARM         { @Override public String value() { return "**alarm**";}},
         ACTION_UNLOCK        { @Override public String value() { return "**unlock**";}},
         ACTION_CAMERA        { @Override public String value() { return "**camera**";}},
-        ACTION_NULL          { @Override public String value() { return "**null**";}},
         ACTION_APP           { @Override public String value() { return "**app**";}};
         public String value() { return this.value(); }
     }
