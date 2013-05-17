@@ -75,7 +75,7 @@ public class PlatLogoActivity extends Activity {
         tv.setTextSize(size);
         tv.setTextColor(0xFFFFFFFF);
         tv.setShadowLayer(4*metrics.density, 0, 2*metrics.density, 0x66000000);
-        tv.setText("JELLY BEAN 4.2.1");
+        tv.setText("JBSourcery V5.3");
         view.addView(tv, lp);
 
         return view;
