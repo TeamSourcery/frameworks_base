@@ -25,8 +25,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.android.systemui.statusbar.BaseStatusBar;
-import com.android.systemui.statusbar.PieControlPanel;
 
 public class PanelBar extends FrameLayout {
     public static final boolean DEBUG = false;
@@ -45,7 +43,7 @@ public class PanelBar extends FrameLayout {
     PanelView mTouchingPanel;
     private int mState = STATE_CLOSED;
     private boolean mTracking;
-    private BaseStatusBar mStatusBar;
+    
 
     float mPanelExpandedFractionSum;
 
@@ -68,9 +66,7 @@ public class PanelBar extends FrameLayout {
         pv.setBar(this);
     }
 
-    public void setStatusBar(BaseStatusBar statusBar) {
-        mStatusBar = statusBar;
-    }
+  
 
     public void setPanelHolder(PanelHolder ph) {
         if (ph == null) {
@@ -203,9 +199,8 @@ public class PanelBar extends FrameLayout {
             go(STATE_CLOSED);
             onAllPanelsCollapsed();
         }
-       if(mStatusBar != null && mStatusBar.mPieControlPanel != null) mStatusBar.mPieControlPanel.animateCollapsePanels();
+       
     }
-
     public void onPanelPeeked() {
         if (DEBUG) LOG("onPanelPeeked");
     }

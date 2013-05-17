@@ -428,7 +428,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             }});
 
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
-        mStatusBarView.setStatusBar(this);
+        
         mStatusBarView.setBar(this);
         
 
@@ -745,11 +745,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         return mStatusBarView;
     }
 
-    @Override
-    public QuickSettingsContainerView getQuickSettingsPanel() {
-       return mSettingsContainer;
-    }
-
+   
     @Override
     protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutParams) {
        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
@@ -1659,7 +1655,7 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         mStatusBarWindow.cancelExpandHelper();
         mStatusBarView.collapseAllPanels(true);
-        super.animateCollapsePanels(flags);
+        
     }
 
     public ViewPropertyAnimator setVisibilityWhenDone(
@@ -2311,9 +2307,6 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     public void topAppWindowChanged(boolean showMenu) {
        
-
-         if (mPieControlPanel != null)
-             mPieControlPanel.setMenu(showMenu);
 
         mStatusBarView.updateBackgroundAlpha();
         if (DEBUG) {
