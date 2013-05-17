@@ -61,6 +61,12 @@ public class PieLayout extends FrameLayout implements View.OnTouchListener {
     private static final int TIME_FADEIN = 600;
     private static final int TIME_FADEIN_DELAY = 1000;
 
+    // default value, must fit with PieStyleSettings.java in settings
+    public static final float PIE_CONTROL_SIZE_DEFAULT = 0.84f;
+    // default icon scale value on default control size
+    // need to be >= PIE_CONTROL_SIZE_DEFAULT
+    public static final float PIE_ICON_SIZE_FACTOR_DEFAULT = 1.0f;
+
     private Paint mBackgroundPaint = new Paint();
     private float mBackgroundFraction;
     private int mBackgroundTargetAlpha;
@@ -73,7 +79,7 @@ public class PieLayout extends FrameLayout implements View.OnTouchListener {
     private float mSnapThreshold;
     private float mSnapThresholdSqr;
 
-    private float mPieScale = 1.0f;
+    private float mPieScale;
     private int mPadding;
 
     private boolean mActive = false;
@@ -318,7 +324,7 @@ public class PieLayout extends FrameLayout implements View.OnTouchListener {
 
     private void getDimensions() {
         mPieScale = Settings.System.getFloat(mContext.getContentResolver(),
-                Settings.System.PIE_SIZE, 1.0f);
+                Settings.System.PIE_SIZE, PIE_CONTROL_SIZE_DEFAULT);
 
         final Resources res = mContext.getResources();
 
@@ -598,7 +604,7 @@ public class PieLayout extends FrameLayout implements View.OnTouchListener {
 
         for (PieSlice slice : mSlices) {
             if ((slice.flags & viewMask) == viewMask && (slice.flags & PieSlice.IMPORTANT) != 0) {
-                estimatedWidth = Math.max(estimatedWidth, slice.estimateWidth());
+                estimatedWidth = Math.max(estimatedWidth, slice.estimateWidth()) * mPieScale;
             }
         }
 

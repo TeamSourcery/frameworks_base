@@ -35,9 +35,10 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.ServiceConnection;
 import android.database.ContentObserver;
-import android.graphics.Point;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.hardware.input.InputManager;
 import android.net.Uri;
@@ -177,6 +178,8 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
     private int mDisabledFlags = 0;
     private Drawable mBackIcon;
     private Drawable mBackAltIcon;
+    private boolean mIconResize = false;
+    private float mIconResizeFactor ;
 
     /**
      * Defines the positions in which pie controls may appear. This enumeration is used to store
@@ -299,11 +302,13 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_SIZE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.PIE_BUTTON_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.PIE_BUTTON_PRESSED_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.PIE_BUTTON_OUTLINE_COLOR), false, this);
+                    Settings.System.PIE_BUTTON_LONG_PRESSED_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.PIE_BUTTON_OUTLINE_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -419,7 +424,6 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
             }
         }
     };
-
     private boolean mBroadcastReceiverRegistered = false;
 
     private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
@@ -558,10 +562,27 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
 
     private void setupNavigationItems() {
         ContentResolver resolver = mContext.getContentResolver();
+        // get minimum allowed image size for layout
         int minimumImageSize = (int) mContext.getResources().getDimension(R.dimen.pie_item_size);
 
         mNavigationSlice.clear();
-        prepareBackAltIcon();
+
+        // reset mIconResizeFactor to default
+        mIconResizeFactor = PieLayout.PIE_ICON_SIZE_FACTOR_DEFAULT;
+        // check the size set from the user and set resize values if needed
+        float diff = mIconResizeFactor - Settings.System.getFloat(resolver,
+                Settings.System.PIE_SIZE, PieLayout.PIE_CONTROL_SIZE_DEFAULT);
+        float stockDiff = mIconResizeFactor - PieLayout.PIE_CONTROL_SIZE_DEFAULT;
+        if ((diff - stockDiff) > 0.0f) {
+            mIconResize = true;
+            mIconResizeFactor = 1.0f - (1 / mIconResizeFactor * diff);
+        } else {
+            mIconResize = false;
+        }
+
+        // prepare IME back icon
+        mBackAltIcon = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back_ime);
+        mBackAltIcon = prepareBackIcon(mBackAltIcon, false, false);
 
         int numberOfButtons = Settings.System.getInt(resolver,
                 Settings.System.PIE_BUTTONS_QTY, 0);
@@ -697,42 +718,49 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
     }
 
     private int setPieItemIcon(ImageView view, String imageUri, String clickAction) {
-        boolean drawableSet = false;
         if (imageUri != null) {
             if (imageUri.length() > 0) {
                 // custom icon from the URI here
                 File f = new File(Uri.parse(imageUri).getPath());
                 if (f.exists()) {
                     Drawable d = new BitmapDrawable(mContext.getResources(), f.getAbsolutePath());
-                    if (clickAction.equals(ACTION_BACK)) {
-                        mBackIcon = d;
-                    }
                     view.setImageDrawable(d);
-                    drawableSet = true;
+                    if (clickAction.equals(ACTION_BACK)) {
+                        // back icon image needs to be handled seperatly
+                        // all other is handled in PieItem
+                        int customImageColorize = Settings.System.getInt(
+                                mContext.getContentResolver(),
+                                Settings.System.PIE_ICON_COLOR_MODE, 0);
+                        mBackIcon = prepareBackIcon(d,
+                            (customImageColorize == 0 || customImageColorize == 2), true);
+                    } else {
+                        // custom images need to be forced to resize to fit better
+                        resizeIcon(view, null, true);
+                    }
                     return 2;
                 }
-            }
-            if (!drawableSet && clickAction != null && !clickAction.startsWith("**")) {
+            } else if (clickAction != null && !clickAction.startsWith("**")) {
                 // here it's not a system action (**action**), so it must be an
                 // app intent
                 try {
                     Drawable d = mContext.getPackageManager().getActivityIcon(
                             Intent.parseUri(clickAction, 0));
                     view.setImageDrawable(d);
-                    drawableSet = true;
+                    if (mIconResize) {
+                        resizeIcon(view, null, false);
+                    }
                     return 1;
                 } catch (NameNotFoundException e) {
                     e.printStackTrace();
-                    drawableSet = false;
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
-                    drawableSet = false;
                 }
             }
         }
 
-        if (!drawableSet) {
-            view.setImageDrawable(getPieSystemIconImage(clickAction));
+        view.setImageDrawable(getPieSystemIconImage(clickAction));
+        if (mIconResize) {
+            resizeIcon(view, null, false);
         }
         return 0;
     }
@@ -746,6 +774,7 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
                 return mContext.getResources().getDrawable(R.drawable.ic_sysbar_home);
             } else if (uri.equals(ACTION_BACK)) {
                 mBackIcon = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back);
+                mBackIcon = prepareBackIcon(mBackIcon, false, false);
                 return mBackIcon;
             } else if (uri.equals(ACTION_RECENTS)) {
                 return mContext.getResources().getDrawable(R.drawable.ic_sysbar_recent);
@@ -761,26 +790,62 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
                 return mContext.getResources().getDrawable(R.drawable.ic_sysbar_lastapp);
             } else if (uri.equals(ACTION_KILL)) {
                 return mContext.getResources().getDrawable(R.drawable.ic_sysbar_killtask);
-            
             } else if (uri.equals(ACTION_POWER)) {
                 return mContext.getResources().getDrawable(R.drawable.ic_sysbar_power);
             } else if (uri.equals(ACTION_NOTIFICATIONS)) {
                 return mContext.getResources().getDrawable(R.drawable.ic_sysbar_notifications);
+           
             }
         }
         return mContext.getResources().getDrawable(R.drawable.ic_sysbar_null);
     }
 
-    private void prepareBackAltIcon() {
+    private Drawable resizeIcon(ImageView view, Drawable d, boolean useSystemDimens) {
+        int width = 0;
+        int height = 0;
+        Drawable dOriginal = d;
+        if (d == null) {
+            dOriginal = view.getDrawable();
+        }
+        Bitmap bitmap = ((BitmapDrawable) dOriginal).getBitmap();
+        if (useSystemDimens) {
+            width = height = mContext.getResources()
+                .getDimensionPixelSize(com.android.internal.R.dimen.app_icon_size);
+        } else {
+            width = bitmap.getWidth();
+            height = bitmap.getHeight();
+        }
+        width = (int) (width * mIconResizeFactor);
+        height = (int) (height * mIconResizeFactor);
+
+        Drawable dResized = new BitmapDrawable(mContext.getResources(), Bitmap.createScaledBitmap(bitmap, width, height, false));
+        if (d == null) {
+            view.setImageDrawable(dResized);
+            return null;
+        } else {
+            return (dResized);
+        }
+    }
+
+    private Drawable prepareBackIcon(Drawable d, boolean customImageColorize, boolean forceResize) {
         int drawableColor = (Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.PIE_ICON_COLOR, -2));
-
-        mBackAltIcon = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back_ime);
-        if (drawableColor != -2) {
-            mBackAltIcon.setColorFilter(drawableColor, Mode.SRC_ATOP);
+        if (mIconResize && !forceResize) {
+            d = resizeIcon(null, d, false);
+        } else if (forceResize) {
+            d = resizeIcon(null, d, true);
+        }
+        if (drawableColor != -2 && customImageColorize) {
+            d.setColorFilter(drawableColor, Mode.MULTIPLY);
+        // forceResize gives us the information that it must
+        // be a custom image icon....so do not colorize
+        // it if not already done before
+        } else if (drawableColor != -2 && !forceResize) {
+            d.setColorFilter(drawableColor, Mode.SRC_ATOP);
         } else {
-            mBackAltIcon.setColorFilter(null);
-        }   
+            d.setColorFilter(null);
+        }
+        return d;
     }
 
     public void activateFromTrigger(View view, MotionEvent event, Position position) {
@@ -986,6 +1051,7 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
                 // wtf is this
             }
             return;
+      
         } else {  // we must have a custom uri
             try {
                 Intent intent = Intent.parseUri(type, 0);
