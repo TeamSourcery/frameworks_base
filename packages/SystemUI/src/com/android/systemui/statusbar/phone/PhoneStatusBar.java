@@ -3005,7 +3005,7 @@ public class PhoneStatusBar extends BaseStatusBar {
          @Override
         public void onChange(boolean selfChange) {
             updateSettings();
-                       
+            updateStatusBarVisibility();            
         }
     }
     protected void updateSettings() {
