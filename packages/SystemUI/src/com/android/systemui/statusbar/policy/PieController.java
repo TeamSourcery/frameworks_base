@@ -109,7 +109,6 @@ public class PieController implements BaseStatusBar.NavigationBarCallback,
     private final static String ACTION_IME = "**ime**";
     private final static String ACTION_LAST_APP = "**lastapp**";
     private final static String ACTION_KILL = "**kill**";
-    private final static String ACTION_WIDGETS = "**widgets**";
     private final static String ACTION_NULL = "**null**";
 
     private String[] mClickActions = new String[7];
