@@ -96,7 +96,7 @@ public class CustomToggle extends BaseToggle {
         public void run() {
             mCustomState = 0;
             commitState();
-            AwesomeAction.launchAction(mContext, mClickActions[mCustomState].equals("**null**")
+            AwesomeAction.launchAction(mContext, "**null**".equals(mClickActions[mCustomState])
                     ? mLongActions[mCustomState] : mClickActions[mCustomState]);
             startMagicTricks();
         }
@@ -221,7 +221,7 @@ public class CustomToggle extends BaseToggle {
                 myIcon = new BitmapDrawable(mContext.getResources(), f.getAbsolutePath());
             }
         } else {
-            myIcon = NavBarHelpers.getIconImage(mContext, mClickActions[mCustomState].equals("**null**")
+            myIcon = NavBarHelpers.getIconImage(mContext, "**null**".equals(mClickActions[mCustomState])
                     ? mLongActions[mCustomState] : mClickActions[mCustomState]);
         }
         setLabel(toggleText);
