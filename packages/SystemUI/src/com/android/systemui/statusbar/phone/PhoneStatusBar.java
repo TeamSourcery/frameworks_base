@@ -105,7 +105,6 @@ import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
 import com.android.systemui.statusbar.policy.Prefs;
-import com.android.systemui.statusbar.policy.PieController.Position;
 import com.android.systemui.statusbar.powerwidget.PowerWidget;
 import com.android.systemui.statusbar.toggles.ToggleManager;
 import com.android.systemui.sourcery.AwesomeAction;
@@ -957,6 +956,8 @@ public class PhoneStatusBar extends BaseStatusBar {
             }
                 // Start the timer to hide the NavBar; <-- I LOLZ. Mike even comments in java. ;-)
         }
+        // recreate pie navigation
+        recreatePie();
     }
 
     private void hideNavBar() {

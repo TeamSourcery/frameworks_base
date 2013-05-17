@@ -31,8 +31,8 @@ public class HandlerCaller {
     final Callback mCallback;
 
     class MyHandler extends Handler {
-        MyHandler(Looper looper) {
-            super(looper);
+        MyHandler(Looper looper, boolean async) {
+            super(looper, null, async);
         }
         
         @Override
@@ -45,17 +45,11 @@ public class HandlerCaller {
         public void executeMessage(Message msg);
     }
     
-    public HandlerCaller(Context context, Callback callback) {
+    public HandlerCaller(Context context, Looper looper, Callback callback,
+            boolean asyncHandler) {
         mContext = context;
-        mMainLooper = context.getMainLooper();
-        mH = new MyHandler(mMainLooper);
-        mCallback = callback;
-    }
-
-    public HandlerCaller(Context context, Looper looper, Callback callback) {
-        mContext = context;
-        mMainLooper = looper;
-        mH = new MyHandler(mMainLooper);
+        mMainLooper = looper != null ? looper : context.getMainLooper();
+        mH = new MyHandler(mMainLooper, asyncHandler);
         mCallback = callback;
     }
 
