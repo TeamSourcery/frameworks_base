@@ -790,6 +790,9 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     @Override
     public void toggleNotificationShade() {
+         Settings.System.putInt(mContext.getContentResolver(),
+                Settings.System.TOGGLE_NOTIFICATION_SHADE,
+                (mExpandedVisible) ? 0 : 1);
         int msg = (mExpandedVisible)
                 ? MSG_CLOSE_PANELS : MSG_OPEN_NOTIFICATION_PANEL;
         mHandler.removeMessages(msg);
@@ -1212,6 +1215,18 @@ public class PhoneStatusBar extends BaseStatusBar {
         setAreThereNotifications();
     }
 
+    private void updateStatusBarVisibility() {
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.AUTO_HIDE_STATUSBAR, 0) == 1) {
+            Settings.System.putInt(mContext.getContentResolver(),
+                    Settings.System.HIDE_STATUSBAR,
+                    (mNotificationData.size() == 0) ? 1 : 0);
+        } else {
+            Settings.System.putInt(mContext.getContentResolver(),
+                    Settings.System.HIDE_STATUSBAR, 0);
+        }
+    }
+
    
     private void loadNotificationShade() {
         if (mPile == null) return;
@@ -1409,6 +1424,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                 })
                 .start();
         }
+        if (mNotificationData.size() < 2) updateStatusBarVisibility();
 
         updateCarrierLabelVisibility(false);
     }
@@ -2982,6 +2998,8 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.RIBBON_TEXT_COLOR[RibbonHelper.QUICK_SETTINGS]), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.PIE_DISABLE_STATUSBAR_INFO), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.AUTO_HIDE_STATUSBAR), false, this, UserHandle.USER_ALL);
          }
 
          @Override
