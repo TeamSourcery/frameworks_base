@@ -5722,6 +5722,8 @@ public final class Settings {
          */
         public static final String SCREENSAVER_DEFAULT_COMPONENT = "screensaver_default_component";
 
+        public static final String ENABLE_PERMISSIONS_MANAGEMENT = "enable_permissions_management";
+
         /**
          * This are the settings to be backed up.
          *
