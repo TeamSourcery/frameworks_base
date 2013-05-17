@@ -1091,48 +1091,46 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void setInitialDisplaySize(Display display, int width, int height, int density) {
         mDisplay = display;
 
+        boolean reverseConfig = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_reverseDefaultRotation);
+
         int shortSize, longSize;
         if (width > height) {
             shortSize = height;
             longSize = width;
-            mLandscapeRotation = Surface.ROTATION_0;
-            mSeascapeRotation = Surface.ROTATION_180;
-            if (mContext.getResources().getBoolean(
-                    com.android.internal.R.bool.config_reverseDefaultRotation)) {
-                mPortraitRotation = Surface.ROTATION_90;
-                mUpsideDownRotation = Surface.ROTATION_270;
-            } else {
-                mPortraitRotation = Surface.ROTATION_270;
-                mUpsideDownRotation = Surface.ROTATION_90;
+            if (mNavBarFirstBootFlag) {
+                // This should only be run once at boot time.  Since we poke this
+                // routine often, it has the potential to screw with rotation settings.
+                mLandscapeRotation = Surface.ROTATION_0;
+                mSeascapeRotation = Surface.ROTATION_180;
+                if (reverseConfig) {
+                    mPortraitRotation = Surface.ROTATION_90;
+                    mUpsideDownRotation = Surface.ROTATION_270;
+                } else {
+                    mPortraitRotation = Surface.ROTATION_270;
+                    mUpsideDownRotation = Surface.ROTATION_90;
+                }
             }
         } else {
             shortSize = width;
             longSize = height;
-            mPortraitRotation = Surface.ROTATION_0;
-            mUpsideDownRotation = Surface.ROTATION_180;
-            if (mContext.getResources().getBoolean(
-                    com.android.internal.R.bool.config_reverseDefaultRotation)) {
-                mLandscapeRotation = Surface.ROTATION_270;
-                mSeascapeRotation = Surface.ROTATION_90;
-            } else {
-                mLandscapeRotation = Surface.ROTATION_90;
-                mSeascapeRotation = Surface.ROTATION_270;
+            if (mNavBarFirstBootFlag) {
+                // This should only be run once at boot time.  Since we poke this
+                // routine often, it has the potential to screw with rotation settings.
+                mPortraitRotation = Surface.ROTATION_0;
+                mUpsideDownRotation = Surface.ROTATION_180;
+                if (reverseConfig) {
+                    mLandscapeRotation = Surface.ROTATION_270;
+                    mSeascapeRotation = Surface.ROTATION_90;
+                } else {
+                    mLandscapeRotation = Surface.ROTATION_90;
+                    mSeascapeRotation = Surface.ROTATION_270;
+                }
             }
         }
 
-         mFontSize = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUSBAR_FONT_SIZE, -1);
-        if (mFontSize == -1) { // No custom Font Size - so obey @dimen
-            mStatusBarHeight = mContext.getResources().getDimensionPixelSize(
+        mStatusBarHeight = mContext.getResources().getDimensionPixelSize(
                 com.android.internal.R.dimen.status_bar_height);
-        } else { // Custom Font size, so let's adjust Statusbar Height
-            float fontSizepx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mFontSize,
-                    mContext.getResources().getDisplayMetrics());
-            int padding = mContext.getResources().getDimensionPixelSize(
-                    com.android.internal.R.dimen.status_bar_padding);
-            mStatusBarHeight = (int) (fontSizepx + padding);
-            // This gives the StatusBar room for the Font, plus a little padding.
-        }
 
         // Height of the navigation bar when presented horizontally at bottom
         mNavigationBarHeightForRotation[mPortraitRotation] =
@@ -1225,7 +1223,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
 
-        if (!mHasNavigationBar) {
+        if (!mHasNavigationBar && !mHasSystemNavBar) {
              mNavigationBarWidthForRotation[mPortraitRotation] =
                      mNavigationBarWidthForRotation[mUpsideDownRotation] =
                      mNavigationBarWidthForRotation[mLandscapeRotation] =
