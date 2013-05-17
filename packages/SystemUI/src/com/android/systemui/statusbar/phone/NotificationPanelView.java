@@ -43,6 +43,8 @@ public class NotificationPanelView extends PanelView {
    
     private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper.jpg";
     private final String NOTIF_WALLPAPER_IMAGE_PATH_LAND = "/data/data/com.teamsourcery.sourcerytools/files/notification_wallpaper_land.jpg";
+    private final boolean hasPortrait = new File(NOTIF_WALLPAPER_IMAGE_PATH).exists();
+    private final boolean hasLandscape = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND).exists();
     private static final float STATUS_BAR_SETTINGS_LEFT_PERCENTAGE = 0.8f;
     private static final float STATUS_BAR_SETTINGS_RIGHT_PERCENTAGE = 0.2f;
     private static final float STATUS_BAR_SWIPE_TRIGGER_PERCENTAGE = 0.05f;
@@ -93,36 +95,36 @@ public class NotificationPanelView extends PanelView {
     }
 
     public void setNotificationWallpaper() {
-    File portrait = new File(NOTIF_WALLPAPER_IMAGE_PATH);
-        File landscape = new File(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
-	mScreenOrientation = getContext().getResources().getConfiguration().orientation;
+    mScreenOrientation = getContext().getResources().getConfiguration().orientation;
         boolean isPortrait =  mScreenOrientation == Configuration.ORIENTATION_PORTRAIT;
 
         if (isPortrait) {
-            if (portrait.exists()) {
+            if (hasPortrait) {
                 Drawable d = Drawable.createFromPath(NOTIF_WALLPAPER_IMAGE_PATH);
                 d.setAlpha((int) (wallpaperAlpha * 255));
                 this.setBackground(d);
 	    } else {
-       this.setBackground(this.getResources().getDrawable(R.drawable.sourcery_animation));
-       }
+                this.setBackground(this.getResources().getDrawable(R.drawable.sourcery_animation));
+            }
        } else {
-            if (landscape.exists()) {
+            if (hasLandscape) {
                 Drawable d = Drawable.createFromPath(NOTIF_WALLPAPER_IMAGE_PATH_LAND);
                 d.setAlpha((int) (wallpaperAlpha * 255));
                 this.setBackground(d);
        } else {
-       this.setBackground(this.getResources().getDrawable(R.drawable.sourcery_animation));
+                this.setBackground(this.getResources().getDrawable(R.drawable.sourcery_animation));
+            }
        }
-        }
-    }
+   }
 
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
     //super.onConfigurationChanged(newConfig);
     if (newConfig.orientation != mScreenOrientation) {
-        setNotificationWallpaper();
-    }
+            if (hasPortrait || hasLandscape) {
+                setNotificationWallpaper();
+            }
+        }
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
