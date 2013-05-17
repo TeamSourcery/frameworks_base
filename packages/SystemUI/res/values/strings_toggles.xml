@@ -49,4 +49,7 @@
     <string name="toggle_STAYAWAKE">Stay Awake</string>
     <string name="toggle_WIRELESSADB">Wireless ADB</string>
     <string name="toggle_EXPANDEDDESKTOP">Expanded Desktop</string>
+    <string name="toggle_VOLUME">Volume</string>
+    <string name="toggle_JBCONTROL">JBS Control</string>
+    <string name="toggle_JBTOOL">JBS Tools</string>
 </resources>
