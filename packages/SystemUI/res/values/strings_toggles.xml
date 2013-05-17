@@ -53,4 +53,5 @@
     <string name="toggle_JBCONTROL">JBS Control</string>
     <string name="toggle_JBTOOL">JBS Tools</string>
     <string name="toggle_PW">Power Widget</string>
+    <string name="toggle_DARK">Black Hat</string>
 </resources>

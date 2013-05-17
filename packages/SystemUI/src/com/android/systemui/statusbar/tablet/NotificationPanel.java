@@ -60,6 +60,7 @@ import com.android.systemui.statusbar.phone.QuickSettingsContainerView;
 import com.android.systemui.statusbar.phone.SettingsPanelView;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.toggles.ToggleManager;
+import com.android.systemui.sourcery.SwipeRibbon;
 
 public class NotificationPanel extends RelativeLayout implements StatusBarPanel,
         View.OnClickListener {
@@ -87,6 +88,9 @@ public class NotificationPanel extends RelativeLayout implements StatusBarPanel,
 
     // settings
     ToggleManager mToggleManager;
+    private SwipeRibbon mSwipeRibbonLeft;
+    private SwipeRibbon mSwipeRibbonRight;
+    private SwipeRibbon mSwipeRibbonBottom;
     boolean mHasSettingsPanel, mHasFlipSettings;
     int mToggleStyle;
     SettingsPanelView mSettingsPanel;
@@ -123,6 +127,10 @@ public class NotificationPanel extends RelativeLayout implements StatusBarPanel,
             mToggleManager.setControllers(mBar.mBluetoothController,mBar.mNetworkController, mBar.mBatteryController,
                 mBar.mLocationController, null);
             mToggleManager.updateSettings();
+            mSwipeRibbonLeft.setControllers(mBar.mBluetoothController,mBar.mNetworkController, mBar.mBatteryController,
+                mBar.mLocationController, null);
+            mSwipeRibbonRight.setControllers(mBar.mBluetoothController,mBar.mNetworkController, mBar.mBatteryController,
+                mBar.mLocationController, null);
         }
     }
 
@@ -211,6 +219,9 @@ public class NotificationPanel extends RelativeLayout implements StatusBarPanel,
 
             // wherever you find it, Quick Settings needs a container to survive
             mToggleManager = new ToggleManager(mContext);
+            mSwipeRibbonBottom = new SwipeRibbon(mContext,null,"bottom");
+            mSwipeRibbonLeft = new SwipeRibbon(mContext,null,"left");
+            mSwipeRibbonRight = new SwipeRibbon(mContext,null,"right");
             mToggleStyle = Settings.System.getInt(mContext.getContentResolver(), 
                     Settings.System.TOGGLES_STYLE,ToggleManager.STYLE_TILE);
             if (mToggleStyle == ToggleManager.STYLE_SCROLLABLE) {
