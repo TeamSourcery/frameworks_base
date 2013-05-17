@@ -52,9 +52,7 @@
     <!-- Margin at the edge of the screen to ignore touch events for in the windowshade. -->
     <dimen name="status_bar_edge_ignore">5dp</dimen>
 
-     <!-- Padding of the status bar -->
-    <dimen name="status_bar_padding">9dip</dimen>
-
+  
     <!-- Size of the fastscroll hint letter -->
     <dimen name="fastscroll_overlay_size">104dp</dimen>
     <!-- Width of the fastscroll thumb -->

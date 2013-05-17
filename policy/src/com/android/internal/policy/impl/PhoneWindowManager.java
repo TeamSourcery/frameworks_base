@@ -74,7 +74,6 @@ import android.util.EventLog;
 import android.util.Log;
 import android.util.Slog;
 import android.util.SparseArray;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
@@ -268,7 +267,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     WindowState mStatusBar = null;
     boolean mHasSystemNavBar;
     int mStatusBarHeight;
-    int mFontSize;
     WindowState mNavigationBar = null;
     boolean mHasNavigationBar = false;
     boolean mNavBarAutoHide = false;
@@ -630,8 +628,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.NAVIGATION_BAR_HEIGHT_LANDSCAPE), false, this);
  	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_WIDTH), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUSBAR_FONT_SIZE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.USER_UI_MODE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -1366,12 +1362,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (NavHide != mNavBarAutoHide && mUserUIMode != 1) {
            mNavBarAutoHide = NavHide;
            resetScreenHelper();
-        }
-        int fontSize = Settings.System.getInt(resolver,
-                Settings.System.STATUSBAR_FONT_SIZE, -1);
-        if (fontSize != mFontSize) {
-            mFontSize = fontSize;
-            resetScreenHelper();
         }
     }
 
