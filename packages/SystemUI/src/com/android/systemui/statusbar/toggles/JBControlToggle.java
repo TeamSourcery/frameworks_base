@@ -10,7 +10,7 @@ import com.android.systemui.R;
 public class JBControlToggle extends BaseToggle {
 
     @Override
-    protected void init(Context c, int style) {
+    public void init(Context c, int style) {
         super.init(c, style);
         setIcon(R.drawable.ic_qs_control);
         setLabel(R.string.quick_settings_jbcontrol_label);

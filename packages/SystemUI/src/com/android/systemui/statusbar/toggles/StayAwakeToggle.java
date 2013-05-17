@@ -24,7 +24,7 @@ public class StayAwakeToggle extends StatefulToggle {
     SettingsObserver mObserver = null;
 
     @Override
-    protected void init(Context c, int style) {
+    public void init(Context c, int style) {
         super.init(c, style);
 
         SharedPreferences shared = mContext.getSharedPreferences(KEY_USER_TIMEOUT,

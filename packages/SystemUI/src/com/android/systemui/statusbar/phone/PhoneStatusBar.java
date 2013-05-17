@@ -110,6 +110,7 @@ import com.android.systemui.statusbar.powerwidget.PowerWidget;
 import com.android.systemui.statusbar.toggles.ToggleManager;
 import com.android.systemui.sourcery.AwesomeAction;
 import com.android.internal.util.sourcery.RibbonHelper;
+import com.android.systemui.sourcery.SwipeRibbon;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -168,6 +169,10 @@ public class PhoneStatusBar extends BaseStatusBar {
     PhoneStatusBarPolicy mIconPolicy;
 
     private IWindowManager mWm;
+
+    private SwipeRibbon mSwipeRibbonLeft;
+    private SwipeRibbon mSwipeRibbonRight;
+    private SwipeRibbon mSwipeRibbonBottom;
 
     // These are no longer handled by the policy, because we need custom strategies for them
     BluetoothController mBluetoothController;
@@ -685,9 +690,17 @@ public class PhoneStatusBar extends BaseStatusBar {
             // wherever you find it, Quick Settings needs a container to survive
             mSettingsContainer = (QuickSettingsContainerView)
                     mStatusBarWindow.findViewById(R.id.quick_settings_container);
+
+            mSwipeRibbonBottom = new SwipeRibbon(mContext,null,"bottom");
+            mSwipeRibbonLeft = new SwipeRibbon(mContext,null,"left");
+            mSwipeRibbonRight = new SwipeRibbon(mContext,null,"right");
             
             mToggleManager = new ToggleManager(mContext);
             mToggleManager.setControllers(mBluetoothController, mNetworkController, mBatteryController,
+                    mLocationController, null);
+            mSwipeRibbonLeft.setControllers(mBluetoothController, mNetworkController, mBatteryController,
+                    mLocationController, null);
+            mSwipeRibbonRight.setControllers(mBluetoothController, mNetworkController, mBatteryController,
                     mLocationController, null);
             if (mToggleStyle == ToggleManager.STYLE_SCROLLABLE) {
                 mToggleManager.setContainer((LinearLayout) mNotificationPanel.findViewById(R.id.quick_toggles),

@@ -547,6 +547,8 @@
     <!--  App window Strings -->
     <string name="close">Close</string>
     <string name="app_window">Applications</string>
+    <string name="toggles">Toggles</string>
+    <string name="ribbon">Ribbon</string>
 
     <!--  Quick Settings -->
     <string name="quick_settings_vibrate_on_label">Vibrate On</string>

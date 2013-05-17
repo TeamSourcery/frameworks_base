@@ -3889,6 +3889,16 @@ public final class Settings {
             "swipe_ribbon_color_right",
             "swipe_ribbon_color_bottom",
         };
+       
+        /**
+         *
+	 * @hide
+         */
+        public static final String[] SWIPE_RIBBON_TOGGLES = new String[] {
+            "swipe_ribbon_toggles_left",
+            "swipe_ribbon_toggles_right",
+	    "swipe_ribbon_toggles_bottom",
+        };
 
         /**
          * Whether Status bar should be hidden when there are no
@@ -4110,6 +4120,11 @@ public final class Settings {
          * @hide
          */
         public static final String CUSTOM_TOGGLE_REVERT = "custom_toggle_revert";
+
+        /**
+         * @hide
+         */
+         public static final String CUSTOM_TOGGLE_STATE = "custom_toggle_state";
 
         /**
          * @hide

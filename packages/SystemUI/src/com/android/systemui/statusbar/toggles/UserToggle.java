@@ -38,7 +38,7 @@ public class UserToggle extends BaseToggle {
     private static int sAvatarBaseSize = 125;
 
     @Override
-    protected void init(Context c, int style) {
+    public void init(Context c, int style) {
         super.init(c, style);
         reloadUserInfo();
         registerBroadcastReceiver(new BroadcastReceiver() {
