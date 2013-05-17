@@ -631,6 +631,7 @@
     <string name="permlab_screenshot">Allows the app to cature a screenshot. This is protected by SystemUI.</string>
     <string name="screenshot_toast">Screenshot in %1$d seconds</string>
     
-
+   <string name="powerwidget_screen_timeout_toast">Screen timeout set to: %1$d %2$s</string>
+   <string name="brightness_label">Brightness</string>
     
 </resources>

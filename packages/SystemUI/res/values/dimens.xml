@@ -278,4 +278,10 @@
     <!-- The fixed height of traditional toggles -->
     <dimen name="toggle_traditional_padding">6dp</dimen>
 
+    <!-- Height of the notification panel brightness slider -->
+    <dimen name="notification_panel_brightness_height">42dp</dimen>
+
+    <!-- Height of the notification panel widget bar -->
+    <dimen name="notification_panel_widget_height">48dp</dimen>
+
 </resources>
