@@ -265,4 +265,6 @@ interface IWindowManager
      * credentials.
      */
     void showAssistant();
+
+  
 }

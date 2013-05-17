@@ -3403,18 +3403,7 @@ public final class Settings {
          */
         public static final String POWER_DIALOG_SHOW_REBOOT_HIDE = "power_dialog_show_reboot_hide";
 
-       /**
-        * Option to hide expanded desktop in power menu
-        * @hide
-        */
-        public static final String POWER_DIALOG_SHOW_EXPANDED_DESKTOP_TOGGLE = "power_dialog_show_expanded_desktop_toggle";
-
-       /**
-        * Statusbar State
-        * @hide
-        */
-        public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
-
+       
         /*
          * Restart Launcher
          * @hide
@@ -3901,6 +3890,26 @@ public final class Settings {
             "swipe_ribbon_color_bottom",
         };
 
+        /**
+          * Whether Expanded desktop is currently running or not
+          * @hide
+          */
+         public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
+ 
+         /**
+         * Expanded desktop mode
+         * 0 = none, 1 = hide only navbar, 2 = hide only statusbar, 3 = hide both
+         * @hide
+         */
+        public static final String EXPANDED_DESKTOP_MODE = "expanded_desktop_mode";
+
+       /**
+         * Whether power menu expanded desktop is enabled
+         * @hide
+         */
+        public static final String POWER_MENU_EXPANDED_DESKTOP_ENABLED = "power_menu_expanded_desktop_enabled";
+
+        
         /**
          *
          * @hide

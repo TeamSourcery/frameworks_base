@@ -499,9 +499,9 @@ final class WindowState implements WindowManagerPolicy.WindowState {
         }
 
          if (mIsWallpaper) {
- 	     final int rotation = mService.getRotation();
-             mService.updateWallpaperOffsetLocked(this, mPolicy.getWallpaperWidth(rotation),
-                     mPolicy.getWallpaperHeight(rotation), false);
+            final DisplayInfo displayInfo = mDisplayContent.getDisplayInfo();
+            mService.updateWallpaperOffsetLocked(this, displayInfo.appWidth, displayInfo.appHeight,
+                    false);
         }
 
         if (WindowManagerService.localLOGV) {

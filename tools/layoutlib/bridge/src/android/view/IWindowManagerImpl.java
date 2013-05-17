@@ -457,6 +457,7 @@ public class IWindowManagerImpl implements IWindowManager {
 
     }
 
+  
     @Override
     public IBinder getFocusedWindowToken() {
         // TODO Auto-generated method stub
