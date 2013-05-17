@@ -3913,17 +3913,7 @@ public final class Settings {
          */
         public static final String HIDE_STATUSBAR = "hide_statusbar";
 
-        /**
-         * Whether or not hidden Statusbar can be pulled down
-         * @hide
-         */
-        public static final String HIDDEN_STATUSBAR_PULLDOWN = "hidden_statusbar_pulldown";
-
-        /**
-         * Allows hidden Statusbar timeout to be configured
-         * @hide
-         */
-        public static final String HIDDEN_STATUSBAR_PULLDOWN_TIMEOUT = "hidden_statusbar_pulldown_timeout";
+       
 
        /**
          * Whether Status Bar is currently hidden or not for notification
