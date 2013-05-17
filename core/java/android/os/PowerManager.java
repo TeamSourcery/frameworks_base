@@ -340,6 +340,19 @@ public final class PowerManager {
                 com.android.internal.R.integer.config_screenBrightnessSettingDefault);
     }
 
+     /**
+     * Gets the minimum screen brightness.
+     * This is the lowest possible screen brightness; the screen will
+     * never become dimmer than that.
+     * @hide
+     */
+    public int getMinimumAbsoluteScreenBrightness() {
+        int minSetting = getMinimumScreenBrightnessSetting();
+        int dimSetting = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_screenBrightnessDim);
+        return Math.min(minSetting, dimSetting);
+    }
+
     /**
      * Returns true if the screen auto-brightness adjustment setting should
      * be available in the UI.  This setting is experimental and disabled by default.
