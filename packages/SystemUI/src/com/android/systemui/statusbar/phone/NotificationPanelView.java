@@ -114,8 +114,8 @@ public class NotificationPanelView extends PanelView {
        } else {
                 this.setBackground(this.getResources().getDrawable(R.drawable.sourcery_animation));
             }
-       }
-   }
+        }
+    }
 
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
