@@ -125,13 +125,7 @@ public class SwipeRibbon extends LinearLayout {
             params.gravity = getGravity();
             params.setTitle("Ribbon" + mLocation);
             if (mWindowManager != null) {
-                if (mGesturePanel != null) {
-                    try {
-                        mWindowManager.removeView(mGesturePanel);
-                    } catch (IllegalArgumentException e) {
-                        //If we try to remove the gesture panel and it's not currently attached.
-                    }
-                }
+               
                 mWindowManager.addView(mPopupView, params);
                 PlayInAnim();
                 if (mHideTimeOut > 0) {
@@ -281,9 +275,7 @@ public class SwipeRibbon extends LinearLayout {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mWindowManager.removeView(mPopupView);
-                        if (mGesturePanel != null) {
-                            mWindowManager.addView(mGesturePanel, mGesturePanel.getGesturePanelLayoutParams());
-                        }
+                       
                     animating = false;
                 }
 
