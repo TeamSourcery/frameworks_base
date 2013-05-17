@@ -52,4 +52,5 @@
     <string name="toggle_VOLUME">Volume</string>
     <string name="toggle_JBCONTROL">JBS Control</string>
     <string name="toggle_JBTOOL">JBS Tools</string>
+    <string name="toggle_PW">Power Widget</string>
 </resources>

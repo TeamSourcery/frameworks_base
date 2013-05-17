@@ -101,6 +101,7 @@ public class ToggleManager {
     public static final String VOLUME_TOGGLE = "VOLUME";
     public static final String JBCONTROL_TOGGLE = "JBCONTROL";
     public static final String JBTOOL_TOGGLE = "JBTOOL";
+    public static final String PW_TOGGLE = "PW";
 
     private int mStyle;
 
@@ -163,6 +164,7 @@ public class ToggleManager {
             toggleMap.put(VOLUME_TOGGLE, VolumeToggle.class);
             toggleMap.put(JBTOOL_TOGGLE, JBToolToggle.class);
             toggleMap.put(JBCONTROL_TOGGLE, JBControlToggle.class);
+            toggleMap.put(PW_TOGGLE, PWToggle.class);
              // toggleMap.put(BT_TETHER_TOGGLE, null);
         }
         return toggleMap;
