@@ -103,6 +103,7 @@ public class ToggleManager {
     public static final String JBTOOL_TOGGLE = "JBTOOL";
     public static final String PW_TOGGLE = "PW";
     public static final String DARK_TOGGLE = "DARK";
+    public static final String PIE_TOGGLE = "PIE";
 
     private int mStyle;
 
@@ -167,6 +168,7 @@ public class ToggleManager {
             toggleMap.put(JBCONTROL_TOGGLE, JBControlToggle.class);
             toggleMap.put(PW_TOGGLE, PWToggle.class);
             toggleMap.put(DARK_TOGGLE, DarkToggle.class);
+            toggleMap.put(PIE_TOGGLE, PieToggle.class);
              // toggleMap.put(BT_TETHER_TOGGLE, null);
         }
         return toggleMap;
