@@ -27,7 +27,7 @@ public class PieToggle extends StatefulToggle {
     @Override
     protected void doEnable() {
         Settings.System.putInt(mContext.getContentResolver(),
-                Settings.System.PIE_CONTROLS, 1);
+                Settings.System.PIE_CONTROLS, 2);
     }
 
     @Override
@@ -69,9 +69,9 @@ public class PieToggle extends StatefulToggle {
                     this);
         }
 
-        @Override
+       @Override
         public void onChange(boolean selfChange) {
-            SysHelpers.restartSystemUI();
+            scheduleViewUpdate();
         }
     }
 
