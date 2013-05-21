@@ -427,6 +427,7 @@ public class SwipeRibbon extends LinearLayout {
             toggleMap.put(JBTOOL_TOGGLE, JBToolToggle.class);
             toggleMap.put(JBCONTROL_TOGGLE, JBControlToggle.class);
             toggleMap.put(PW_TOGGLE, PWToggle.class);
+            toggleMap.put(DARK_TOGGLE, DarkToggle.class);
              // toggleMap.put(BT_TETHER_TOGGLE, null);
         }
         return toggleMap;

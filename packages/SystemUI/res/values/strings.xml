@@ -606,8 +606,8 @@
     <string name="quick_settings_jbcontrol_label">JBS Control</string>
     <string name="quick_settings_pwtoggle_on">PW ON</string>
     <string name="quick_settings_pwtoggle_off">PW OFF</string>
-    <string name="quick_settings_dark_on_label">Black Hat</string>
-    <string name="quick_settings_dark_off_label">White Hat</string>
+    <string name="quick_settings_dark_on_label">Black Magic</string>
+    <string name="quick_settings_dark_off_label">White Magic</string>
 
     <!--  RamBar -->
     <string name="memory">RAM</string>
