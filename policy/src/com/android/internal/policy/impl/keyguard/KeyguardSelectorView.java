@@ -84,6 +84,7 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
     private String[] customIcons = new String[8];
     private UnlockReceiver receiver;
     private IntentFilter filter;
+    private boolean mReceiverRegistered = false;
 
     private class H extends Handler {
         public void handleMessage(Message m) {
@@ -139,14 +140,20 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
                 if (!mGlowPadLock) {
                     mGlowPadLock = true;
                     mLongPress = true;
-                    mContext.unregisterReceiver(receiver);
+                    if (mReceiverRegistered) {
+                        mContext.unregisterReceiver(receiver);
+                        mReceiverRegistered = false;
+                    }
                     launchAction(longActivities[mTarget]);
                  }
             }
         };
 
         public void onTrigger(View v, int target) {
-            mContext.unregisterReceiver(receiver);
+             if (mReceiverRegistered) {
+                mContext.unregisterReceiver(receiver);
+                mReceiverRegistered = false;
+            }
             if ((!mUsesCustomTargets) || (mTargetCounter() == 0 && mUnlockCounter() < 2)) {
                 mCallback.userActivity(0);
                 mCallback.dismiss(false);
@@ -271,6 +278,7 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
         filter.addAction(UnlockReceiver.ACTION_UNLOCK_RECEIVER);
         receiver = new UnlockReceiver();
         mContext.registerReceiver(receiver, filter);
+        mReceiverRegistered = true;
 
         final int unsecureUnlockMethod = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.LOCKSCREEN_UNSECURE_USED, 1);
@@ -493,7 +501,10 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
                     mCallback.dismiss(false);
                 }
             }
-            mContext.unregisterReceiver(receiver);
+            if (mReceiverRegistered) {
+                mContext.unregisterReceiver(receiver);
+                mReceiverRegistered = false;
+            }
         }
     }
 }

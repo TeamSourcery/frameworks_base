@@ -1,6 +1,7 @@
 
 package com.android.systemui.statusbar.toggles;
 
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,17 +12,25 @@ import android.provider.Settings;
 import android.view.View;
 
 import com.android.systemui.R;
-import com.android.internal.util.sourcery.SysHelpers;
 
 public class PieToggle extends StatefulToggle {
 
-    SettingsObserver mSettingsObserver;
+    SettingsObserver mObserver = null;
 
     @Override
     public void init(Context c, int style) {
         super.init(c, style);
-        mSettingsObserver = new SettingsObserver(new Handler());
-        scheduleViewUpdate();
+        mObserver = new SettingsObserver(mHandler);
+        mObserver.observe();
+    }
+
+    @Override
+    protected void cleanup() {
+        if (mObserver != null) {
+            mContext.getContentResolver().unregisterContentObserver(mObserver);
+            mObserver = null;
+        }
+        super.cleanup();
     }
 
     @Override
@@ -37,18 +46,9 @@ public class PieToggle extends StatefulToggle {
     }
 
     @Override
-    public boolean onLongClick(View v) {
-        Intent intent = new Intent("android.intent.action.MAIN");
-        intent.setClassName("com.android.settings", "com.android.settings.Settings$PieActivity");
-        intent.addCategory("android.intent.category.LAUNCHER");
-        startActivity(intent);
-        return super.onLongClick(v);
-    }
-
-    @Override
     protected void updateView() {
         boolean enabled = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.PIE_CONTROLS, 0) == 1;
+                Settings.System.PIE_CONTROLS, 0) == 2;
         setEnabledState(enabled);
         setIcon(enabled ? R.drawable.ic_qs_pie_on : R.drawable.ic_qs_pie_off);
         setLabel(enabled ? R.string.quick_settings_pie_on_label
@@ -59,7 +59,6 @@ public class PieToggle extends StatefulToggle {
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
-            observe();
         }
 
         void observe() {
@@ -69,7 +68,7 @@ public class PieToggle extends StatefulToggle {
                     this);
         }
 
-       @Override
+        @Override
         public void onChange(boolean selfChange) {
             scheduleViewUpdate();
         }

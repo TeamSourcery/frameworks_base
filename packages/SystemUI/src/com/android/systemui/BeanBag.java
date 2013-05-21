@@ -102,7 +102,7 @@ public class BeanBag extends Activity {
         }
 
         static int NUM_BEANS = 40;
-        static float MIN_SCALE = 0.2f;
+        static float MIN_SCALE = 0.4f;
         static float MAX_SCALE = 1f;
 
         static float LUCKY = 0.001f;

@@ -2393,7 +2393,6 @@ public class Activity extends ContextThemeWrapper
         return onKeyShortcut(event.getKeyCode(), event);
     }
 
-      
     /**
      * Called to process touch screen events.  You can override this to
      * intercept all touch screen events before they are dispatched to the
@@ -2405,7 +2404,6 @@ public class Activity extends ContextThemeWrapper
      * @return boolean Return true if this event was consumed.
      */
     public boolean dispatchTouchEvent(MotionEvent ev) {
-         
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             onUserInteraction();
         }
@@ -2414,8 +2412,8 @@ public class Activity extends ContextThemeWrapper
         }
         return onTouchEvent(ev);
     }
-
-     /**
+    
+    /**
      * Called to process trackball events.  You can override this to
      * intercept all trackball events before they are dispatched to the
      * window.  Be sure to call this implementation for trackball events
@@ -2541,7 +2539,6 @@ public class Activity extends ContextThemeWrapper
      * Activity don't need to deal with feature codes.
      */
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-     
         switch (featureId) {
             case Window.FEATURE_OPTIONS_PANEL:
                 // Put event logging here so it gets called even if subclass
@@ -5174,7 +5171,6 @@ public class Activity extends ContextThemeWrapper
     }
     
     final void performResume() {
-       
         performRestart();
         
         mFragments.execPendingActions();
@@ -5205,7 +5201,6 @@ public class Activity extends ContextThemeWrapper
     }
 
     final void performPause() {
-       
         mFragments.dispatchPause();
         mCalled = false;
         onPause();
