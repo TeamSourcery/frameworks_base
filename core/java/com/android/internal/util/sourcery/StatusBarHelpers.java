@@ -16,7 +16,10 @@
 
 package com.android.internal.util.sourcery;
 
+import com.android.internal.R;
+
 import android.content.Context;
+import android.util.TypedValue;
 
 public class StatusBarHelpers {
 
@@ -26,5 +29,21 @@ public class StatusBarHelpers {
     public static int pixelsToSp(Context c, Float px) {
         float scaledDensity = c.getResources().getDisplayMetrics().scaledDensity;
         return (int) (px/scaledDensity);
+    }
+
+    public static int getIconWidth(Context c, int fontsize) {
+
+        int toppadding = c.getResources().getDimensionPixelSize(
+                com.android.internal.R.dimen.status_bar_icon_top_padding);
+        int bottompadding = c.getResources().getDimensionPixelSize(
+                com.android.internal.R.dimen.status_bar_icon_bottom_padding);
+        int padding = c.getResources().getDimensionPixelSize(
+                com.android.internal.R.dimen.status_bar_padding);
+        float fontSizepx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, fontsize,
+                c.getResources().getDisplayMetrics());
+        int naturalBarHeight = (int) (fontSizepx + padding);
+
+        int newIconSize = naturalBarHeight - (toppadding + bottompadding);
+        return newIconSize;
     }
 }
