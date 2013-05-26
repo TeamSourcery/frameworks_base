@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.internal.util.sourcery.StatusBarHelpers;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.NetworkController;
 
@@ -55,6 +56,9 @@ public class SignalClusterView
 
     private boolean showingSignalText = false;
     private boolean showingWiFiText = false;
+    private int mStockFontSize;
+    private int mFontSize;
+
     private boolean showingAltCluster = false;
 
     ViewGroup mWifiGroup, mMobileGroup;
@@ -64,8 +68,9 @@ public class SignalClusterView
 
     Handler mHandler;
 
-    private SettingsObserver mSettingsObserver;
+   private SettingsObserver mSettingsObserver;
 
+   
     public SignalClusterView(Context context) {
         this(context, null);
     }
@@ -102,6 +107,7 @@ public class SignalClusterView
 
         mHandler = new Handler();
 
+        mStockFontSize = StatusBarHelpers.pixelsToSp(mContext,mMobileText.getTextSize());
         mSettingsObserver.observe();
 
         apply();
@@ -267,7 +273,9 @@ public class SignalClusterView
 
     protected void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
-
+        
+        int fontSize = Settings.System.getInt(resolver,
+                Settings.System.STATUSBAR_FONT_SIZE,mStockFontSize);
         boolean clustdefault = getResources().getBoolean(R.bool.statusbar_alt_signal_layout);
         showingSignalText = Settings.System.getBoolean(resolver,
                 Settings.System.STATUSBAR_SIGNAL_TEXT, false);
@@ -275,6 +283,11 @@ public class SignalClusterView
                 Settings.System.STATUSBAR_WIFI_SIGNAL_TEXT, false);
         showingAltCluster = Settings.System.getBoolean(resolver,
                 Settings.System.STATUSBAR_SIGNAL_CLUSTER_ALT, clustdefault);
+        if (fontSize != mFontSize) {
+            mFontSize = fontSize;
+            mWiFiText.setTextSize(mFontSize);
+            mMobileText.setTextSize(mFontSize);
+        }
          apply();
     }
 }

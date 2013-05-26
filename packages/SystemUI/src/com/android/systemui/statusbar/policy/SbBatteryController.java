@@ -39,7 +39,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import com.android.internal.util.sourcery.StatusBarHelpers;
 import android.R.integer;
 import com.android.systemui.R;
 
@@ -71,6 +71,8 @@ public class SbBatteryController extends LinearLayout {
 
     private int mLevel = -1;
     private boolean mPlugged = false;
+    private int mStockFontSize;
+    private int mFontSize;
 
     public static final int STYLE_ICON_ONLY = 0;
     public static final int STYLE_ICON_TEXT = 1;
@@ -96,7 +98,8 @@ public class SbBatteryController extends LinearLayout {
         mBatteryCenterText = (TextView) findViewById(R.id.battery_text_center);
         mBatteryTextOnly = (TextView) findViewById(R.id.battery_text_only);
         addIconView(mBatteryIcon);
-
+        
+        mStockFontSize = StatusBarHelpers.pixelsToSp(mContext,mBatteryTextOnly.getTextSize());
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
         settingsObserver.observe();
         updateSettings(); // to initialize values
@@ -141,6 +144,8 @@ public class SbBatteryController extends LinearLayout {
         ContentResolver cr = mContext.getContentResolver();
         mBatteryStyle = Settings.System.getInt(cr,
                 Settings.System.STATUSBAR_BATTERY_ICON, 0);
+        mFontSize = Settings.System.getInt(cr,
+                Settings.System.STATUSBAR_FONT_SIZE, mStockFontSize);
         int icon;
         if (mBatteryStyle == STYLE_ICON_CIRCLE) {
             icon = plugged ? R.drawable.stat_sys_battery_charge_mod
@@ -311,6 +316,11 @@ public class SbBatteryController extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
         }
+
+        if (StatusBarHelpers.pixelsToSp(mContext,mBatteryTextOnly.getTextSize()) != mFontSize) {
+            // assume if one needs changed, all of them do. 
+            mBatteryTextOnly.setTextSize(mFontSize);
+            }
 
         setBatteryIcon(mLevel, mPlugged);
 

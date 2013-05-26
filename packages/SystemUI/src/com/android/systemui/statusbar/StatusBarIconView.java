@@ -49,7 +49,7 @@ public class StatusBarIconView extends AnimatedImageView {
     private StatusBarIcon mIcon;
     @ViewDebug.ExportedProperty private String mSlot;
     private Drawable mNumberBackground;
-    private Paint mNumberPain;
+    private Paint mNumberPaint;
     private int mNumberX;
     private int mNumberY;
     private String mNumberText;
@@ -59,38 +59,37 @@ public class StatusBarIconView extends AnimatedImageView {
 
     public StatusBarIconView(Context context, String slot, Notification notification) {
         super(context);
-        final Resources res = context.getResources();
-        final float densityMultiplier = res.getDisplayMetrics().density;
-        final float scaledPx = 8 * densityMultiplier;
+        Resources res = mContext.getResources();
         mSlot = slot;
-        mNumberPain = new Paint();
-        mNumberPain.setTextAlign(Paint.Align.CENTER);
-        mNumberPain.setColor(res.getColor(R.drawable.notification_number_text_color));
-        mNumberPain.setAntiAlias(true);
-        mNumberPain.setTypeface(Typeface.DEFAULT_BOLD);
-        mNumberPain.setTextSize(scaledPx);
+        mNumberPaint = new Paint();
+        mNumberPaint.setTextAlign(Paint.Align.CENTER);
+        mNumberPaint.setColor(res.getColor(R.drawable.notification_number_text_color));
+        mNumberPaint.setAntiAlias(true);
+        mNumberPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        float textSize = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_FONT_SIZE, 0);
+        if (textSize == 0) {
+            final float densityMultiplier = res.getDisplayMetrics().density;
+            textSize = 8 * densityMultiplier;
+        }
+        mNumberPaint.setTextSize(textSize);
         mNotification = notification;
-        mShowNotificationCount = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUSBAR_NOTIF_COUNT, 0) == 1;
+        mShowNotificationCount = Settings.System.getBoolean(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_NOTIF_COUNT, false);
         setContentDescription(notification);
 
         mObserver = new SettingsObserver(new Handler());
 
-        // We do not resize and scale system icons (on the right), only notification icons (on the
-        // left).
+        final int outerBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_size);
+        final int imageBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_drawing_size);
+        final float scale = (float)imageBounds / (float)outerBounds;
+        setScaleX(scale);
+        setScaleY(scale);
         if (notification != null) {
-            final int outerBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_size);
-            final int imageBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_drawing_size);
-            final float scale = (float)imageBounds / (float)outerBounds;
-            setScaleX(scale);
-            setScaleY(scale);
-            setAlpha(Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.STATUS_BAR_NOTIF_ICON_OPACITY, 140));
-        }
-
-        setScaleType(ImageView.ScaleType.CENTER);
+            final float alpha = res.getFraction(R.dimen.status_bar_icon_drawing_alpha, 1, 1);
+            setAlpha(alpha);
+       }
     }
-
     public StatusBarIconView(Context context, AttributeSet attrs) {
         super(context, attrs);
         final Resources res = context.getResources();
@@ -242,7 +241,7 @@ public class StatusBarIconView extends AnimatedImageView {
 
         if (mNumberBackground != null) {
             mNumberBackground.draw(canvas);
-            canvas.drawText(mNumberText, mNumberX, mNumberY, mNumberPain);
+            canvas.drawText(mNumberText, mNumberX, mNumberY, mNumberPaint);
         }
     }
 
@@ -287,19 +286,15 @@ public class StatusBarIconView extends AnimatedImageView {
         final int w = getWidth();
         final int h = getHeight();
         final Rect r = new Rect();
-        mNumberPain.getTextBounds(str, 0, str.length(), r);
+        mNumberPaint.getTextBounds(str, 0, str.length(), r);
         final int tw = r.right - r.left;
         final int th = r.bottom - r.top;
         mNumberBackground.getPadding(r);
         int dw = r.left + tw + r.right;
-        if (dw < mNumberBackground.getMinimumWidth()) {
-            dw = mNumberBackground.getMinimumWidth();
-        }
+            
         mNumberX = w-r.right-((dw-r.right-r.left)/2);
         int dh = r.top + th + r.bottom;
-        if (dh < mNumberBackground.getMinimumWidth()) {
-            dh = mNumberBackground.getMinimumWidth();
-        }
+    
         mNumberY = h-r.bottom-((dh-r.top-th-r.bottom)/2);
         mNumberBackground.setBounds(w-dw, h-dh, w, h);
     }
