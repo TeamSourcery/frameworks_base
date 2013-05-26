@@ -1451,6 +1451,10 @@ public class PhoneStatusBar extends BaseStatusBar {
         final int diff = state ^ old;
         mDisabled = state;
 
+        mSwipeRibbonBottom.setDisabledFlags(state);
+        mSwipeRibbonLeft.setDisabledFlags(state);
+        mSwipeRibbonRight.setDisabledFlags(state);
+
         if (DEBUG) {
             Slog.d(TAG, String.format("disable: 0x%08x -> 0x%08x (diff: 0x%08x)",
                 old, state, diff));
@@ -1834,7 +1838,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.getBoolean(cr,
                           Settings.System.RIBBON_ICON_VIBRATE[RibbonHelper.QUICK_SETTINGS], true),
                     Settings.System.getBoolean(cr,
-                         Settings.System.RIBBON_ICON_COLORIZE[RibbonHelper.QUICK_SETTINGS], false)));
+                         Settings.System.RIBBON_ICON_COLORIZE[RibbonHelper.QUICK_SETTINGS], false), 0));
             }
             mRibbonNotif.removeAllViews();
             mRibbonNotif.addView(RibbonHelper.getRibbon(mContext,
@@ -1855,7 +1859,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                 Settings.System.getBoolean(cr,
                      Settings.System.RIBBON_ICON_VIBRATE[RibbonHelper.NOTIFICATIONS], true),
                 Settings.System.getBoolean(cr,
-                     Settings.System.RIBBON_ICON_COLORIZE[RibbonHelper.NOTIFICATIONS], false)));
+                     Settings.System.RIBBON_ICON_COLORIZE[RibbonHelper.NOTIFICATIONS], false), 0));
     }
 
     public void updateRibbon() {
@@ -2346,6 +2350,10 @@ public class PhoneStatusBar extends BaseStatusBar {
     public void setImeWindowStatus(IBinder token, int vis, int backDisposition) {
         boolean altBack = (backDisposition == InputMethodService.BACK_DISPOSITION_WILL_DISMISS)
             || ((vis & InputMethodService.IME_VISIBLE) != 0);
+
+        mSwipeRibbonBottom.setNavigationIconHints(vis);
+        mSwipeRibbonLeft.setNavigationIconHints(vis);
+        mSwipeRibbonRight.setNavigationIconHints(vis);
 
         mCommandQueue.setNavigationIconHints(
                 altBack ? (mNavigationIconHints | StatusBarManager.NAVIGATION_HINT_BACK_ALT)

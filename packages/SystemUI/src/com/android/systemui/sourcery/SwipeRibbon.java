@@ -34,6 +34,7 @@ import com.android.systemui.statusbar.policy.LocationController.LocationGpsState
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NetworkController.NetworkSignalChangedCallback;
 
+import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -45,6 +46,7 @@ import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.PixelFormat;
+import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -71,6 +73,7 @@ import android.widget.ImageButton;
 
 import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.util.sourcery.RibbonHelper;
+import com.android.internal.util.sourcery.AwesomeAnimationHelper;
 import com.android.internal.util.sourcery.BackgroundAlphaColorDrawable;
 import com.android.systemui.sourcery.RibbonGestureCatcherView;
 import static com.android.systemui.statusbar.toggles.ToggleManager.*;
@@ -82,6 +85,7 @@ public class SwipeRibbon extends LinearLayout {
     private Context mContext;
     private RibbonGestureCatcherView mGesturePanel;
     public FrameLayout mPopupView;
+    public FrameLayout mContainerFrame;
     public WindowManager mWindowManager;
     private SettingsObserver mSettingsObserver;
     private LinearLayout mRibbon;
@@ -89,11 +93,12 @@ public class SwipeRibbon extends LinearLayout {
     private ImageButton mTogglesButton;
     private TextView mTogglesText;
     private Button mBackGround;
-    private boolean mText, mColorize, hasNavBarByDefault, NavBarEnabled, navAutoHide, mNavBarShowing, mVib;
+    private boolean mText, mColorize, hasNavBarByDefault, NavBarEnabled, navAutoHide, mNavBarShowing, mVib, mToggleButtonLoc, mHideIme;
     private int mHideTimeOut = 5000;
     private boolean showing = false;
     private boolean animating = false;
-    private int mRibbonNumber, mLocationNumber, mSize, mColor, mTextColor, mOpacity, animationIn, animationOut, animTogglesOut, mIconLoc, mPad;
+   private int mRibbonNumber, mLocationNumber, mSize, mColor, mTextColor, mOpacity, animationIn,
+        animationOut, animTogglesIn, animTogglesOut, mIconLoc, mPad, mAnimDur, mDismiss, mAnim;
     private ArrayList<String> shortTargets = new ArrayList<String>();
     private ArrayList<String> longTargets = new ArrayList<String>();
     private ArrayList<String> customIcons = new ArrayList<String>();
@@ -103,10 +108,14 @@ public class SwipeRibbon extends LinearLayout {
     private boolean flipped = false;
     private Vibrator vib;
 
-    ArrayList<LinearLayout> mRows = new ArrayList<LinearLayout>();
-    ArrayList<BaseToggle> toggles = new ArrayList<BaseToggle>();
+    private ArrayList<LinearLayout> mRows = new ArrayList<LinearLayout>();
+    private ArrayList<BaseToggle> toggles = new ArrayList<BaseToggle>();
     private ScrollView mRibbonSV;
     private ScrollView mTogglesSV;
+    private Animation mAnimationIn;
+    private Animation mAnimationOut;
+    private int visible = 0;
+    private int mDisabledFlags = 0;
 
     private static final String TOGGLE_DELIMITER = "|";
 
@@ -177,7 +186,7 @@ public class SwipeRibbon extends LinearLayout {
             if (mWindowManager != null) {
                
                 mWindowManager.addView(mPopupView, params);
-                PlayInAnim();
+                mContainerFrame.startAnimation(mAnimationIn);
                 if (mHideTimeOut > 0) {
                     mHandler.postDelayed(delayHide, mHideTimeOut);
                 }
@@ -188,7 +197,7 @@ public class SwipeRibbon extends LinearLayout {
     public void hideRibbonView() {
         if (mPopupView != null && showing) {
             showing = false;
-            PlayOutAnim();
+            mContainerFrame.startAnimation(mAnimationOut);
         }
     }
 
@@ -218,21 +227,39 @@ public class SwipeRibbon extends LinearLayout {
         int gravity = 0;
         if (mLocation.equals("bottom")) {
             gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
-            animationIn = com.android.internal.R.anim.slide_in_up;
-            animationOut = com.android.internal.R.anim.slide_out_down;
+            
         } else if (mLocation.equals("left")) {
             gravity = Gravity.CENTER_VERTICAL | Gravity.LEFT;
-            animationIn = com.android.internal.R.anim.slide_in_left;
-            animationOut = com.android.internal.R.anim.slide_out_left;
-            animTogglesOut = com.android.internal.R.anim.slide_out_right;
+            
         } else {
             gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;
-            animationIn = com.android.internal.R.anim.slide_in_right;
-            animationOut = com.android.internal.R.anim.slide_out_right;
-            animTogglesOut = com.android.internal.R.anim.slide_out_left;
+            
         }
         return gravity;
     }
+
+    private void setAnimation() {
+        if (mLocation.equals("bottom")) {
+            animationIn = com.android.internal.R.anim.slide_in_up_ribbon;
+            animationOut = com.android.internal.R.anim.slide_out_down_ribbon;
+        } else if (mLocation.equals("left")) {
+            animationIn = com.android.internal.R.anim.slide_in_left_ribbon;
+            animationOut = com.android.internal.R.anim.slide_out_left_ribbon;
+            animTogglesIn = com.android.internal.R.anim.slide_in_left_ribbon;
+            animTogglesOut = com.android.internal.R.anim.slide_out_right_ribbon;
+        } else {
+            animationIn = com.android.internal.R.anim.slide_in_right_ribbon;
+            animationOut = com.android.internal.R.anim.slide_out_right_ribbon;
+            animTogglesIn = com.android.internal.R.anim.slide_in_right_ribbon;
+            animTogglesOut = com.android.internal.R.anim.slide_out_left_ribbon;
+        }
+        if (mAnim > 0) {
+            int[] animArray = AwesomeAnimationHelper.getAnimations(mAnim);
+            animationIn = animArray[1];
+            animationOut = animArray[0];
+        }
+    }
+
 
     public void createRibbonView() {
         if (mGesturePanel != null) {
@@ -248,6 +275,8 @@ public class SwipeRibbon extends LinearLayout {
         }
         mPopupView = new FrameLayout(mContext);
         mPopupView.removeAllViews();
+        mContainerFrame = new FrameLayout(mContext);
+        mContainerFrame.removeAllViews();
         if (mNavBarShowing) {
             int adjustment = mContext.getResources().getDimensionPixelSize(
                         com.android.internal.R.dimen.status_bar_height);
@@ -260,8 +289,13 @@ public class SwipeRibbon extends LinearLayout {
         mBackGround.getBackground().setAlpha((int)opacity);
         View ribbonView = View.inflate(mContext, R.layout.swipe_ribbon, null);
         mRibbonMain = (LinearLayout) ribbonView.findViewById(R.id.ribbon_main);
-        mTogglesButton = (ImageButton) ribbonView.findViewById(R.id.toggles);
-        mTogglesText = (TextView) ribbonView.findViewById(R.id.label);
+        if (mToggleButtonLoc) {
+            mTogglesButton = (ImageButton) ribbonView.findViewById(R.id.toggles_bottom);
+            mTogglesText = (TextView) ribbonView.findViewById(R.id.label_bottom);
+        } else {
+            mTogglesButton = (ImageButton) ribbonView.findViewById(R.id.toggles);
+            mTogglesText = (TextView) ribbonView.findViewById(R.id.label);
+        }
         switch (mIconLoc) {
             case 0:
                 mRibbonMain.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
@@ -275,8 +309,14 @@ public class SwipeRibbon extends LinearLayout {
         }
         mRibbon = (LinearLayout) ribbonView.findViewById(R.id.ribbon);
         setupRibbon();
-        mPopupView.addView(mBackGround, backgroundParams);
-        mPopupView.addView(ribbonView);
+        maybeToggleOnly();
+        ribbonView.invalidate();
+        mContainerFrame.addView(mBackGround, backgroundParams);
+        mContainerFrame.addView(ribbonView);
+        mContainerFrame.setDrawingCacheEnabled(true);
+        mAnimationIn = PlayInAnim();
+        mAnimationOut = PlayOutAnim();
+        mPopupView.addView(mContainerFrame, backgroundParams);
         mPopupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -303,12 +343,22 @@ public class SwipeRibbon extends LinearLayout {
         return false;
     }
 
+    private boolean maybeToggleOnly() {
+        if (shortTargets.size() < 1 && longTargets.size() < 1  && toggles.size() > 0) {
+            mTogglesButton.setVisibility(View.GONE);
+            mTogglesText.setVisibility(View.GONE);
+            mRibbon.removeView(mRibbonSV);
+            mRibbon.addView(mTogglesSV);
+            return true;
+        }
+        return false;
+    }
+
     public Animation PlayInAnim() {
         if (mRibbon != null) {
             Animation animation = AnimationUtils.loadAnimation(mContext, animationIn);
             animation.setStartOffset(0);
-            mBackGround.startAnimation(animation);
-            mRibbonMain.startAnimation(animation);
+            animation.setDuration((int) (animation.getDuration() * (mAnimDur * 0.01f)));
             return animation;
         }
         return null;
@@ -318,8 +368,7 @@ public class SwipeRibbon extends LinearLayout {
         if (mRibbon != null) {
             Animation animation = AnimationUtils.loadAnimation(mContext, animationOut);
             animation.setStartOffset(0);
-            mBackGround.startAnimation(animation);
-            mRibbonMain.startAnimation(animation);
+            animation.setDuration((int) (animation.getDuration() * (mAnimDur * 0.01f)));
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -347,7 +396,8 @@ public class SwipeRibbon extends LinearLayout {
         if (mLocation.equals("bottom")) {
             HorizontalScrollView hsv = new HorizontalScrollView(mContext);
             hsv = RibbonHelper.getRibbon(mContext,
-                shortTargets, longTargets, customIcons, mText, mTextColor, mSize, mPad, mVib, mColorize);
+                shortTargets, longTargets, customIcons,
+                mText, mTextColor, mSize, mPad, mVib, mColorize, mDismiss);
             hsv.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -362,7 +412,8 @@ public class SwipeRibbon extends LinearLayout {
         } else {
             mRibbonSV = new ScrollView(mContext);
             mRibbonSV = RibbonHelper.getVerticalRibbon(mContext,
-                shortTargets, longTargets, customIcons, mText, mTextColor, mSize, mPad, mVib, mColorize);
+                shortTargets, longTargets, customIcons, mText, mTextColor,
+                mSize, mPad, mVib, mColorize, mDismiss);
             mRibbonSV.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -521,10 +572,13 @@ public class SwipeRibbon extends LinearLayout {
     }
 
     private void addToogleButton() {
+        mRibbon.removeView(mRibbonSV);
         mTogglesButton.setVisibility(View.VISIBLE);
         if (mText) {
             mTogglesText.setVisibility(View.VISIBLE);
         }
+        mRibbon.addView(mRibbonSV);
+        mRibbon.invalidate();
         mTogglesButton.getBackground().setAlpha(0);
         mTogglesButton.setImageDrawable(
             mContext.getResources().getDrawable(R.drawable.ribbon_toggles_icon));
@@ -577,15 +631,15 @@ public class SwipeRibbon extends LinearLayout {
     public void PlayAnim(final ScrollView in, final ScrollView out, final Drawable newIcon, final String text) {
         if (mRibbon != null) {
             Animation outAnimation = AnimationUtils.loadAnimation(mContext, animTogglesOut);
-            final Animation inAnimation = AnimationUtils.loadAnimation(mContext, animationIn);
+            final Animation inAnimation = AnimationUtils.loadAnimation(mContext, animTogglesIn);
             final Animation inIcon = AnimationUtils.loadAnimation(mContext, com.android.internal.R.anim.fade_in);
             final Animation outIcon = AnimationUtils.loadAnimation(mContext, com.android.internal.R.anim.fade_out);
-            inIcon.setDuration(250);
+            inIcon.setDuration((int) (250 * (mAnimDur * 0.01f)));
             inIcon.setStartOffset(0);
             outIcon.setStartOffset(0);
-            outIcon.setDuration(250);
+            outIcon.setDuration((int) (250 * (mAnimDur * 0.01f)));
             outAnimation.setStartOffset(0);
-            outAnimation.setDuration(250);
+            outAnimation.setDuration((int) (250 * (mAnimDur * 0.01f)));
             outAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -610,7 +664,7 @@ public class SwipeRibbon extends LinearLayout {
                 }
             });
             inAnimation.setStartOffset(0);
-            inAnimation.setDuration(250);
+            inAnimation.setDuration((int) (250 * (mAnimDur * 0.01f)));
             inAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -626,6 +680,31 @@ public class SwipeRibbon extends LinearLayout {
                 }
             });
             out.startAnimation(outAnimation);
+        }
+    }
+
+     protected void updateSwipeArea() {
+        final boolean showingIme = ((visible & InputMethodService.IME_VISIBLE) != 0);
+        if (mGesturePanel != null) {
+            mGesturePanel.setViewVisibility(showingIme);
+        }
+    }
+
+    public void setNavigationIconHints(int hints) {
+          if (hints == visible) return;
+
+        if (mHideIme) {
+             visible = hints;
+             updateSwipeArea();
+        }
+    }
+
+    public void setDisabledFlags(int disabledFlags) {
+        if (disabledFlags == mDisabledFlags) return;
+
+        if (mHideIme) {
+            mDisabledFlags = disabledFlags;
+            updateSwipeArea();
         }
     }
 
@@ -658,7 +737,7 @@ public class SwipeRibbon extends LinearLayout {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAV_HIDE_ENABLE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.RIBBON_DRAG_HANDLE_LOCATION), false, this);
+                    Settings.System.RIBBON_DRAG_HANDLE_LOCATION[mLocationNumber]), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RIBBON_TEXT_COLOR[mRibbonNumber]), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -685,6 +764,16 @@ public class SwipeRibbon extends LinearLayout {
 
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SWIPE_RIBBON_TOGGLES[mLocationNumber]), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RIBBON_DISMISS[mLocationNumber]), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RIBBON_ANIMATION_DURATION[mLocationNumber]), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RIBBON_ANIMATION_TYPE[mLocationNumber]), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RIBBON_TOGGLE_BUTTON_LOCATION[mLocationNumber]), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RIBBON_HIDE_IME[mLocationNumber]), false, this);
 
             if (mLocationNumber < 2) {
                 resolver.registerContentObserver(Settings.System.getUriFor(
@@ -717,13 +806,22 @@ public class SwipeRibbon extends LinearLayout {
                  Settings.System.RIBBON_ICON_VIBRATE[mRibbonNumber], true);
         mColorize = Settings.System.getBoolean(cr,
                  Settings.System.RIBBON_ICON_COLORIZE[mRibbonNumber], false);
-
+        mAnimDur = Settings.System.getInt(cr,
+                 Settings.System.RIBBON_ANIMATION_DURATION[mLocationNumber], 50);
+        mDismiss = Settings.System.getInt(cr,
+                 Settings.System.RIBBON_DISMISS[mLocationNumber], 1);
         mHideTimeOut = Settings.System.getInt(cr,
                  Settings.System.RIBBON_HIDE_TIMEOUT[mLocationNumber], mHideTimeOut);
         mColor = Settings.System.getInt(cr,
                  Settings.System.SWIPE_RIBBON_COLOR[mLocationNumber], Color.BLACK);
         mOpacity = Settings.System.getInt(cr,
-                 Settings.System.SWIPE_RIBBON_OPACITY[mLocationNumber], 255);
+                 Settings.System.SWIPE_RIBBON_OPACITY[mLocationNumber], 100);
+        mAnim = Settings.System.getInt(cr,
+                 Settings.System.RIBBON_ANIMATION_TYPE[mLocationNumber], 0);
+        mToggleButtonLoc = Settings.System.getBoolean(cr,
+                 Settings.System.RIBBON_TOGGLE_BUTTON_LOCATION[mLocationNumber], false);
+        mHideIme = Settings.System.getBoolean(cr,
+                 Settings.System.RIBBON_HIDE_IME[mLocationNumber], false);
         if (mLocationNumber < 2) {
             mIconLoc = Settings.System.getInt(cr,
                      Settings.System.RIBBON_ICON_LOCATION[mLocationNumber], 0);
@@ -740,7 +838,9 @@ public class SwipeRibbon extends LinearLayout {
         hasNavBarByDefault = mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar);
         mNavBarShowing = (NavBarEnabled || hasNavBarByDefault) && manualNavBarHide && !navHeightZero && !navAutoHide;
         mEnableSides[0] = mEnableSides[0] && (!(NavBarEnabled || hasNavBarByDefault) || !manualNavBarHide);
-         addToggles(Settings.System.getArrayList(cr, Settings.System.SWIPE_RIBBON_TOGGLES[mLocationNumber]));
+        addToggles(Settings.System.getArrayList(cr, Settings.System.SWIPE_RIBBON_TOGGLES[mLocationNumber]));
+
+        setAnimation();
         if (!showing && !animating) {
             createRibbonView();
         }
