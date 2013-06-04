@@ -67,7 +67,7 @@ public final class Bitmap implements Parcelable {
 
     private static volatile Matrix sScaleMatrix;
 
-    
+    private static volatile int sDefaultDensity = -1;
 
     /**
      * For backwards compatibility, allows the app layer to change the default
@@ -75,11 +75,15 @@ public final class Bitmap implements Parcelable {
      * @hide
      */
     public static void setDefaultDensity(int density) {
-        // Ignore 
+        sDefaultDensity = density; 
     }
 
     static int getDefaultDensity() {
-        return DisplayMetrics.getDeviceDensity();
+        if (sDefaultDensity >= 0) {
+            return sDefaultDensity;
+        }
+        sDefaultDensity = DisplayMetrics.DENSITY_DEVICE;
+        return sDefaultDensity;
     }
 
     /**

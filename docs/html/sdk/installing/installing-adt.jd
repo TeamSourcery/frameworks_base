@@ -156,3 +156,4 @@ JKS</pre>
 ...then your development machine lacks a suitable Java VM. Installing Sun
 Java 6 will resolve this issue and you can then reinstall the ADT
 Plugin.</p>
+

@@ -3,11 +3,6 @@ page.template=sdk
 header.hide=1
 page.metaDescription=Download the official Android SDK to develop apps for Android-powered devices.
 
-<<<<<<< HEAD
-sdk.win_installer=installer_r20.0.3-windows.exe
-sdk.win_installer_bytes=70495456
-sdk.win_installer_checksum=cf23b95d0c9cd57fac3c3be253171af4
-=======
 sdk.win32_bundle_download=adt-bundle-windows-x86.zip
 sdk.win32_bundle_bytes=418030942
 sdk.win32_bundle_checksum=ce32861d8f7c93ff6ff6971bd99d228e
@@ -46,34 +41,18 @@ sdk.linux_download=android-sdk_r21.0.1-linux.tgz
 sdk.linux_bytes=91394975
 sdk.linux_checksum=eaa5a8d76d692d1d027f2bbcee019644
 
->>>>>>> remotes/aosp/jb-mr1.1-release
 
-sdk.win_download=android-sdk_r20.0.3-windows.zip
-sdk.win_bytes=90379469
-sdk.win_checksum=cd895c79201f7f02507eb3c3868a1c5e
 
-sdk.mac_download=android-sdk_r20.0.3-macosx.zip
-sdk.mac_bytes=58218455
-sdk.mac_checksum=07dc88ba2c0817ef178a665d002831bf
 
-sdk.linux_download=android-sdk_r20.0.3-linux.tgz
-sdk.linux_bytes=82616305
-sdk.linux_checksum=0d53c2c31d6b5d0cf7385bccd0b06c27
 
 @jd:body
 
 <style type="text/css">
-  .offline { display:none; }
+  .offline {display:none;}
 </style>
 
-<div class="wrap">
 
-<div class="col-13">&nbsp;</div><!-- provides top margin for content -->
 
-<<<<<<< HEAD
-<div class="col-7" style="margin-left:0">
-  <img src="{@docRoot}images/sdk-cube.png" alt="" />
-=======
 
 <div style="position:relative;height:660px;">
 
@@ -247,72 +226,109 @@ This is the Android Software Development Kit License Agreement
     <label for="64">64-bit</label>
 </p>
 <p><a href="" class="button disabled" id="downloadForRealz" onclick="return onDownloadForRealz(this);"></a></p>
->>>>>>> remotes/aosp/jb-mr1.1-release
 </div>
 
 
-<div class="col-6" style="margin-right:0;">
-  
-<div id="intro" style="position:absolute;width:inherit">
+
+</div><!-- end TOS -->
+
+
+
+<div class="wrap" id="landing">
+
+<div class="col-13">&nbsp;</div><!-- provides top margin for content -->
+
+<div class="col-6" style="margin-left:0">
+
 <h1 style="margin-top:0">Get the Android SDK</h1>
 
 
 <p>The Android SDK provides you the API libraries and developer tools necessary to build, test,
   and debug apps for Android.</p>
 
+<p>If you're a new Android developer, we recommend you download the ADT Bundle
+to quickly start developing apps. It includes the essential
+Android SDK components and a version of the Eclipse IDE with built-in
+<b>ADT (Android Developer Tools)</b> to
+streamline your Android app development.</p>
+
+<p>With a single download, the ADT Bundle
+includes everything you need to begin developing apps:</p>
+<ul>
+<li>Eclipse + ADT plugin</li>
+<li>Android SDK Tools</li>
+<li>Android Platform-tools</li>
+<li>The latest Android platform</li>
+<li>The latest Android system image for the emulator</li>
+</ul>
+
+
 <!-- this appears when viewing the offline docs -->
 <p class="offline">
-To get the latest Android SDK, please visit the web site at <a
+To get the ADT Bundle or stand-alone SDK Tools, please visit the web site at <a
 href="http://developer.android.com/sdk/index.html">developer.android.com/sdk/</a>
 </p>
 
+</div>
+
+
+
+<div class="col-7" style="margin-right:0;">
+  <img src="{@docRoot}images/sdk-cube.png" alt="" height=264 />
+
 <!-- this appears when viewing the online docs -->
 <div class="online">
-<a class="big button" id="download-button" href="" style="display:none" ></a>
+
+<a class="big button subtitle" id="download-bundle-button"
+href="" style="display:none;width:265px;margin:0 auto;display:block" ></a>
+
 <p id="not-supported">Choose the SDK package for your OS from the table below.</p>
 
-<p style="margin-top:20px;font-size:12px"><a href='' onclick="
-  if ($('.pax').is(':visible')) {
-    $('.pax').slideUp();
-  } else {
-    $('.reqs').slideUp();
-    $('.pax').slideDown();
-  }return false;">Other platforms</a> | 
-  <a href='' onclick="
-  if ($('.reqs').is(':visible')) {
-    $('.reqs').slideUp();
-  } else {
-    $('.pax').slideUp();
-    $('.reqs').slideDown();
-  }return false;">System requirements</a></p>
-</div><!-- end online -->
+</div>
+<!-- end online -->
 
-</div><!-- end intro -->
+</div><!-- end col-7 -->
 
 
 
-<div id="next-steps" class="online" style="display:none;position:absolute;width:inherit">
-  <h1 style="margin-top:0">Get ready to code!</h1>
-  <p><em><span id="filename"></span></em> is now downloading...</p>
-  <p>You'll soon be developing apps for Android! Once the download completes,
-    you need to follow a few steps to set up your environment.</p>
-  <p>To continue, follow the guide to <a href="{@docRoot}sdk/installing/index.html">Installing
-the SDK</a>.</p>
-  
-</div><!-- end next-steps -->
-
-</div><!-- end col-6 -->
 
 
-<<<<<<< HEAD
-<div class="col-13">&nbsp;</div><!-- provides padding -->
- 
-=======
+<!-- alternative SDK options -->
+<div class="col-13" style="margin:0;">
 
->>>>>>> remotes/aosp/jb-mr1.1-release
+<p>If you prefer to use an existing version of Eclipse or another IDE,
+you can instead take a more customized approach to installing
+the Android SDK. See the following instructions.</p>
 
-<div class="col-6 reqs" style="margin-left:0;display:none;font-size:12px">
-<h3>Operating Systems</h3>
+
+<h4 id="ExistingIDE"><a href='' class="expandable"
+  onclick="toggleExpandable(this,'.myide');hideExpandable('.pax,.reqs');return false;"
+  >USE AN EXISTING IDE</a></h4>
+
+<div class="col-13 myide" style="margin:0 0 15px;display:none;">
+
+<p>If you already have an IDE you want to use for Android app development,
+setting up a new SDK requires that you download the SDK Tools, then
+select additional Android SDK packages to install (such as the Android platform
+and system image). If you'll be using an existing version of Eclipse, then you can add
+the ADT plugin to it.</p>
+  <p>
+<a class="button subtitle" id="download-tools-button" href="" style="display:none" ></a>
+  </p>
+
+
+</div>
+
+
+
+
+
+<h4 id="Requirements"><a href='' class="expandable"
+  onclick="toggleExpandable(this,'.reqs');hideExpandable('.pax,.myide');return false;"
+  >SYSTEM REQUIREMENTS</a></h4>
+
+<div class="col-6 reqs" style="margin:0 0 15px;display:none;">
+<h5>Operating Systems</h5>
 <ul>
   <li>Windows XP (32-bit), Vista (32- or 64-bit), or Windows 7 (32- or 64-bit)</li>
   <li>Mac OS X 10.5.8 or later (x86 only)</li>
@@ -326,10 +342,10 @@ the SDK</a>.</p>
 </ul>
 </div>
 
-<div class="col-7 reqs" style="margin-right:0;display:none;font-size:12px">
-<h3>Eclipse IDE</h3>
+<div class="col-6 reqs" style="margin:0 0 15px 20px;display:none;">
+<h5>Eclipse IDE</h5>
     <ul>
-      <li>Eclipse 3.6.2 (Helios) or greater
+      <li><a href="http://eclipse.org/mobile/">Eclipse</a> 3.6.2 (Helios) or greater
 <p class="note"><strong>Note:</strong> Eclipse 3.5 (Galileo) is no longer
 supported with the latest version of ADT.</p></li>
       <li>Eclipse <a href="http://www.eclipse.org/jdt">JDT</a> plugin (included
@@ -338,29 +354,20 @@ in most Eclipse IDE packages) </li>
         (JRE alone is not sufficient)</li>
       <li><a href="{@docRoot}tools/sdk/eclipse-adt.html">Android Development Tools plugin</a>
 (recommended)</li>
-      <li><strong>Not</strong> compatible with Gnu Compiler for Java (gcj)</li>
+      <li><strong>Not</strong> compatible with GNU Compiler for Java (gcj)</li>
     </ul>
 
 
-<h3>Other development environments</h3>
+<h5>Other development environments</h5>
     <ul>
       <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">JDK 6</a>
         (JRE alone is not sufficient)</li>
       <li><a href="http://ant.apache.org/">Apache Ant</a> 1.8 or later</li>
       <li><strong>Not</strong> compatible with Gnu Compiler for Java (gcj)</li>
     </ul>
-  </li>
-</ul>
 
 <p class="note"><strong>Note:</strong> Some Linux distributions may include JDK 1.4 or Gnu Compiler
 for Java, both of which are <em>not</em> supported for Android development. </p>
-</div>
+</div><!-- end col-7 reqs -->
 
-</div>
-
-<script>
-  if (location.hash == "#Requirements") {
-    $('.reqs').show();
-  }
-</script>
 

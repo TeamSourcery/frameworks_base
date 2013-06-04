@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.UserHandle;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -60,6 +61,11 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
     private static final boolean DEBUG = KeyguardHostView.DEBUG;
     private static final String TAG = "SecuritySelectorView";
 
+    private final int TORCH_TIMEOUT = ViewConfiguration.getLongPressTimeout(); //longpress glowpad torch
+    private final int TORCH_CHECK = 2000; //make sure torch turned off
+
+    private final long KEEP_AWAKE = 60000;
+
     private KeyguardSecurityCallback mCallback;
     private GlowPadView mGlowPadView;
     private LinearLayout mRibbon;
@@ -72,6 +78,8 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
     private Drawable mBouncerFrame;
     private Resources res;
 
+    private boolean mGlowTorch;
+    private boolean mGlowTorchOn;
     private boolean mGlowPadLock;
     private boolean mBoolLongPress;
     private int mTarget;
@@ -137,14 +145,10 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
 
        final Runnable SetLongPress = new Runnable () {
             public void run() {
-                if (!mGlowPadLock) {
-                    mGlowPadLock = true;
+                if (!mLongPress) {
+                    vibrate();
                     mLongPress = true;
-                    if (mReceiverRegistered) {
-                        mContext.unregisterReceiver(receiver);
-                        mReceiverRegistered = false;
-                    }
-                    launchAction(longActivities[mTarget]);
+                    
                  }
             }
         };
@@ -166,14 +170,27 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
         }
 
         public void onReleased(View v, int handle) {
+            fireTorch();
             if (!mIsBouncing) {
                 doTransition(mFadeView, 1.0f);
+            }
+            if (!mGlowPadLock && mLongPress) {
+                mGlowPadLock = true;
+                if (mReceiverRegistered) {
+                    mContext.unregisterReceiver(receiver);
+                    mReceiverRegistered = false;
+                }
+                launchAction(longActivities[mTarget]);
             }
         }
 
         public void onGrabbed(View v, int handle) {
             mCallback.userActivity(0);
             doTransition(mFadeView, 0.0f);
+            if (mGlowTorch) {
+                mHandler.removeCallbacks(checkTorch);
+                mHandler.postDelayed(startTorch, TORCH_TIMEOUT);
+            }
         }
 
         public void onGrabbedStateChange(View v, int handle) {
@@ -186,6 +203,7 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
                 mHandler.removeCallbacks(SetLongPress);
                 mLongPress = false;
             } else {
+                fireTorch();
                 if (mBoolLongPress && !TextUtils.isEmpty(longActivities[target]) && !longActivities[target].equals(AwesomeConstant.ACTION_NULL.value())) {
                     mTarget = target;
                     mHandler.postDelayed(SetLongPress, ViewConfiguration.getLongPressTimeout());
@@ -270,6 +288,10 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
                 Settings.System.RIBBON_ICON_COLORIZE[RibbonHelper.LOCKSCREEN], true), 0));
         updateTargets();
 
+        mGlowTorch = Settings.System.getBoolean(cr,
+                Settings.System.LOCKSCREEN_GLOW_TORCH, false);
+        mGlowTorchOn = false;
+
         mSecurityMessageDisplay = new KeyguardMessageArea.Helper(this);
         View bouncerFrameView = findViewById(R.id.keyguard_selector_view_frame);
         mBouncerFrame = bouncerFrameView.getBackground();
@@ -309,6 +331,63 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
     public boolean isScreenPortrait() {
         return res.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
+
+     private void fireTorch() {
+        mHandler.removeCallbacks(startTorch);
+        mCallback.userActivity(0);
+        if (mGlowTorch && mGlowTorchOn) {
+            mGlowTorchOn = false;
+            vibrate();
+            torchOff();
+            mHandler.postDelayed(checkTorch, TORCH_CHECK);
+        }
+    }
+
+    private void torchOff() {
+        Intent intent = new Intent("com.sourcery.torch.INTENT_TORCH_OFF");
+        intent.setComponent(ComponentName.unflattenFromString
+                ("com.sourcery.Torch/.TorchReceiver"));
+        intent.setAction("com.sourcery.torch.INTENT_TORCH_OFF");
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        mContext.sendBroadcast(intent);
+    }
+
+    private void vibrate() {
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.HAPTIC_FEEDBACK_ENABLED, 1, UserHandle.USER_CURRENT) != 0) {
+            android.os.Vibrator vib = (android.os.Vibrator)mContext.getSystemService(
+                    Context.VIBRATOR_SERVICE);
+            vib.vibrate(25);
+        }
+    }
+
+    final Runnable checkTorch = new Runnable () {
+        public void run() {
+            boolean torchActive = Settings.System.getBoolean(mContext.getContentResolver(),
+                    Settings.System.TORCH_STATE, false);
+            if (torchActive) {
+                Log.w(TAG, "Second Torch Temination Required");
+                torchOff();
+            }
+        }
+    };
+
+    final Runnable startTorch = new Runnable () {
+        public void run() {
+            boolean torchActive = Settings.System.getBoolean(mContext.getContentResolver(),
+                    Settings.System.TORCH_STATE, false);
+            if (!torchActive && !mGlowTorchOn) {
+                mCallback.userActivity(KEEP_AWAKE);
+                mGlowTorchOn = true;
+                vibrate();
+                Intent intent = new Intent("com.sourcery.torch.INTENT_TORCH_ON");
+                intent.setComponent(ComponentName.unflattenFromString
+                        ("com.sourcery.Torch/.TorchReceiver"));
+                intent.setAction("com.sourcery.torch.INTENT_TORCH_ON");
+                mContext.sendBroadcast(intent);
+            }
+        }
+    };
 
     private void updateTargets() {
         mLongPress = false;
