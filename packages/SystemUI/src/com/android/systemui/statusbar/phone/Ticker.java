@@ -184,13 +184,16 @@ public abstract class Ticker {
                     AnimationUtils.loadAnimation(context, com.android.internal.R.anim.push_up_out));
 
         // Copy the paint style of one of the TextSwitchers children to use later for measuring
-        TextView text = (TextView)mTextSwitcher.getChildAt(0);
+        TextView text = (TextView) mTextSwitcher.getChildAt(0);
         mPaint = text.getPaint();
         int stockFontSize = StatusBarHelpers.pixelsToSp(mContext,text.getTextSize());
         int fontSize = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUSBAR_FONT_SIZE, stockFontSize);
+        // If custom fonSize is set, then need to reduce by 2 to keep stock look/feel
+        // if no custom size is set, then stay with what was set by layout/style.
+        fontSize = (fontSize == 0 ? stockFontSize : fontSize -2);
         text.setTextSize(fontSize);
-        text = (TextView)mTextSwitcher.getChildAt(1);
+        text = (TextView) mTextSwitcher.getChildAt(1);
         text.setTextSize(fontSize);
     }
 

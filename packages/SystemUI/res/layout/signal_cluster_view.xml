@@ -34,7 +34,6 @@
             android:id="@+id/wifi_signal"
             android:layout_height="match_parent"
             android:layout_width="wrap_content"
-            android:layout_gravity="fill_vertical"
             android:scaleType="fitCenter"
             android:paddingTop="@dimen/status_bar_icon_top_padding"
             android:paddingBottom="@dimen/status_bar_icon_bottom_padding"
@@ -43,7 +42,8 @@
             android:id="@+id/wifi_inout"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_gravity="center|bottom"
+            android:layout_gravity="center_horizontal|bottom"
+            android:scaleType="fitCenter"
             android:paddingTop="@dimen/status_bar_icon_top_padding"
             android:paddingBottom="@dimen/status_bar_icon_bottom_padding"
             />
@@ -102,7 +102,6 @@
                 android:layout_height="match_parent"
                 android:layout_width="wrap_content"
                 android:scaleType="fitCenter"
-                android:layout_gravity="fill_vertical"
                 android:paddingTop="@dimen/status_bar_icon_top_padding"
                 android:paddingBottom="@dimen/status_bar_icon_bottom_padding"
                 />
@@ -111,6 +110,7 @@
                 android:layout_height="match_parent"
                 android:layout_width="wrap_content"
                 android:layout_gravity="left|top"
+                android:scaleType="fitCenter"
                 android:paddingTop="@dimen/status_bar_icon_top_padding"
                 android:paddingBottom="@dimen/status_bar_icon_bottom_padding"
                 />
@@ -118,6 +118,7 @@
                 android:id="@+id/mobile_inout"
                 android:layout_height="match_parent"
                 android:layout_width="wrap_content"
+                android:scaleType="fitCenter"
                 android:layout_gravity="right|bottom"
                 android:paddingTop="@dimen/status_bar_icon_top_padding"
                 android:paddingBottom="@dimen/status_bar_icon_bottom_padding"

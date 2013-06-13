@@ -96,7 +96,7 @@
                     android:paddingLeft="2dp"
                     android:orientation="horizontal"
                     android:gravity="center" >
-                    <include layout="@layout/signal_cluster_view" 
+                    <include layout="@layout/signal_cluster_view"
                         android:id="@+id/signal_cluster"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
@@ -118,7 +118,7 @@
                  android:layout_height="match_parent"
                  android:textAppearance="@style/TextAppearance.StatusBar.Battery"
                  android:singleLine="true"
-                 android:gravity="center_vertical"
+                 android:scaleType="fitCenter"
                  android:paddingLeft="5dip"
                  />
              </LinearLayout>
@@ -161,7 +161,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginRight="4dip"
-            android:scaleType="fitCenter"
             >
             <com.android.systemui.statusbar.AnimatedImageView
                 android:layout_width="wrap_content"
@@ -178,6 +177,7 @@
             android:layout_width="0dip"
             android:layout_weight="1"
             android:layout_height="match_parent"
+            android:paddingTop="2dip"
             android:paddingRight="10dip"
             android:baselineAligned="false">
             <TextView

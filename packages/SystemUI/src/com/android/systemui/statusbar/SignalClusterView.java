@@ -290,7 +290,10 @@ public class SignalClusterView
             mMobileText.setTextSize(mFontSize);
             int width = StatusBarHelpers.getIconWidth(mContext, mFontSize);
             mWifi.getLayoutParams().width = width;
+            mWifiActivity.getLayoutParams().width = width;
             mMobile.getLayoutParams().width = width;
+            mMobileActivity.getLayoutParams().width = width;
+            mMobileType.getLayoutParams().width = width;
             mAirplane.getLayoutParams().width = width;
         }
          apply();
